@@ -8,21 +8,23 @@ import {
   Code,
   Grid,
   theme,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { Logo } from './Logo';
-import LoginCard from './components/Login/LoginCard';
+import {LoginForm, RegisterForm, AuthTabs } from './components/Auth';
+import RegisterCard from './components/Auth/RegisterForm';
 import { AuthContextProvider } from './contexts/AuthContext'
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
       <AuthContextProvider>
-      <Box textAlign="center" fontSize="xl">
+      <Box textAlign="center" fontSize="xl" bg={'blue.100'}>
         <Grid minH="100vh" p={3}>
           <ColorModeSwitcher justifySelf="flex-end" />
           
-          <LoginCard/>
+          <AuthTabs/>
           {/* <VStack spacing={8}>
             <Logo h="40vmin" pointerEvents="none" />
             <Text>

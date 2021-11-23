@@ -3,6 +3,7 @@ import Cookies from 'js-cookie';
 import AuthService  from '../services/AuthService'
 import axios from 'axios'
 
+// change it to store 
 const AuthState = {
     token: null,
     refreshToken: null,
@@ -43,13 +44,22 @@ const AuthContextProvider = ({children}) =>{
         return false
     }, [])
 
+    const signUp = useCallback(async(firstName, lastName, phoneNumver, email, password) => {
+        const registerResult = await AuthService.signUp(firstName, lastName, phoneNumver, email, password);
+        console.log(registerResult);
+        if(registerResult){
+            return true;
+        }
+        return false;
+    }, [])
+
     const signOut = useCallback(() => { 
         clearUserData()
         setState({accessToken: null, refreshToken: null, user: null})
     }, [])
 
     const refreshToken = useCallback(async () => {
-
+        // TODO
     })
 
     useMemo(() => {
@@ -75,7 +85,7 @@ const AuthContextProvider = ({children}) =>{
     },[])
 
     return (
-        <AuthContext.Provider value={{...state, signIn, signOut}}>
+        <AuthContext.Provider value={{...state, signIn, signUp, signOut}}>
             {children}
         </AuthContext.Provider>
     )
