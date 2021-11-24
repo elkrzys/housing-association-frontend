@@ -42,11 +42,11 @@ const RegisterForm = () => {
         {(props) => (
         <Form>
             <Flex minH={'100vh'} align={'start'} justify={'center'} bg={flexBg} >
-                <Stack spacing={8} mx={'auto'} py={12} px={6}>
+                <Stack spacing={8} mx={'auto'} py={6} px={6}>
                 <Stack align={'center'}>
-                    <Heading fontSize={'4xl'}>Utwórz konto</Heading>
+                    <Heading fontSize={'2xl'}>Utwórz konto</Heading>
                 </Stack>
-                <Box rounded={'lg'} bg={boxBg} boxShadow={'lg'} p={8} w={'md'}>
+                <Box rounded={'lg'} bg={boxBg} boxShadow={'lg'} py={6} px={8} w={'md'}>
                     <Stack spacing={4}>
 
                     <HStack spacing={2}>
@@ -103,7 +103,7 @@ const RegisterForm = () => {
                      isRequired
                      />
 
-                    <Stack pt={5}>
+                    <Stack pt={4}>
                         <Button bg={'blue.400'} color={'white'} _hover={{ bg: 'blue.500', }}
                         type={'submit'}
                         isLoading={props.isSubmitting}>

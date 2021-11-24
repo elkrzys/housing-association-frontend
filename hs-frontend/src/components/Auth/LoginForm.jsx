@@ -46,7 +46,7 @@ const LoginForm = (props) => {
                     
                     bg={flexBg}
                     >
-                    <Stack spacing={8} mx={'auto'} py={12} px={6}>
+                    <Stack spacing={8} mx={'auto'} py={6} px={6}>
                     <Stack align={'center'}>
                         <Heading fontSize={'4xl'}>Zaloguj się</Heading>
                     </Stack>

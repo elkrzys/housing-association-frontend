@@ -4,14 +4,14 @@ import { LoginForm, RegisterForm } from ".";
 const AuthTabs = () => {
     const boxBg = useColorModeValue('white', 'gray.700');
     return (
-        <Box
-            //minH={'100vh'}
-            align={'center'}
-            justify={'center'}
-            width={'50%'}
-            mx={'auto'}
-        >
-            <Tabs isFitted variant="enclosed" size="md" bg={boxBg}>
+        // <Box
+        //     //minH={'100vh'}
+        //     align={'center'}
+        //     justify={'center'}
+        //     width={'50%'}
+        //     mx={'auto'}
+        // >
+            <Tabs rounded={'lg'} isFitted variant="enclosed" size="md" bg={boxBg}>
                 <TabList >
                     <Tab>Zaloguj</Tab>
                     <Tab>Zarejestruj</Tab>
@@ -25,7 +25,7 @@ const AuthTabs = () => {
                     </TabPanel>
                 </TabPanels>
             </Tabs>
-        </Box>
+       // </Box>
     )
 }
 export default AuthTabs;
