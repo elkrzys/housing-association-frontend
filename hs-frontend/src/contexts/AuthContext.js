@@ -4,18 +4,20 @@ import AuthService  from '../services/AuthService'
 import axios from 'axios'
 
 // change it to store 
-const AuthState = {
-    token: null,
-    refreshToken: null,
-    user: null
-}
+const AuthState = () => ({
+    token: localStorage.getItem('accessToken'),
+    refreshToken: localStorage.getItem('refreshToken'),
+    user: JSON.parse(localStorage.getItem('user'))
+})
 
-const AuthContext = createContext(AuthState)
+const AuthContext = createContext(AuthState())
 
-const setUserData = (result) => {
-    console.log(result.data.accessToken)
+
+const getUserFromResult = (result) => ({ id: result.data.id, firstName: result.data.firstName, lastName: result.data.lastName, email: result.data.email })
+
+const setLocalStorageData = (result) => {
     localStorage.setItem('accessToken',result.data.accessToken)
-    let user = { id: result.data.id, firstName: result.data.firstName, lastName: result.data.lastName, email: result.data.email }
+    let user = getUserFromResult(result)
     localStorage.setItem('user', JSON.stringify(user))
     localStorage.setItem('role', result.data.role)
     axios.defaults.headers.common.Authorization = `Bearer ${result.data.accessToken}`
@@ -30,14 +32,14 @@ const clearUserData = () => {
 
 const AuthContextProvider = ({children}) =>{
 
-    const [state, setState] = useState(AuthState)
+    const [state, setState] = useState(AuthState())
 
     const signIn = useCallback(async (email, password) => {
         const loginResult = await AuthService.signIn(email, password);
         console.log(loginResult);
         if(loginResult){
-            setUserData(loginResult)
-            setState(loginResult.data)
+            setLocalStorageData(loginResult)
+            setState({ token: loginResult.data.accessToken, refreshToken: localStorage.getItem('refreshToken'), user: getUserFromResult(loginResult) })
             console.log('state: ' + state)
             return true;
         }

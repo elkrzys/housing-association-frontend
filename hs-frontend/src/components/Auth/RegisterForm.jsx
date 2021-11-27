@@ -41,7 +41,7 @@ const RegisterForm = () => {
 
         {(props) => (
         <Form>
-            <Flex minH={'100vh'} align={'start'} justify={'center'} bg={flexBg} >
+            <Flex align={'start'} justify={'center'} bg={flexBg} >
                 <Stack spacing={8} mx={'auto'} py={6} px={6}>
                 <Stack align={'center'}>
                     <Heading fontSize={'2xl'}>Utwórz konto</Heading>

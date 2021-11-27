@@ -48,7 +48,7 @@ const LoginForm = (props) => {
                     >
                     <Stack spacing={8} mx={'auto'} py={6} px={6}>
                     <Stack align={'center'}>
-                        <Heading fontSize={'4xl'}>Zaloguj się</Heading>
+                        <Heading fontSize={'2xl'}>Zaloguj się</Heading>
                     </Stack>
                     <Box
                         rounded={'lg'}

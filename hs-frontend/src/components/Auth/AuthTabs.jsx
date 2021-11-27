@@ -11,7 +11,7 @@ const AuthTabs = () => {
         //     width={'50%'}
         //     mx={'auto'}
         // >
-            <Tabs rounded={'lg'} isFitted variant="enclosed" size="md" bg={boxBg}>
+            <Tabs rounded={'lg'} isFitted variant="enclosed" bg={boxBg}>
                 <TabList >
                     <Tab>Zaloguj</Tab>
                     <Tab>Zarejestruj</Tab>
