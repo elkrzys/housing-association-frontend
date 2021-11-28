@@ -30,6 +30,20 @@ const AuthService = {
             return {status: REQUEST_STATUS.ERROR, error};
         }
     },
+    resetPassword: async (email, phoneNumber, password) => {
+        try{
+            const response = await axios.post(Endpoints.resetPassword,
+                {
+                    email, phoneNumber, password
+                });
+            console.log('response', response)
+            return {status: REQUEST_STATUS.SUCCESS, data: response.data};
+        }
+        catch(error) {
+            console.log(error);
+            return {status: REQUEST_STATUS.ERROR, error};
+        }
+    },
     refreshToken: async(token) => {
         try {
             const response = await axios.post(Endpoints.refreshToken,

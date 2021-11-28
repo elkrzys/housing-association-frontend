@@ -24,6 +24,7 @@ export const Endpoints = {
     login: url(Controllers.authentication, 'login'),
     refreshToken: url(Controllers.authentication, 'refresh-token'),
     revokeToken: url(Controllers.authentication, 'revoke-refresh-token'),
+    resetPassword: url(Controllers.authentication, 'reset-password'),
     // users
     users: url(Controllers.users),
     usersUnconfirmed: url(Controllers.users, 'not-enabled'),

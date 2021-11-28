@@ -6,6 +6,7 @@ import {
     Button,
     Heading,
     useColorModeValue,
+    useToast
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
 import { BasicInput, PasswordInput } from '../Inputs';
@@ -16,13 +17,18 @@ const RegisterForm = () => {
     const flexBg = useColorModeValue('none', 'gray.800');
     const boxBg = useColorModeValue('white', 'gray.700');
     const {signUp} = useContext(AuthContext)
+    const toast = useToast()
 
     const setSubmit = async (values, actions) =>
     {
+        
         if(await signUp(values.firstName, values.lastName, values.phoneNumber, values.email, values.password)){
             console.log('registration successful')
+            actions.resetForm()
+            toast({title: 'Pomyślnie zarejestrowano', status: 'success', isClosable: true, duration: 2500})
         }else{
             console.log('registration failed')
+            toast({title: 'Użytkownik już istnieje', status: 'error', isClosable: true, duration: 2500})
         }
         actions.setSubmitting(false);
     }
@@ -46,7 +52,7 @@ const RegisterForm = () => {
                 <Stack align={'center'}>
                     <Heading fontSize={'2xl'}>Utwórz konto</Heading>
                 </Stack>
-                <Box rounded={'lg'} bg={boxBg} boxShadow={'lg'} py={6} px={8} w={'md'}>
+                <Box rounded={'lg'} bg={boxBg} boxShadow={'lg'} py={6} px={8} maxW={'md'}>
                     <Stack spacing={4}>
 
                     <HStack spacing={2}>

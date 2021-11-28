@@ -11,12 +11,15 @@ import { Field, Form, Formik } from 'formik'
 import { AuthContext } from '../../contexts/AuthContext'
 import { useContext } from 'react';
 import { BasicInput, PasswordInput } from '../Inputs';
+import { useDisclosure } from "@chakra-ui/hooks"
+import { ResetPasswordModal } from '.';
 
 const LoginForm = (props) => {
 
     const flexBg = useColorModeValue('none', 'gray.800');
     const boxBg = useColorModeValue('white', 'gray.700');
     const {signIn} = useContext(AuthContext)
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     const setSubmit = async (values, actions) =>
     {
@@ -50,15 +53,8 @@ const LoginForm = (props) => {
                     <Stack align={'center'}>
                         <Heading fontSize={'2xl'}>Zaloguj się</Heading>
                     </Stack>
-                    <Box
-                        rounded={'lg'}
-                        bg={boxBg}
-                        boxShadow={'lg'}
-                        w={'md'}
-                        p={8}
-                        >
+                    <Box rounded={'lg'} bg={boxBg} boxShadow={'lg'} maxW={'md'} p={8} >
                         <Stack spacing={4}>
-
                         <BasicInput 
                             id='email' 
                             name='email'
@@ -81,7 +77,8 @@ const LoginForm = (props) => {
                             direction={{ base: 'column', sm: 'row' }}
                             align={'start'}
                             justify={'flex-end'}>
-                            <Link color={'blue.400'}>Zapomniałeś hasło?</Link>
+                            <Link onClick={onOpen} color={'blue.400'}>Nie pamiętasz hasła?</Link>
+                            <ResetPasswordModal isOpen={isOpen} onClose={onClose} />
                             </Stack>
 
                             <Button

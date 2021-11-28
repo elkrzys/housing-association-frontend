@@ -17,12 +17,11 @@ import {
     const {user, signOut} = useContext(AuthContext)
 
     const Hello = () => {
-      const user = JSON.parse(localStorage.getItem('user'));
       return(
-            <div>
+            <Box >
               <p>Hello, {user.firstName}</p>
               <button onClick={signOut}>Wyloguj</button>
-            </div>
+            </Box>
             )
     }
 

@@ -13,11 +13,11 @@ const AuthState = () => ({
 const AuthContext = createContext(AuthState())
 
 
-const getUserFromResult = (result) => ({ id: result.data.id, firstName: result.data.firstName, lastName: result.data.lastName, email: result.data.email })
+const getUserFromResponse = (result) => ({ id: result.data.id, firstName: result.data.firstName, lastName: result.data.lastName, email: result.data.email })
 
 const setLocalStorageData = (result) => {
     localStorage.setItem('accessToken',result.data.accessToken)
-    let user = getUserFromResult(result)
+    let user = getUserFromResponse(result)
     localStorage.setItem('user', JSON.stringify(user))
     localStorage.setItem('role', result.data.role)
     axios.defaults.headers.common.Authorization = `Bearer ${result.data.accessToken}`
@@ -35,21 +35,21 @@ const AuthContextProvider = ({children}) =>{
     const [state, setState] = useState(AuthState())
 
     const signIn = useCallback(async (email, password) => {
-        const loginResult = await AuthService.signIn(email, password);
-        console.log(loginResult);
-        if(loginResult){
-            setLocalStorageData(loginResult)
-            setState({ token: loginResult.data.accessToken, refreshToken: localStorage.getItem('refreshToken'), user: getUserFromResult(loginResult) })
+        const response = await AuthService.signIn(email, password);
+        console.log(response);
+        if(response.status === 'SUCCESS'){
+            setLocalStorageData(response)
+            setState({ token: response.data.accessToken, refreshToken: localStorage.getItem('refreshToken'), user: getUserFromResponse(response) })
             console.log('state: ' + state)
             return true;
         }
-        return false
+        return false;
     }, [])
 
-    const signUp = useCallback(async(firstName, lastName, phoneNumver, email, password) => {
-        const registerResult = await AuthService.signUp(firstName, lastName, phoneNumver, email, password);
-        console.log(registerResult);
-        if(registerResult){
+    const signUp = useCallback(async(firstName, lastName, phoneNumber, email, password) => {
+        const response = await AuthService.signUp(firstName, lastName, phoneNumber, email, password);
+        console.log(response);
+        if(response.status === 'SUCCESS'){
             return true;
         }
         return false;
@@ -58,6 +58,15 @@ const AuthContextProvider = ({children}) =>{
     const signOut = useCallback(() => { 
         clearUserData()
         setState({accessToken: null, refreshToken: null, user: null})
+    }, [])
+
+    const resetPassword = useCallback(async(email, phoneNumber, password) => {
+        const response = await AuthService.resetPassword(email, phoneNumber, password);
+        console.log(response)
+        if(response.status === 'SUCCESS'){
+            return true;
+        }
+        return false;
     }, [])
 
     const refreshToken = useCallback(async () => {
@@ -87,7 +96,7 @@ const AuthContextProvider = ({children}) =>{
     },[])
 
     return (
-        <AuthContext.Provider value={{...state, signIn, signUp, signOut}}>
+        <AuthContext.Provider value={{...state, signIn, signUp, signOut, resetPassword}}>
             {children}
         </AuthContext.Provider>
     )
