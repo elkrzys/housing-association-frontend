@@ -39,7 +39,6 @@ const ResetPasswordForm = (props) => {
         }
         actions.setSubmitting(false);
     }
-
     
     return(
         <Formik 

@@ -1,4 +1,5 @@
 import { createContext, useState, useCallback, useMemo } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import AuthService  from '../services/AuthService'
 import axios from 'axios'
@@ -7,7 +8,8 @@ import axios from 'axios'
 const AuthState = () => ({
     token: localStorage.getItem('accessToken'),
     refreshToken: localStorage.getItem('refreshToken'),
-    user: JSON.parse(localStorage.getItem('user'))
+    user: JSON.parse(localStorage.getItem('user')),
+    role: localStorage.getItem('role')
 })
 
 const AuthContext = createContext(AuthState())
@@ -26,6 +28,7 @@ const setLocalStorageData = (result) => {
 const clearUserData = () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('user')
+    localStorage.removeItem('role')
     Cookies.remove('refreshToken')
     axios.defaults.headers.common.Authorization = undefined
 }
@@ -33,6 +36,7 @@ const clearUserData = () => {
 const AuthContextProvider = ({children}) =>{
 
     const [state, setState] = useState(AuthState())
+    const navigate = useNavigate();
 
     const signIn = useCallback(async (email, password) => {
         const response = await AuthService.signIn(email, password);
@@ -58,6 +62,7 @@ const AuthContextProvider = ({children}) =>{
     const signOut = useCallback(() => { 
         clearUserData()
         setState({accessToken: null, refreshToken: null, user: null})
+        navigate("/");
     }, [])
 
     const resetPassword = useCallback(async(email, phoneNumber, password) => {

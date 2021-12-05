@@ -10,6 +10,7 @@ import {
   import background from '../../assets/images/park-background.jpg'
   import { AuthTabs } from '../Auth';
   import { AuthContext } from '../../contexts/AuthContext';
+  import {Navigate } from 'react-router-dom'
 
   
 
@@ -34,7 +35,7 @@ import {
         direction={'column'}
         backgroundSize={'cover'}
         backgroundPosition={'start center'}
-        >
+        > 
         <Box  px={useBreakpointValue({ base: 4, md: 8 })}
           bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
           w={'full'}
@@ -64,7 +65,7 @@ import {
             </Text>
             <Box w={'40vw'} pt={10} >
               {
-                (user) ? Hello() : <AuthTabs />
+                (user) ? <Navigate to="/home" /> : <AuthTabs />
               }   
             </Box>
            </Box>
