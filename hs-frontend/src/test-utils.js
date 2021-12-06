@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import React from 'react';
 import { render } from '@testing-library/react';
 import { ChakraProvider, theme } from '@chakra-ui/react';

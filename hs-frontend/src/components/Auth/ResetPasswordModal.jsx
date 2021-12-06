@@ -6,12 +6,12 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Button
-} from "@chakra-ui/react"
-import { ResetPasswordForm } from '.'
+  Button,
+} from '@chakra-ui/react';
+import ResetPasswordForm from './ResetPasswordForm';
 
-const ResetPasswordModal = (props) => {
- // const { isOpen, onOpen, onClose } = useDisclosure()
+const ResetPasswordModal = props => {
+  // const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <>
       {/* <Button onClick={props.onOpen}>Open Modal</Button> */}
@@ -33,6 +33,6 @@ const ResetPasswordModal = (props) => {
         </ModalContent>
       </Modal>
     </>
-  )
-}
+  );
+};
 export default ResetPasswordModal;

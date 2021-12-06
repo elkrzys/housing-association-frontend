@@ -9,8 +9,8 @@ import {
 } from '@chakra-ui/react';
 import SidebarContent from './SidebarContent';
 
-const Sidebar = ({ isOpen, variant, onClose }) => {
-  return variant === 'sidebar' ? (
+const Sidebar = ({ isOpen, variant, onClose }) =>
+  variant === 'sidebar' ? (
     <Box position="fixed" left={0} p={5} w="16vw" top={0} h="100%" bg="#f2f2f2">
       <SidebarContent onClick={onClose} />
     </Box>
@@ -27,6 +27,4 @@ const Sidebar = ({ isOpen, variant, onClose }) => {
       </DrawerOverlay>
     </Drawer>
   );
-};
-
 export default Sidebar;

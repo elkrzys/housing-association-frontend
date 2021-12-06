@@ -13,30 +13,36 @@ const CFaUserAlt = chakra(FaUserAlt);
 const CFaAt = chakra(FaAt);
 const CFaPhone = chakra(FaPhone);
 
-const BasicInput = props => {
-  const leftIcon =
-    props.type === 'email' ? (
-      <CFaAt color="gray.300" />
-    ) : props.type === 'tel' ? (
-      <CFaPhone color="gray.300" />
-    ) : props.name.includes('Name') ? (
-      <CFaUserAlt color="gray.300" />
-    ) : null;
+const BasicInput = ({ name, id, isRequired, isDisabled, label, type }) => {
+  let leftIcon = null;
+  switch ({ type }) {
+    case 'email':
+      leftIcon = <CFaAt color="gray.300" />;
+      break;
+    case 'tel':
+      leftIcon = <CFaPhone color="gray.300" />;
+      break;
+    default:
+      leftIcon = name.includes('Name') ? <CFaUserAlt color="gray.300" /> : null;
+      break;
+  }
 
   return (
-    <Field name={props.name}>
+    <Field name={name}>
       {({ field }) => (
-        <FormControl
-          id={props.id}
-          isRequired={props.isRequired}
-          isDisabled={props.isDisabled}
-        >
-          <FormLabel>{props.label}</FormLabel>
+        <FormControl id={id} isRequired={isRequired} isDisabled={isDisabled}>
+          <FormLabel>{label}</FormLabel>
           <InputGroup>
             {leftIcon !== null && (
-              <InputLeftElement pointerEvents="none" children={leftIcon} />
+              <InputLeftElement pointerEvents="none">
+                {leftIcon}
+              </InputLeftElement>
             )}
-            <Input {...field} type={props.type} defaultValue={props.value} />
+            <Input
+              {...field}
+              type={type}
+              // defaultValue={props.defaultValue}
+            />
           </InputGroup>
         </FormControl>
       )}

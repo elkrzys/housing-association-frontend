@@ -6,17 +6,16 @@ import {
   Button,
   Heading,
   useColorModeValue,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
-import { AuthContext } from '../../contexts/AuthContext';
 import { useContext, useEffect, useState } from 'react';
-import { BasicInput, PasswordInput } from '../Inputs';
-import { useDisclosure } from '@chakra-ui/hooks';
-import { ResetPasswordModal } from '.';
-import { Redirect } from 'react-router-dom';
+// import { Redirect } from 'react-router-dom';
+import { BasicInput } from '../Inputs';
+import { AuthContext } from '../../contexts/AuthContext';
 import { UsersService } from '../../services';
 
-const UserProfile = props => {
+const UserProfile = () => {
   const flexBg = useColorModeValue('none', 'gray.800');
   const boxBg = useColorModeValue('white', 'gray.700');
 
@@ -28,11 +27,10 @@ const UserProfile = props => {
 
   useEffect(() => {
     const getUser = async () => {
-      let response = await UsersService.getUser(user.id);
+      const response = await UsersService.getUser(user.id);
       console.log(response);
-      response.status === 'SUCCESS'
-        ? setUser(response.data)
-        : console.log('failure dirung user fething');
+      if (response.status === 'SUCCESS') setUser(response.data);
+      else console.log('failure dirung user fething');
     };
     getUser();
   }, []);
@@ -63,21 +61,19 @@ const UserProfile = props => {
         email: fullUser?.email,
         phoneNumber: fullUser?.phoneNumber,
       }}
-      onSubmit={setSubmit}
-    >
+      onSubmit={setSubmit}>
       {props => (
         <Form>
           <Flex
             // minH={'100vh'}
-            align={'start'}
-            justify={'center'}
-            bg={flexBg}
-          >
-            <Stack spacing={8} mx={'auto'} py={6} px={6}>
-              <Stack align={'center'}>
-                <Heading fontSize={'2xl'}>Zaloguj się</Heading>
+            align="start"
+            justify="center"
+            bg={flexBg}>
+            <Stack spacing={8} mx="auto" py={6} px={6}>
+              <Stack align="center">
+                <Heading fontSize="2xl">Zaloguj się</Heading>
               </Stack>
-              <Box rounded={'lg'} bg={boxBg} boxShadow={'lg'} maxW={'md'} p={8}>
+              <Box rounded="lg" bg={boxBg} boxShadow="lg" maxW="md" p={8}>
                 <Stack spacing={4}>
                   <BasicInput
                     id="firstName"
@@ -119,34 +115,31 @@ const UserProfile = props => {
                   <Stack spacing={10}>
                     <Stack
                       direction={{ base: 'column', sm: 'row' }}
-                      align={'start'}
-                      justify={'flex-end'}
-                    >
-                      <Link onClick={onOpen} color={'blue.400'}>
+                      align="start"
+                      justify="flex-end">
+                      <Button onClick={onOpen} color="blue.400">
                         Zmień hasło
-                      </Link>
+                      </Button>
                       {/* <ResetPasswordModal isOpen={isOpen} onClose={onClose} /> */}
                     </Stack>
 
                     <Button
-                      bg={'blue.400'}
-                      color={'white'}
+                      bg="blue.400"
+                      color="white"
                       _hover={{
                         bg: 'blue.500',
                       }}
-                      onClick={() => enableEdit(!isEditEnabled)}
-                    >
+                      onClick={() => enableEdit(!isEditEnabled)}>
                       Edytuj dane
                     </Button>
                     <Button
-                      bg={'blue.400'}
-                      color={'white'}
+                      bg="blue.400"
+                      color="white"
                       _hover={{
                         bg: 'blue.500',
                       }}
-                      type={'submit'}
-                      isLoading={props.isSubmitting}
-                    >
+                      type="submit"
+                      isLoading={props.isSubmitting}>
                       Zaktualizuj dane
                     </Button>
                   </Stack>
