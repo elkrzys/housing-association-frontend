@@ -1,67 +1,90 @@
-import React, { useContext, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import React, { useContext, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
-    Flex,
-    Text,
-    IconButton,
-    Divider,
-    Avatar,
-    Heading
-} from '@chakra-ui/react'
+  Flex,
+  Text,
+  IconButton,
+  Divider,
+  Avatar,
+  Heading,
+  chakra,
+} from '@chakra-ui/react';
 import {
-    FaBars,
-    FaHome,
-    FaUser,
-    FaBuilding,
-    FaBriefcase,
-    FaSettings,
-    FaScroll,
-    FaClipboardCheck,
-    FaSignOutAlt
-} from 'react-icons/fa'
-import NavItem from './NavItem'
-import { AuthContext } from '../../contexts/AuthContext'
+  FaBars,
+  FaHome,
+  FaUser,
+  FaBuilding,
+  FaBriefcase,
+  FaSettings,
+  FaUserAlt,
+  FaScroll,
+  FaClipboardCheck,
+  FaSignOutAlt,
+} from 'react-icons/fa';
+import NavItem from './NavItem';
+import { MODES } from '../../strings';
+import { ModeContext, AuthContext } from '../../contexts';
+
+const CFaUserAlt = chakra(FaUserAlt);
 
 const SidebarContent = () => {
-    const {user, role, signOut} = useContext(AuthContext)
-    const history = useHistory();
+  const { user, role, signOut } = useContext(AuthContext);
 
-    const signOutAndRedirect = () =>{
-        signOut()
-        history.replace("/")
+  const history = useHistory();
+  // const [selectedMode, setSelectedMode] = useState(null);
+
+  const signOutAndRedirect = () => {
+    signOut();
+    history.replace('/');
+  };
+
+  const getRole = () => {
+    switch (role) {
+      case 'Resident':
+        return 'Mieszkaniec';
+      case 'Worker':
+        return 'Pracownik';
+      case 'Admin':
+        return 'Admin';
+      default:
+        return 'Undefined Role';
     }
+  };
 
-    return(
-        <Flex>
-            <Flex
-                p="5%"
-                flexDir="column"
-                w="100%"
-                alignItems={"flex-start"}
-                as="nav"
-                >
-                
-            
-                <NavItem  icon={FaHome} title="Strona główna" />
-                <NavItem  icon={FaBuilding} title="Budynki" />
-                <NavItem  icon={FaScroll} title="Ogłoszenia" />
-                <NavItem  icon={FaClipboardCheck} title="Zgłoszenia" />
-                <NavItem  icon={FaBriefcase} title="Dokumenty" />
-                <NavItem  icon={FaUser} title="Twoje konto" />
-                <NavItem  icon={FaSignOutAlt} title="Wyloguj się" onClick={signOutAndRedirect} />
-                <Flex mt={'100%'} align="flex-end" w={'100%'}>
-                    <Avatar size="sm" src="avatar-1.jpg" />
-                    <Flex flexDir="column" ml={4} display={"flex"}>
-                        <Heading as="h3" size="sm">
-                            {(user !== null) ? user.firstName && user.lastName : "Unknown user" }
-                        </Heading>
-                        <Text color="gray">{(role !== null) ? role : "Unknown role"}</Text>
-                    </Flex>
-                </Flex>
-               
-            </Flex>
-           
+  const { setMode } = useContext(ModeContext);
+  return (
+    <Flex>
+      <Flex p="5%" flexDir="column" w="100%" alignItems={'flex-start'} as="nav">
+        <NavItem icon={FaHome} title="Strona główna" />
+        <NavItem icon={FaBuilding} title="Budynki" />
+        <NavItem icon={FaScroll} title="Ogłoszenia" />
+        <NavItem icon={FaClipboardCheck} title="Zgłoszenia" />
+        <NavItem icon={FaBriefcase} title="Dokumenty" />
+        <NavItem
+          icon={FaUser}
+          title="Twój profil"
+          onClick={() => setMode(MODES.UserProfile)}
+        />
+        <NavItem
+          icon={FaSignOutAlt}
+          title="Wyloguj"
+          onClick={signOutAndRedirect}
+        />
+        <Flex mt={'100%'} align="flex-end" w={'100%'}>
+          <Avatar size="sm" icon={<CFaUserAlt color="white" />} />
+          <Flex flexDir="column" ml={4}>
+            <Heading as="h1" fontSize="sm">
+              {user !== null
+                ? user.firstName + ' ' + user.lastName
+                : 'Unknown user'}
+            </Heading>
+            <Text fontSize="sm" color="gray.500">
+              {getRole()}
+            </Text>
+          </Flex>
+        </Flex>
+      </Flex>
     </Flex>
-    )
-}
+  );
+};
 export default SidebarContent;

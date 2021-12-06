@@ -41,3 +41,7 @@ export const Endpoints = {
     announcements: url(Controllers.announcements),
     announcementsAll: url(Controllers.announcements, 'all')
 }
+
+export const MODES = {
+    UserProfile: 'User profile'
+}

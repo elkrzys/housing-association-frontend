@@ -6,9 +6,9 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { AuthContextProvider } from './contexts/AuthContext'
 import AuthPage from './components/Pages/AuthPage'
 import MainPage from './components/Pages/MainPage'
+import { AuthContextProvider, ModeContextProvider } from './contexts';
 
 
 function App() {
@@ -21,7 +21,9 @@ function App() {
                 <AuthPage />
               </Route>
               <Route path='/home'>
-                <MainPage />
+                <ModeContextProvider>
+                  <MainPage />
+                </ModeContextProvider>
               </Route>
           </Switch> 
         </Router>
