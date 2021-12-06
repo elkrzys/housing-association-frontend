@@ -1,5 +1,4 @@
 import { createContext, useState, useCallback, useMemo } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import AuthService  from '../services/AuthService'
 import axios from 'axios'
@@ -36,7 +35,6 @@ const clearUserData = () => {
 const AuthContextProvider = ({children}) =>{
 
     const [state, setState] = useState(AuthState())
-    const navigate = useNavigate();
 
     const signIn = useCallback(async (email, password) => {
         const response = await AuthService.signIn(email, password);
@@ -62,7 +60,6 @@ const AuthContextProvider = ({children}) =>{
     const signOut = useCallback(() => { 
         clearUserData()
         setState({accessToken: null, refreshToken: null, user: null})
-        navigate("/");
     }, [])
 
     const resetPassword = useCallback(async(email, phoneNumber, password) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import {
   ChakraProvider,
   theme,
@@ -7,20 +7,24 @@ import {
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { AuthContextProvider } from './contexts/AuthContext'
+import AuthPage from './components/Pages/AuthPage'
 import MainPage from './components/Pages/MainPage'
-import Layout from './components/Pages/Layout'
 
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
       <AuthContextProvider>
-          <Router >
-            <Routes>
-              <Route path='/' element={<MainPage />} />
-              <Route path='/home' element={<Layout />} />
-            </Routes>
-          </Router> 
+        <Router>
+          <Switch >
+              <Route exact path='/'>
+                <AuthPage />
+              </Route>
+              <Route path='/home'>
+                <MainPage />
+              </Route>
+          </Switch> 
+        </Router>
       </AuthContextProvider>
     </ChakraProvider>
   );

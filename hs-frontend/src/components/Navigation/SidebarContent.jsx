@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import {
     Flex,
     Text,
@@ -23,6 +24,12 @@ import { AuthContext } from '../../contexts/AuthContext'
 
 const SidebarContent = () => {
     const {user, role, signOut} = useContext(AuthContext)
+    const history = useHistory();
+
+    const signOutAndRedirect = () =>{
+        signOut()
+        history.replace("/")
+    }
 
     return(
         <Flex>
@@ -41,7 +48,7 @@ const SidebarContent = () => {
                 <NavItem  icon={FaClipboardCheck} title="Zgłoszenia" />
                 <NavItem  icon={FaBriefcase} title="Dokumenty" />
                 <NavItem  icon={FaUser} title="Twoje konto" />
-                <NavItem  icon={FaSignOutAlt} title="Wyloguj się" onClick={signOut} />
+                <NavItem  icon={FaSignOutAlt} title="Wyloguj się" onClick={signOutAndRedirect} />
                 <Flex mt={'100%'} align="flex-end" w={'100%'}>
                     <Avatar size="sm" src="avatar-1.jpg" />
                     <Flex flexDir="column" ml={4} display={"flex"}>

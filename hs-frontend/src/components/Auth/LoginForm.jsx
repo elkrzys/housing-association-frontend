@@ -13,7 +13,7 @@ import { useContext } from 'react';
 import { BasicInput, PasswordInput } from '../Inputs';
 import { useDisclosure } from "@chakra-ui/hooks"
 import { ResetPasswordModal } from '.';
-import {Navigate } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 
 const LoginForm = (props) => {
 
@@ -26,7 +26,7 @@ const LoginForm = (props) => {
     {
         if(await signIn(values.email,values.password)){
             console.log('login successful')
-            return <Navigate to="/home" />
+            return <Redirect to="/home" />
         }else{
             console.log('login failed')
         }
