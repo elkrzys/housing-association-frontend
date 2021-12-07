@@ -9,7 +9,6 @@ import Modes from '../Modes/Modes';
 const MainPage = () => {
   const { user, role, token } = useContext(AuthContext);
   const { mode } = useContext(ModeContext);
-  console.log('mode: ', mode);
 
   const smVariant = { navigation: 'drawer', navigationButton: true };
   const mdVariant = { navigation: 'sidebar', navigationButton: false };
@@ -24,24 +23,20 @@ const MainPage = () => {
   return token === null ? (
     <Redirect to="/" />
   ) : (
-    <Flex>
+    <Flex w="100%">
       <Sidebar
         variant={variants?.navigation}
         isOpen={isSidebarOpen}
         onClose={toggleSidebar}
       />
       <Box
-        ml={!variants?.navigationButton && '16vw'}
-        w={!variants?.navigationButton && '84vw'}
-      >
+        ml={!variants?.navigationButton && { base: '0', md: '16vw' }}
+        w={!variants?.navigationButton && { base: '100vw', md: '84vw' }}>
         <Header
           showSidebarButton={variants?.navigationButton}
           onShowSidebar={toggleSidebar}
         />
-        <Flex justify={'center'} mt={'8vh'}>
-          <Heading size="md">Hej, {user.firstName}!</Heading>
-        </Flex>
-        <Flex p={10}>
+        <Flex minW="100%" justify={'center'} mt={'8vh'}>
           {mode !== null ? (
             <Modes mode={mode} />
           ) : (

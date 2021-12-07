@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   Flex,
@@ -28,10 +28,11 @@ import { ModeContext, AuthContext } from '../../contexts';
 const CFaUserAlt = chakra(FaUserAlt);
 
 const SidebarContent = () => {
-  const { user, role, signOut } = useContext(AuthContext);
+  const { role, signOut } = useContext(AuthContext);
+  let { user } = useContext(AuthContext);
+  useEffect(() => {}, [user]);
 
   const history = useHistory();
-  // const [selectedMode, setSelectedMode] = useState(null);
 
   const signOutAndRedirect = () => {
     signOut();

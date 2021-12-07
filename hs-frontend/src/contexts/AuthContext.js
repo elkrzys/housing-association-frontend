@@ -3,7 +3,6 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import AuthService from '../services/AuthService';
 
-// change it to store
 const AuthState = () => ({
   token: localStorage.getItem('accessToken'),
   refreshToken: localStorage.getItem('refreshToken'),
@@ -46,8 +45,9 @@ const AuthContextProvider = ({ children }) => {
       setLocalStorageData(response);
       setState({
         token: response.data.accessToken,
-        refreshToken: localStorage.getItem('refreshToken'),
+        refreshToken: Cookies.get('refreshToken'),
         user: getUserFromResponse(response),
+        role: response.data.role
       });
       console.log(`state: ${  state}`);
       return true;
@@ -69,8 +69,7 @@ const AuthContextProvider = ({ children }) => {
         return true;
       }
       return false;
-    },
-    [],
+    }, []
   );
 
   const signOut = useCallback(() => {
@@ -91,8 +90,15 @@ const AuthContextProvider = ({ children }) => {
     return false;
   }, []);
 
+  const refreshUser = useCallback((newUser) => {
+    setState(prev=> {prev.user = newUser; return prev;});
+    localStorage.setItem('user', JSON.stringify(newUser))
+    console.log("current state:");
+    console.log(state);
+  }, []);
+
   // const refreshToken = useCallback(async () => {
-  //   // TODO
+  // TODO
   // });
 
   useMemo(() => {
@@ -119,7 +125,7 @@ const AuthContextProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ ...state, signIn, signUp, signOut, resetPassword }}
+      value={{ ...state, signIn, signUp, signOut, resetPassword, refreshUser }}
     >
       {children}
     </AuthContext.Provider>

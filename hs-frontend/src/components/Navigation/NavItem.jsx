@@ -19,16 +19,15 @@ const NavItem = ({ icon, title, active, navSize, onClick }) => {
           borderRadius={8}
           _hover={{ textDecor: 'none', backgroundColor: '#73EFFF' }}
           w={'100%'}
-          onClick={onClick}
-        >
+          onClick={onClick}>
           <MenuButton w="100%">
             <Flex>
               <Icon
                 as={icon}
-                fontSize="xl"
+                fontSize={{ base: 'sm', md: 'md' }}
                 color={active ? '#73EFFF' : 'gray.500'}
               />
-              <Text ml={3} display={navSize === 'small' ? 'none' : 'flex'}>
+              <Text ml={3} align="left" fontSize={{ base: 'sm', md: 'sm' }}>
                 {title}
               </Text>
             </Flex>
