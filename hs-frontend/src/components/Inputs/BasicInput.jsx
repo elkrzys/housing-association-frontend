@@ -13,7 +13,15 @@ const CFaUserAlt = chakra(FaUserAlt);
 const CFaAt = chakra(FaAt);
 const CFaPhone = chakra(FaPhone);
 
-const BasicInput = ({ name, id, isRequired, isDisabled, label, type }) => {
+const BasicInput = ({
+  name,
+  id,
+  isRequired,
+  isDisabled,
+  label,
+  type,
+  placeholder,
+}) => {
   let leftIcon = null;
   switch ({ type }) {
     case 'email':
@@ -41,6 +49,7 @@ const BasicInput = ({ name, id, isRequired, isDisabled, label, type }) => {
             <Input
               {...field}
               type={type}
+              placeholder={placeholder}
               // defaultValue={props.defaultValue}
             />
           </InputGroup>

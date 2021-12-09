@@ -1,7 +1,11 @@
+import { useContext } from 'react';
+import { ModeContext } from '../../contexts';
 import { Flex, Box, IconButton, Center, Text } from '@chakra-ui/react';
 import { FaBars } from 'react-icons/fa';
 
 const Header = ({ showSidebarButton = true, onShowSidebar }) => {
+  const { mode } = useContext(ModeContext);
+
   return (
     <Flex bg="blue.500" p={4} color="white" justifyContent="center">
       <Box flex="1">
@@ -17,7 +21,7 @@ const Header = ({ showSidebarButton = true, onShowSidebar }) => {
         )}
       </Box>
       <Center flex="1" h="40px">
-        <Text fontSize="xl">Homepage Demo</Text>
+        <Text fontSize="xl">{mode}</Text>
       </Center>
       <Box flex="1" />
     </Flex>

@@ -40,5 +40,7 @@ export const Endpoints = {
 };
 
 export const MODES = {
-  UserProfile: 'User profile',
+  UserProfile: 'Profil użytkownika',
+  Buildings: 'Budynki wspólnoty',
+  HomePage: 'Strona główna',
 };

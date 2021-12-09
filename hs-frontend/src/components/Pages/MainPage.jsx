@@ -36,7 +36,7 @@ const MainPage = () => {
           showSidebarButton={variants?.navigationButton}
           onShowSidebar={toggleSidebar}
         />
-        <Flex minW="100%" justify={'center'} mt={'8vh'}>
+        <Box minW="100%" justify={'center'} mt={'4vh'}>
           {mode !== null ? (
             <Modes mode={mode} />
           ) : (
@@ -78,7 +78,7 @@ const MainPage = () => {
               augue ipsum, lobortis a auctor non, pharetra vitae ex.
             </Text>
           )}
-        </Flex>
+        </Box>
       </Box>
     </Flex>
   );

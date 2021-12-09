@@ -56,8 +56,16 @@ const SidebarContent = () => {
   return (
     <Flex>
       <Flex p="5%" flexDir="column" w="100%" alignItems={'flex-start'} as="nav">
-        <NavItem icon={FaHome} title="Strona główna" />
-        <NavItem icon={FaBuilding} title="Budynki" />
+        <NavItem
+          icon={FaHome}
+          title="Strona główna"
+          onClick={() => setMode(MODES.HomePage)}
+        />
+        <NavItem
+          icon={FaBuilding}
+          title="Budynki"
+          onClick={() => setMode(MODES.Buildings)}
+        />
         <NavItem icon={FaScroll} title="Ogłoszenia" />
         <NavItem icon={FaClipboardCheck} title="Zgłoszenia" />
         <NavItem icon={FaBriefcase} title="Dokumenty" />
