@@ -40,7 +40,7 @@ const MainPage = () => {
           {mode !== null ? (
             <Modes mode={mode} />
           ) : (
-            <Text px={10} textJustify={'inter-word'} textAlign={'justify'}>
+            <Text px={10} textAlign={'justify'}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
               et magna in ligula malesuada gravida sit amet a lectus.
               Suspendisse fringilla tempor nisi vel euismod. Class aptent taciti

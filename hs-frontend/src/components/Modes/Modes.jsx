@@ -1,20 +1,22 @@
 import { React } from 'react';
 import { MODES } from '../../strings';
 import { UserProfile } from '../UserProfile';
-import { BuildingsTable } from '../Buildings';
+import { BuildingsTable, BuildingDetails } from '../Buildings';
+import { AnnouncementsTable } from '../Announcements';
 import { Redirect } from 'react-router';
 
-const Modes = ({ mode }) => {
+const Modes = ({ mode, contentId }) => {
   switch (mode) {
     case MODES.UserProfile:
-      console.log('user profile mode');
       return <UserProfile />;
     case MODES.Buildings:
-      console.log('buildings mode');
       return <BuildingsTable />;
     case MODES.HomePage:
-      console.log('homepage mode');
       return <Redirect to="/home" />;
+    case MODES.BuildingDetails:
+      return <BuildingDetails buildingId={contentId} />;
+    case MODES.Announcements:
+      return <AnnouncementsTable />;
     default:
       return null;
   }

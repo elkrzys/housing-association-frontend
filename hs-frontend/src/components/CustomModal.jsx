@@ -9,7 +9,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 
-const ChangePasswordModal = ({ isOpen, onClose, header, bodyContent }) => {
+const CustomModal = ({ isOpen, onClose, header, bodyContent }) => {
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -18,14 +18,14 @@ const ChangePasswordModal = ({ isOpen, onClose, header, bodyContent }) => {
           <ModalHeader>{header}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>{bodyContent}</ModalBody>
-          <ModalFooter>
+          {/* <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onClose}>
               Zamknij
             </Button>
-          </ModalFooter>
+          </ModalFooter> */}
         </ModalContent>
       </Modal>
     </>
   );
 };
-export default ChangePasswordModal;
+export default CustomModal;

@@ -10,10 +10,12 @@ import {
   Button,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
-import React, { useMemo } from 'react';
-import Modal from '../Modal';
+import { FaArrowDown, FaArrowUp, FaTrash, FaEdit } from 'react-icons/fa';
+import React, { useContext, useEffect } from 'react';
+import { ModeContext } from '../../contexts';
+import CustomModal from '../CustomModal';
 import AddBuildingForm from './AddBuildingForm';
+import { MODES } from '../../strings';
 
 const BuildingsTable = () => {
   const buildings = [
@@ -88,44 +90,66 @@ const BuildingsTable = () => {
     },
   ];
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isAddOpen,
+    onOpen: onAddOpen,
+    onClose: onAddClose,
+  } = useDisclosure();
+
+  const { setMode } = useContext(ModeContext);
 
   return (
     <Box mx={{ base: '0', md: '5%' }}>
-      <Flex w="100%" pb="5" px="10" justifyContent="end">
-        <Button
-          style={{
-            border: '1px solid #fefcbf',
-            boxShadow: '0 0 1em #fefcbf',
-            borderRadius: '5px',
-          }}
-          bg="transparent"
-          _hover={{ bg: 'yellow.100' }}
-          onClick={onOpen}>
-          Dodaj budynek
-        </Button>
-        <Modal
-          isOpen={isOpen}
-          onClose={onClose}
-          bodyContent={<AddBuildingForm />}
-          header={'Dodaj budynek'}
-        />
-      </Flex>
       <Table variant="striped" colorScheme="gray">
         <Thead h="75px">
-          <Tr bg="yellow.100">
+          <Tr bg="white">
             {columns.map(column => (
-              <Th>{column.Header}</Th>
+              <Th w="20%" borderRight={'2px dotted gray'}>
+                {column.Header}
+              </Th>
             ))}
+            <Th>
+              <Flex justifyContent="center">
+                <Button
+                  bg="green.100"
+                  _hover={{ bg: 'green.200' }}
+                  onClick={onAddOpen}>
+                  Dodaj budynek
+                </Button>
+                <CustomModal
+                  isOpen={isAddOpen}
+                  onClose={onAddClose}
+                  bodyContent={<AddBuildingForm />}
+                  header={'Dodaj budynek'}
+                />
+              </Flex>
+            </Th>
           </Tr>
         </Thead>
         <Tbody>
           {buildings.map(building => (
             <Tr>
-              <Td>{building.street}</Td>
-              <Td>{building.number}</Td>
-              <Td>{building.type}</Td>
-              <Td>{building.numberOfLocals}</Td>
+              <Td w="20%">{building.street}</Td>
+              <Td w="20%">{building.number}</Td>
+              <Td w="20%">{building.type}</Td>
+              <Td w="20%">{building.numberOfLocals}</Td>
+              <Td>
+                <Flex gridColumnGap="10px" justifyContent="center">
+                  <Button
+                    bg="blue.100"
+                    onClick={() =>
+                      setMode({
+                        mode: MODES.BuildingDetails,
+                        contentId: building.id,
+                      })
+                    }>
+                    <FaEdit />
+                  </Button>
+                  <Button bg="red.100">
+                    <FaTrash />
+                  </Button>
+                </Flex>
+              </Td>
             </Tr>
           ))}
         </Tbody>

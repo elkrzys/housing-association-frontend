@@ -43,4 +43,6 @@ export const MODES = {
   UserProfile: 'Profil użytkownika',
   Buildings: 'Budynki wspólnoty',
   HomePage: 'Strona główna',
+  BuildingDetails: "Szczegóły budynku",
+  Announcements: "Tablica ogłoszeń"
 };

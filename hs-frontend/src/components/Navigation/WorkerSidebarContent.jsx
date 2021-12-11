@@ -20,6 +20,7 @@ import {
   FaScroll,
   FaClipboardCheck,
   FaSignOutAlt,
+  FaUsers,
 } from 'react-icons/fa';
 import NavItem from './NavItem';
 import { MODES } from '../../strings';
@@ -28,30 +29,15 @@ import { ModeContext, AuthContext } from '../../contexts';
 const CFaUserAlt = chakra(FaUserAlt);
 
 const SidebarContent = () => {
-  const { role, signOut } = useContext(AuthContext);
+  const { signOut } = useContext(AuthContext);
   let { user } = useContext(AuthContext);
   useEffect(() => {}, [user]);
 
   const history = useHistory();
-
   const signOutAndRedirect = () => {
     signOut();
     history.replace('/');
   };
-
-  const getRole = () => {
-    switch (role) {
-      case 'Resident':
-        return 'Mieszkaniec';
-      case 'Worker':
-        return 'Pracownik';
-      case 'Admin':
-        return 'Admin';
-      default:
-        return 'Undefined Role';
-    }
-  };
-
   const { setMode } = useContext(ModeContext);
   return (
     <Flex>
@@ -61,19 +47,17 @@ const SidebarContent = () => {
           title="Strona główna"
           onClick={() => setMode({ mode: MODES.HomePage, contentId: null })}
         />
-
         <NavItem
           icon={FaBuilding}
           title="Budynki"
           onClick={() => setMode({ mode: MODES.Buildings, contentId: null })}
         />
         <NavItem
-          icon={FaScroll}
-          title="Ogłoszenia"
-          onClick={() =>
-            setMode({ mode: MODES.Announcements, contentId: null })
-          }
+          icon={FaUsers}
+          title="Użytkownicy"
+          // onClick={() => setMode({ mode: MODES.Residents, contentId: null })}
         />
+        <NavItem icon={FaScroll} title="Ogłoszenia" />
         <NavItem icon={FaClipboardCheck} title="Zgłoszenia" />
         <NavItem icon={FaBriefcase} title="Dokumenty" />
         <NavItem
@@ -95,7 +79,7 @@ const SidebarContent = () => {
                 : 'Unknown user'}
             </Heading>
             <Text fontSize="sm" color="gray.500">
-              {getRole()}
+              {'Pracownik'}
             </Text>
           </Flex>
         </Flex>
