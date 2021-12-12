@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Menu,
   MenuButton,
@@ -13,13 +13,12 @@ import {
 const MultiSelect = ({ label, options, onChange, buttonProps }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
-  if (options.length > 0 && options.length < 2) {
-    const selOpt = options.slice(0);
-    console.log(options);
-    //console.log(selOpt);
-    // setSelectedOptions(selOpt);
-    // console.log(selectedOptions);
-  }
+  useEffect(() => {
+    if (options.length > 0 && options.length < 2) {
+      setSelectedOptions(options.slice(0));
+    }
+  }, []);
+
   //console.log(options.slice(0));
 
   return (
@@ -28,8 +27,7 @@ const MultiSelect = ({ label, options, onChange, buttonProps }) => {
         <>
           <MenuButton
             type="button"
-            //bg={selectedOptions.length ? 'purple.200' : 'white'}
-            color={selectedOptions.length ? 'blue.200' : 'gray.600'}
+            color={selectedOptions.length ? 'blue.600' : 'gray.600'}
             borderColor={selectedOptions.length ? 'blue.200' : 'gray.300'}
             borderWidth="1"
             p="2"
@@ -63,6 +61,7 @@ const MultiSelect = ({ label, options, onChange, buttonProps }) => {
               }}>
               {options.map(option => (
                 <MenuItemOption
+                  _hover={{ background: 'blue.100' }}
                   key={`multiselect-menu-${option}`}
                   type="button"
                   value={option}>

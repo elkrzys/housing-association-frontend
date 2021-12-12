@@ -133,6 +133,12 @@ const AddAnnouncementForm = () => {
                     <MultiSelect
                       label="Ulice"
                       options={streets}
+                      onChange={values => {
+                        props.handleChange({
+                          target: { value: values, id: 'streets' },
+                        });
+                        console.log(props.values.streets);
+                      }}
                       buttonProps={{
                         borderColor: 'gray.600',
                         borderWidth: '1px',

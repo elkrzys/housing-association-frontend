@@ -17,8 +17,11 @@ import CustomModal from '../CustomModal.jsx';
 import { MODES } from '../../strings';
 import Announcement from './Announcement';
 import AddAnnouncementForm from './AddAnnouncementForm';
+import { AuthContext } from '../../contexts';
 
 const AnnouncementsTable = () => {
+  const { user, role } = useContext(AuthContext);
+
   const {
     isOpen: isAddOpen,
     onOpen: onAddOpen,
@@ -36,8 +39,6 @@ const AnnouncementsTable = () => {
     onOpen: onDisplayOpen,
     onClose: onDisplayClose,
   } = useDisclosure();
-
-  const { setMode } = useContext(ModeContext);
 
   //   const announcement = {
   //     id: null,
@@ -110,39 +111,37 @@ const AnnouncementsTable = () => {
         <Thead h="75px">
           <Tr bg="blue.100">
             {columns.map(column => (
-              <Th key={column} w="20%" borderRight={'2px dotted gray'}>
+              <Th key={column.accessor} w="20%" borderRight={'2px dotted gray'}>
                 {column.Header}
               </Th>
             ))}
-            <Th>
-              <Flex justifyContent="center">
-                <Button
-                  bg="green.100"
-                  _hover={{ bg: 'green.200' }}
-                  onClick={onAddOpen}>
-                  Dodaj
-                </Button>
-                <CustomModal
-                  isOpen={isAddOpen}
-                  onClose={onAddClose}
-                  header={'Dodaj ogłoszenie'}
-                  bodyContent={<AddAnnouncementForm />}
-                />
-              </Flex>
-            </Th>
+
+            {role !== 'Resident' && (
+              <Th>
+                <Flex justifyContent="center">
+                  <Button
+                    bg="gray.100"
+                    _hover={{ bg: 'white' }}
+                    onClick={onAddOpen}>
+                    Dodaj
+                  </Button>
+                  <CustomModal
+                    isOpen={isAddOpen}
+                    onClose={onAddClose}
+                    header={'Dodaj ogłoszenie'}>
+                    <AddAnnouncementForm />
+                  </CustomModal>
+                </Flex>
+              </Th>
+            )}
           </Tr>
         </Thead>
         <Tbody>
-          {announcements.map(announcement => (
+          {announcements.map((announcement, i) => (
             <Tr
-              key={announcement.id}
+              key={i}
               onClick={() => {
-                setAnnouncement({
-                  title: announcement.title,
-                  content: announcement.content,
-                  author: announcement.author,
-                  date: announcement.date,
-                });
+                setAnnouncement(announcement);
                 onDisplayOpen();
               }}
               _hover={{
@@ -150,6 +149,14 @@ const AnnouncementsTable = () => {
                 transition: '0.1s',
                 cursor: 'pointer',
               }}>
+              <CustomModal onClose={onDisplayClose} isOpen={isDisplayOpen}>
+                <Announcement
+                  title={announcementToDisplay?.title}
+                  content={announcementToDisplay?.content}
+                  author={announcementToDisplay?.author}
+                  date={announcementToDisplay?.date}
+                />
+              </CustomModal>
               <Td w="20%">{announcement.id}</Td>
               <Td w="20%">{announcement.title}</Td>
               <Td w="20%">{announcement.date}</Td>
@@ -157,33 +164,25 @@ const AnnouncementsTable = () => {
                 {announcement.isCancelledOrExpired ? 'Nieaktualne' : 'Aktualne'}
               </Td>
               <Td w="20%">{`${announcement.author.firstName} ${announcement.author.lastName}`}</Td>
-              <Td>
-                <Flex justifyContent="center">
-                  <Button
-                    bg="blue.100"
-                    onClick={e => {
-                      e.stopPropagation();
-                      //   setMode({
-                      //     mode: MODES.EditAnnouncement,
-                      //     contentId: announcement.id,
-                      //   });
-                    }}>
-                    <FaEdit />
-                  </Button>
-                </Flex>
-              </Td>
-              <CustomModal
-                bodyContent={
-                  <Announcement
-                    title={announcementToDisplay?.title}
-                    content={announcementToDisplay?.content}
-                    author={announcementToDisplay?.author}
-                    date={announcementToDisplay?.date}
-                  />
-                }
-                onClose={onDisplayClose}
-                isOpen={isDisplayOpen}
-              />
+
+              {role !== 'Resident' && (
+                <Td>
+                  <Flex justifyContent="center">
+                    <Button
+                      bg="blue.100"
+                      _hover={{ bg: 'blue.200' }}
+                      onClick={e => {
+                        e.stopPropagation();
+                        //   setMode({
+                        //     mode: MODES.EditAnnouncement,
+                        //     contentId: announcement.id,
+                        //   });
+                      }}>
+                      <FaEdit />
+                    </Button>
+                  </Flex>
+                </Td>
+              )}
             </Tr>
           ))}
         </Tbody>

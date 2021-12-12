@@ -16,6 +16,7 @@ import { ModeContext } from '../../contexts';
 import CustomModal from '../CustomModal';
 import AddBuildingForm from './AddBuildingForm';
 import { MODES } from '../../strings';
+import './buildings.css';
 
 const BuildingsTable = () => {
   const buildings = [
@@ -102,7 +103,7 @@ const BuildingsTable = () => {
     <Box mx={{ base: '0', md: '5%' }}>
       <Table variant="striped" colorScheme="gray">
         <Thead h="75px">
-          <Tr bg="white">
+          <Tr bg="blue.100">
             {columns.map(column => (
               <Th w="20%" borderRight={'2px dotted gray'}>
                 {column.Header}
@@ -111,17 +112,17 @@ const BuildingsTable = () => {
             <Th>
               <Flex justifyContent="center">
                 <Button
-                  bg="green.100"
-                  _hover={{ bg: 'green.200' }}
+                  bg="gray.100"
+                  _hover={{ bg: 'white' }}
                   onClick={onAddOpen}>
                   Dodaj budynek
                 </Button>
                 <CustomModal
                   isOpen={isAddOpen}
                   onClose={onAddClose}
-                  bodyContent={<AddBuildingForm />}
-                  header={'Dodaj budynek'}
-                />
+                  header={'Dodaj budynek'}>
+                  <AddBuildingForm />
+                </CustomModal>
               </Flex>
             </Th>
           </Tr>
@@ -134,9 +135,11 @@ const BuildingsTable = () => {
               <Td w="20%">{building.type}</Td>
               <Td w="20%">{building.numberOfLocals}</Td>
               <Td>
-                <Flex gridColumnGap="10px" justifyContent="center">
+                <Flex maxH="24px" gridColumnGap="10px" justifyContent="center">
                   <Button
+                    alignSelf="center"
                     bg="blue.100"
+                    _hover={{ bg: 'blue.200' }}
                     onClick={() =>
                       setMode({
                         mode: MODES.BuildingDetails,
@@ -145,7 +148,10 @@ const BuildingsTable = () => {
                     }>
                     <FaEdit />
                   </Button>
-                  <Button bg="red.100">
+                  <Button
+                    alignSelf="center"
+                    bg="red.100"
+                    _hover={{ bg: 'red.200' }}>
                     <FaTrash />
                   </Button>
                 </Flex>

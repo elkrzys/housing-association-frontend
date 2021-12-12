@@ -91,7 +91,11 @@ const AuthContextProvider = ({ children }) => {
   }, []);
 
   const refreshUser = useCallback((newUser) => {
-    setState(prev=> {prev.user = newUser; return prev;});
+    setState((prev=> {
+      const newState = {...prev}
+      newState.user = newUser;
+      return newState
+    }));
     localStorage.setItem('user', JSON.stringify(newUser))
     console.log("current state:");
     console.log(state);
@@ -106,21 +110,7 @@ const AuthContextProvider = ({ children }) => {
       config.withCredentials = true;
       return config;
     });
-    // axios.interceptors.response.use
-    // axios.interceptors.response.use((response)=> response,async error=>{
-    //     const originalRequest = error.config;
-    //     if(error.response.status===401 && originalRequest.url.includes(ENDPOINT.refresh)) {
-    //         signOut()
-    //         return;
-    //     };
-    //     if(error.response.status===401) {
-    //         refresh();
-    //         originalRequest.headers.Authorization=`Bearer ${localStorage.getItem('accessToken')}`;
-    //         axios.defaults.headers.common.Authorization=`Bearer ${localStorage.getItem('accessToken')}`;
-    //         return axios(originalRequest);
-    //     }
-    //     throw error;
-    // })
+    
   }, []);
 
   return (

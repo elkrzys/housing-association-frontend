@@ -35,6 +35,16 @@ const UsersService = {
     } catch (error) {
       return { status: REQUEST_STATUS.ERROR, error};
     }
-  }
+  },
+  getUsersByRole: async (role) => {
+    let endpoint = role === 'residents' ? Endpoints.usersResidents : Endpoints.usersWorkers;
+    try {
+      let response = await axios.get(endpoint);
+      return { status: REQUEST_STATUS.SUCCESS, data: response.data };
+    } catch (error) {
+      return { status: REQUEST_STATUS.ERROR, error};
+    }
+  },
+ 
 };
 export default UsersService;

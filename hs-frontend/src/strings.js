@@ -25,6 +25,8 @@ export const Endpoints = {
   // users
   users: url(Controllers.users),
   usersUnconfirmed: url(Controllers.users, 'not-enabled'),
+  usersResidents: url(Controllers.users, 'residents'),
+  usersWorkers: url(Controllers.users, 'workers'),
   // buildings
   buildings: url(Controllers.buildings),
   buildingsAll: url(Controllers.buildings, 'all'),
@@ -44,5 +46,6 @@ export const MODES = {
   Buildings: 'Budynki wspólnoty',
   HomePage: 'Strona główna',
   BuildingDetails: "Szczegóły budynku",
-  Announcements: "Tablica ogłoszeń"
+  Announcements: "Tablica ogłoszeń",
+  UsersTables: "Użytkownicy"
 };

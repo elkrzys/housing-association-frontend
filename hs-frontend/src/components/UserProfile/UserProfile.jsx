@@ -15,7 +15,8 @@ import { useContext, useEffect, useState } from 'react';
 import { BasicInput } from '../Inputs';
 import { AuthContext } from '../../contexts/AuthContext';
 import { UsersService } from '../../services';
-import ChangePasswordModal from './ChangePasswordModal';
+import CustomModal from '../CustomModal';
+import ChangePasswordForm from './ChangePasswordForm';
 
 const UserProfile = () => {
   const flexBg = useColorModeValue('none', 'gray.800');
@@ -131,7 +132,9 @@ const UserProfile = () => {
                     <Button onClick={onOpen} color="blue.400">
                       Zmień hasło
                     </Button>
-                    <ChangePasswordModal isOpen={isOpen} onClose={onClose} />
+                    <CustomModal isOpen={isOpen} onClose={onClose}>
+                      <ChangePasswordForm />
+                    </CustomModal>
                   </Stack>
                   <HStack>
                     <Button

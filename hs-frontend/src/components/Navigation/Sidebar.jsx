@@ -1,3 +1,4 @@
+import React, { useContext } from 'react';
 import {
   Box,
   Drawer,
@@ -7,12 +8,22 @@ import {
   DrawerBody,
   DrawerContent,
 } from '@chakra-ui/react';
-import SidebarContent from './SidebarContent';
+import WorkerSidebarContent from './WorkerSidebarContent';
+import ResidentSidebarContent from './ResidentSidebarContent';
+import { AuthContext } from '../../contexts';
 
-const Sidebar = ({ isOpen, variant, onClose }) =>
-  variant === 'sidebar' ? (
+const Sidebar = ({ isOpen, variant, onClose }) => {
+  const { role } = useContext(AuthContext);
+  const sidebarContent =
+    role === 'Worker' ? (
+      <WorkerSidebarContent onClick={onClose} />
+    ) : (
+      <ResidentSidebarContent onClick={onClose} />
+    );
+
+  return variant === 'sidebar' ? (
     <Box position="fixed" left={0} p={5} w="16vw" top={0} h="100%" bg="#f2f2f2">
-      <SidebarContent onClick={onClose} />
+      {sidebarContent}
     </Box>
   ) : (
     <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
@@ -20,11 +31,10 @@ const Sidebar = ({ isOpen, variant, onClose }) =>
         <DrawerContent>
           <DrawerCloseButton />
           {/* <DrawerHeader>Chakra-UI</DrawerHeader> */}
-          <DrawerBody>
-            <SidebarContent onClick={onClose} />
-          </DrawerBody>
+          <DrawerBody>{sidebarContent}</DrawerBody>
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>
   );
+};
 export default Sidebar;

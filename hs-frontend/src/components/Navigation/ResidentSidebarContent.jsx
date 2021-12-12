@@ -48,7 +48,13 @@ const SidebarContent = () => {
           title="Strona główna"
           onClick={() => setMode({ mode: MODES.HomePage, contentId: null })}
         />
-        <NavItem icon={FaScroll} title="Ogłoszenia" />
+        <NavItem
+          icon={FaScroll}
+          title="Ogłoszenia"
+          onClick={() =>
+            setMode({ mode: MODES.Announcements, contentId: null })
+          }
+        />
         <NavItem icon={FaClipboardCheck} title="Zgłoszenia" />
         <NavItem icon={FaBuilding} title="Lokale" />
         <NavItem icon={FaBriefcase} title="Dokumenty" />
