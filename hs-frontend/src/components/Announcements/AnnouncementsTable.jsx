@@ -11,11 +11,12 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { FaArrowDown, FaArrowUp, FaBan, FaEdit } from 'react-icons/fa';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ModeContext } from '../../contexts';
 import CustomModal from '../CustomModal.jsx';
 import { MODES } from '../../strings';
 import Announcement from './Announcement';
+import AddAnnouncementForm from './AddAnnouncementForm';
 
 const AnnouncementsTable = () => {
   const {
@@ -101,11 +102,13 @@ const AnnouncementsTable = () => {
     },
   ];
 
+  const [announcementToDisplay, setAnnouncement] = useState(null);
+
   return (
-    <Box mx={{ base: '0', md: '5%' }}>
+    <Box rounded="lg" mx={{ base: '0', md: '5%' }}>
       <Table variant="striped" colorScheme="gray">
         <Thead h="75px">
-          <Tr bg="white">
+          <Tr bg="blue.100">
             {columns.map(column => (
               <Th key={column} w="20%" borderRight={'2px dotted gray'}>
                 {column.Header}
@@ -119,11 +122,12 @@ const AnnouncementsTable = () => {
                   onClick={onAddOpen}>
                   Dodaj
                 </Button>
-                {/* <CustomModal
+                <CustomModal
                   isOpen={isAddOpen}
                   onClose={onAddClose}
                   header={'Dodaj ogłoszenie'}
-                /> */}
+                  bodyContent={<AddAnnouncementForm />}
+                />
               </Flex>
             </Th>
           </Tr>
@@ -133,7 +137,12 @@ const AnnouncementsTable = () => {
             <Tr
               key={announcement.id}
               onClick={() => {
-                // console.log(announcement);
+                setAnnouncement({
+                  title: announcement.title,
+                  content: announcement.content,
+                  author: announcement.author,
+                  date: announcement.date,
+                });
                 onDisplayOpen();
               }}
               _hover={{
@@ -141,18 +150,6 @@ const AnnouncementsTable = () => {
                 transition: '0.1s',
                 cursor: 'pointer',
               }}>
-              <CustomModal
-                bodyContent={
-                  <Announcement
-                    title={announcement.title}
-                    content={announcement.content}
-                    author={announcement.author}
-                    date={announcement.date}
-                  />
-                }
-                onClose={onDisplayClose}
-                isOpen={isDisplayOpen}
-              />
               <Td w="20%">{announcement.id}</Td>
               <Td w="20%">{announcement.title}</Td>
               <Td w="20%">{announcement.date}</Td>
@@ -175,6 +172,18 @@ const AnnouncementsTable = () => {
                   </Button>
                 </Flex>
               </Td>
+              <CustomModal
+                bodyContent={
+                  <Announcement
+                    title={announcementToDisplay?.title}
+                    content={announcementToDisplay?.content}
+                    author={announcementToDisplay?.author}
+                    date={announcementToDisplay?.date}
+                  />
+                }
+                onClose={onDisplayClose}
+                isOpen={isDisplayOpen}
+              />
             </Tr>
           ))}
         </Tbody>

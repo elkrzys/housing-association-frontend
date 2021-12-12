@@ -23,6 +23,7 @@ const BasicInput = ({
   placeholder,
 }) => {
   let leftIcon = null;
+  if (type === null) type = 'text';
   switch ({ type }) {
     case 'email':
       leftIcon = <CFaAt color="gray.300" />;
