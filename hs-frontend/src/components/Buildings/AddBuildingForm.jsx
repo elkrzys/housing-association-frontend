@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Flex,
   Box,
@@ -7,59 +8,47 @@ import {
   Heading,
   InputGroup,
   useColorModeValue,
+  Radio,
+  RadioGroup,
   useToast,
 } from '@chakra-ui/react';
-import { Field, Form, Formik } from 'formik';
-import UsersService from '../../services/UsersService';
-import { AuthContext } from '../../contexts';
-import { useContext, useState } from 'react';
+import { Form, Formik } from 'formik';
+import { BuildingsService } from '../../services';
 import { BasicInput } from '../Inputs';
 
 const AddBuildingForm = () => {
-  const flexBg = useColorModeValue('none', 'gray.800');
-  const boxBg = useColorModeValue('white', 'gray.700');
   const toast = useToast();
-  const { user } = useContext(AuthContext);
-
-  const checkPasswords = (password1, password2) => {
-    if (password1 !== password2) {
-      toast({
-        title: 'Nowe hasło musi się zgadzać z potwierdzonym',
-        status: 'warning',
-        isClosable: true,
-        duration: 3000,
-      });
-      return false;
-    }
-    return true;
-  };
 
   const setSubmit = async (values, actions) => {
-    if (!checkPasswords(values.newPassword, values.confirmPassword)) return;
-    let response = await UsersService.changePassword(
-      user.id,
-      values.oldPassword,
-      values.newPassword,
+    let response = await BuildingsService.addBuilding(
+      values.city,
+      values.district,
+      values.street,
+      values.number,
+      values.type,
     );
+    console.log(values);
     if (response.status === 'SUCCESS') {
-      console.log('change successful');
+      console.log('add successful');
       actions.resetForm({
         values: {
-          oldPassword: '',
-          newPassword: '',
-          confirmPassword: '',
+          city: '',
+          district: '',
+          street: '',
+          number: '',
+          type: 'block',
         },
       });
       toast({
-        title: 'Hasło zmienione pomyślnie',
+        title: 'Budynek dodany',
         status: 'success',
         isClosable: true,
         duration: 2500,
       });
     } else {
-      console.log('change failed');
+      console.log('add failed');
       toast({
-        title: 'Hasło nie zostało zmienione',
+        title: 'Budynek nie został dodany',
         status: 'error',
         isClosable: true,
         duration: 2500,
@@ -75,20 +64,20 @@ const AddBuildingForm = () => {
         district: '',
         street: '',
         number: '',
-        type: '',
+        type: 'block',
       }}
       onSubmit={setSubmit}>
-      {props => (
+      {({ values, setFieldValue, isSubmitting }) => (
         <Form>
-          <Flex align={'start'} justify={'center'} bg={flexBg}>
-            <Stack spacing={8} mx={'auto'} px={6}>
+          <Flex align="start" justify="center" bg="none">
+            <Stack spacing="8" mx="auto" px="6">
               <Box
-                rounded={'lg'}
-                bg={boxBg}
+                rounded="lg"
+                bg="white"
                 // boxShadow={'lg'}
-                w={'md'}
-                px={8}>
-                <Stack spacing={4}>
+                w="md"
+                px="8">
+                <Stack spacing="4">
                   <Stack align="left">
                     <Heading fontSize="md">Adres</Heading>
                   </Stack>
@@ -97,39 +86,53 @@ const AddBuildingForm = () => {
                       id="city"
                       name="city"
                       placeholder="Miasto"
-                      defaultValue={props.values.city}
+                      defaultValue={values.city}
                       isRequired
                     />
                     <BasicInput
                       id="district"
                       name="district"
                       placeholder="Dzielnica"
-                      defaultValue={props.values.district}
+                      defaultValue={values.district}
                     />
                   </HStack>
                   <BasicInput
                     id="street"
                     name="street"
                     placeholder="Ulica"
-                    defaultValue={props.values.street}
+                    defaultValue={values.street}
                     isRequired
                   />
                   <BasicInput
                     id="number"
                     name="number"
                     label="Numer budynku"
-                    defaultValue={props.values.number}
+                    defaultValue={values.number}
                     isRequired
                   />
-                  <Stack spacing={10}>
+                  <RadioGroup defaultValue={values.type} id="type" name="type">
+                    <Stack direction="row">
+                      <Radio
+                        onChange={() => setFieldValue('type', 'block')}
+                        value="block">
+                        Blok
+                      </Radio>
+                      <Radio
+                        onChange={() => setFieldValue('type', 'house')}
+                        value="house">
+                        Dom
+                      </Radio>
+                    </Stack>
+                  </RadioGroup>
+                  <Stack spacing="10">
                     <Button
-                      bg={'green.300'}
-                      color={'white'}
+                      bg="green.300"
+                      color="white"
                       _hover={{
                         bg: 'green.400',
                       }}
-                      type={'submit'}
-                      isLoading={props.isSubmitting}>
+                      type="submit"
+                      isLoading={isSubmitting}>
                       Dodaj
                     </Button>
                   </Stack>

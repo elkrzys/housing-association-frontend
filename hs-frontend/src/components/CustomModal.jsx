@@ -17,7 +17,7 @@ const CustomModal = ({ isOpen, onClose, header, children }) => {
         <ModalContent>
           <ModalHeader>{header}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>{children}</ModalBody>
+          <ModalBody p="5">{children}</ModalBody>
           {/* <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onClose}>
               Zamknij

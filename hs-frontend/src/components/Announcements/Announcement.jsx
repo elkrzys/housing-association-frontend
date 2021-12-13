@@ -10,12 +10,12 @@ import {
 
 const Announcement = ({ title, content, author, date }) => {
   return (
-    <Box>
+    <Box pb="5">
       <Heading textAlign="center" fontSize="1.5rem" p="10">
         {title}
       </Heading>
       <Divider w="75%" mx="auto" />
-      <Text px="4" py="6">
+      <Text px="4" py="6" textAlign="justify">
         {content}
       </Text>
       <Divider w="75%" mx="auto" />

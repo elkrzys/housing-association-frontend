@@ -33,5 +33,25 @@ const BuildingsService = {
           return { status: REQUEST_STATUS.ERROR, error };
         }
     },
+    addBuilding: async (city, district, street, number, type) => {
+      let responseData = null;
+     
+      try {
+        responseData = await axios.post(`${Endpoints.buildings}`, {
+          
+            type: type,
+            number: number,
+            address: {
+              city: city,
+              district: district,
+              street: street
+            }
+          
+        });
+        return { status: REQUEST_STATUS.SUCCESS, data: responseData.data };
+      } catch (error) {
+        return { status: REQUEST_STATUS.ERROR, error };
+      }
+  },
 }
 export default BuildingsService;

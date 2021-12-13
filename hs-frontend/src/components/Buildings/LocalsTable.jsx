@@ -64,30 +64,22 @@ const LocalsTable = () => {
     <Box mx={{ base: '0', md: '5%' }}>
       <Table variant="striped" colorScheme="gray">
         <Thead h="75px">
-          <Tr bg="yellow.100">
+          <Tr bg="blue.100">
             {columns.map(column => (
               <Th>{column.Header}</Th>
             ))}
 
             <Th colSpan={2}>
               <Flex justifyContent="center">
-                <Button
-                  style={{
-                    overflowWrap: 'wrap-word',
-                    boxShadow: '0 0 1em #fefcbf',
-                    borderRadius: '5px',
-                  }}
-                  bg="green.100"
-                  _hover={{ bg: 'green.200' }}
-                  onClick={onOpen}>
+                <Button bg="gray.100" _hover={{ bg: 'white' }} onClick={onOpen}>
                   Dodaj lokal
                 </Button>
                 <CustomModal
                   isOpen={isOpen}
                   onClose={onClose}
-                  bodyContent={<AddBuildingForm />}
-                  header={'Dodaj budynek'}
-                />
+                  header={'Dodaj lokal'}>
+                  <AddBuildingForm />
+                </CustomModal>
               </Flex>
             </Th>
           </Tr>
@@ -99,10 +91,20 @@ const LocalsTable = () => {
               <Td>{local.area}</Td>
               <Td>{local.isOwned ? 'Tak' : 'Nie'}</Td>
               <Td alignItems="end">
-                <FaTrash />
-              </Td>
-              <Td>
-                <FaEdit />
+                <Flex maxH="24px" gridColumnGap="10px" justifyContent="center">
+                  <Button
+                    alignSelf="center"
+                    bg="blue.100"
+                    _hover={{ bg: 'blue.200' }}>
+                    <FaEdit />
+                  </Button>
+                  <Button
+                    alignSelf="center"
+                    bg="red.100"
+                    _hover={{ bg: 'red.200' }}>
+                    <FaTrash />
+                  </Button>
+                </Flex>
               </Td>
             </Tr>
           ))}

@@ -19,7 +19,7 @@ const CollapsedUsersTables = () => {
         <AccordionItem>
           <h2>
             <AccordionButton w="100%">
-              <Box flex="1" textAlign="left">
+              <Box flex="1" textAlign="center">
                 Mieszkańcy
               </Box>
               <AccordionIcon />
@@ -33,7 +33,7 @@ const CollapsedUsersTables = () => {
         <AccordionItem>
           <h2>
             <AccordionButton>
-              <Box flex="1" textAlign="left">
+              <Box flex="1" textAlign="center">
                 Pracownicy
               </Box>
               <AccordionIcon />
