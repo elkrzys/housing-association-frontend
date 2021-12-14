@@ -35,7 +35,7 @@ export const Endpoints = {
   localsAll: url(Controllers.locals, 'all'),
   // issues
   issues: url(Controllers.issues),
-  issuesAll: url(Controllers.issues, 'all'),
+  issuesByAuthor: url(Controllers.issues, 'authorId='),
   // announcements
   announcements: url(Controllers.announcements),
   announcementsAll: url(Controllers.announcements, 'all'),
@@ -47,5 +47,6 @@ export const MODES = {
   HomePage: 'Strona główna',
   BuildingDetails: "Szczegóły budynku",
   Announcements: "Tablica ogłoszeń",
-  UsersTables: "Użytkownicy"
+  UsersTables: "Użytkownicy",
+  Issues: "Tablica zgłoszeń"
 };

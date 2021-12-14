@@ -35,7 +35,6 @@ const BuildingsService = {
     },
     addBuilding: async (city, district, street, number, type) => {
       let responseData = null;
-     
       try {
         responseData = await axios.post(`${Endpoints.buildings}`, {
           

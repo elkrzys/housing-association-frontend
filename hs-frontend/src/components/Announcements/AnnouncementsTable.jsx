@@ -149,7 +149,10 @@ const AnnouncementsTable = () => {
                 transition: '0.1s',
                 cursor: 'pointer',
               }}>
-              <CustomModal onClose={onDisplayClose} isOpen={isDisplayOpen}>
+              <CustomModal
+                size="lg"
+                onClose={onDisplayClose}
+                isOpen={isDisplayOpen}>
                 <Announcement
                   title={announcementToDisplay?.title}
                   content={announcementToDisplay?.content}

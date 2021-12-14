@@ -63,7 +63,7 @@ const RegisterForm = () => {
       {props => (
         <Form>
           <Flex align="start" justify="center" bg={flexBg}>
-            <Stack maxW="75%" spacing={8} mx="auto" py={6} px={6}>
+            <Stack w="100%" spacing={8} mx="auto" py={6} px={6}>
               <Stack align="center">
                 <Heading fontSize="2xl">Utwórz konto</Heading>
               </Stack>

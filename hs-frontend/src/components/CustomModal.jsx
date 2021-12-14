@@ -9,10 +9,10 @@ import {
   Button,
 } from '@chakra-ui/react';
 
-const CustomModal = ({ isOpen, onClose, header, children }) => {
+const CustomModal = ({ isOpen, onClose, header, size, children }) => {
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal size={size} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{header}</ModalHeader>

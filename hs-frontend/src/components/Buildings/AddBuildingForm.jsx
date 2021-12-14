@@ -6,8 +6,6 @@ import {
   HStack,
   Button,
   Heading,
-  InputGroup,
-  useColorModeValue,
   Radio,
   RadioGroup,
   useToast,

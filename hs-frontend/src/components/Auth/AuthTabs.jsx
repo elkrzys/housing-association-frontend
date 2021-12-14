@@ -4,6 +4,7 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  Box,
   useColorModeValue,
 } from '@chakra-ui/react';
 import LoginForm from './LoginForm';
@@ -19,20 +20,22 @@ const AuthTabs = () => {
     //     width={'50%'}
     //     mx={'auto'}
     // >
-    <Tabs rounded="lg" isFitted variant="enclosed" bg={boxBg}>
-      <TabList>
-        <Tab>Zaloguj</Tab>
-        <Tab>Zarejestruj</Tab>
-      </TabList>
-      <TabPanels>
-        <TabPanel>
-          <LoginForm />
-        </TabPanel>
-        <TabPanel>
-          <RegisterForm />
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
+    <Box w="100%">
+      <Tabs rounded="lg" isFitted variant="enclosed" bg={boxBg}>
+        <TabList>
+          <Tab>Zaloguj</Tab>
+          <Tab>Zarejestruj</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <LoginForm />
+          </TabPanel>
+          <TabPanel>
+            <RegisterForm />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </Box>
     // </Box>
   );
 };

@@ -3,6 +3,7 @@ import { MODES } from '../../strings';
 import { UserProfile } from '../UserProfile';
 import { BuildingsTable, BuildingDetails } from '../Buildings';
 import { AnnouncementsTable } from '../Announcements';
+import { IssuesTable } from '../Issues';
 import { CollapsedUsersTables } from '../Users';
 import { Redirect } from 'react-router';
 
@@ -20,6 +21,8 @@ const Modes = ({ mode, contentId }) => {
       return <AnnouncementsTable />;
     case MODES.UsersTables:
       return <CollapsedUsersTables />;
+    case MODES.Issues:
+      return <IssuesTable />;
     default:
       return null;
   }
