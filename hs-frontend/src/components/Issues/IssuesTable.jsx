@@ -1,3 +1,4 @@
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -9,17 +10,72 @@ import {
   Td,
   Button,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { FaArrowDown, FaArrowUp, FaBan, FaEdit } from 'react-icons/fa';
-import React, { useContext, useEffect, useState } from 'react';
 import CustomModal from '../CustomModal.jsx';
+import CustomAlertDialog from '../CustomAlertDialog.jsx';
+import { ToastSuccess, ToastWarning } from '../Toasts.js';
 import { MODES } from '../../strings';
 import { AuthContext } from '../../contexts';
 import Issue from './Issue';
 import AddIssueForm from './AddIssueForm';
+import UpdateIssueForm from './UpdateIssueForm';
+import { IssuesService, LocalsService } from '../../services';
 
 const IssuesTable = () => {
   const { user, role } = useContext(AuthContext);
+  const toast = useToast();
+  const [issues, setIssues] = useState([]);
+  const [locals, setLocals] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+
+  const {
+    onOpen: onAlertOpen,
+    onClose: onAlertClose,
+    isOpen: isAlertOpen,
+  } = useDisclosure();
+  const cancelRef = useRef();
+
+  const cancelIssue = async () => {
+    setRefresh(true);
+    await IssuesService.cancelIssue(selectedIssue.id);
+    await getIssues();
+    setRefresh(false);
+    ToastSuccess(toast, 'Pomyślnie wycofano zgłoszenie');
+  };
+
+  const getIssues = async () => {
+    let issuesResponse;
+    if (role === 'resident') {
+      issuesResponse = await IssuesService.getAllByAuthorId(user.id);
+    } else {
+      issuesResponse = await IssuesService.getAllNotCancelled();
+    }
+
+    if (issuesResponse.status === 'SUCCESS') {
+      setIssues(issuesResponse.data);
+    } else {
+      console.log('failure during fetching issues');
+      return null;
+    }
+  };
+
+  const getLocals = async () => {
+    const localsResponse = await LocalsService.getAllByResidentId(user.id);
+    if (localsResponse.status === 'SUCCESS') {
+      setLocals(localsResponse.data);
+    } else {
+      console.log('failure during fetching locals');
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    getIssues();
+    getLocals();
+    console.log(issues);
+  }, [refresh]);
 
   const {
     isOpen: isAddOpen,
@@ -39,11 +95,24 @@ const IssuesTable = () => {
     onClose: onDisplayClose,
   } = useDisclosure();
 
+  const closeAdd = () => {
+    onAddClose();
+    getIssues();
+  };
+
+  const closeUpdate = async () => {
+    onEditClose();
+    setRefresh(true);
+    await getIssues();
+    setRefresh(false);
+  };
+
   const defColumns = [
     { Header: 'Nr.', accessor: 'id' },
+    { Header: 'Adres', accessor: 'address' },
     { Header: 'Tytuł', accessor: 'title' },
-    { Header: 'Data', accessor: 'date' },
-    { Header: 'Stan', accessor: 'isResolved' },
+    { Header: 'Data', accessor: 'created' },
+    { Header: 'Stan', accessor: 'resolved' },
     { Header: 'Autor', accessor: 'author' },
   ];
 
@@ -54,29 +123,7 @@ const IssuesTable = () => {
     columns = defColumns;
   }
 
-  const issues = [
-    {
-      id: 1,
-      title: 'Spalona żarówka',
-      content: 'Na trzecim piętrze spaliła się żarówka.',
-      isResolved: true,
-      date: '2021-12-06',
-      author: { id: 1, firstName: 'Tomek', lastName: 'Atomek' },
-      targetBuildingsIds: [1],
-    },
-    // {
-    //   id: 2,
-    //   title: 'Uszkodzone drzwi',
-    //   content:
-    //     'W klatce nr 20 drzwi się nie domykają. Dodatkowo występuje problem przy otwieraniu domofonem.',
-    //   isResolved: false,
-    //   date: '2021-12-06',
-    //   author: { id: 2, firstName: 'Kamil', lastName: 'Nowak' },
-    //   targetBuildingsIds: [2],
-    // },
-  ];
-
-  const [displayIssue, setDisplayIssue] = useState(null);
+  const [selectedIssue, setSelectedIssue] = useState(null);
 
   return (
     <Box rounded="lg" mx={{ base: '0', md: '5%' }}>
@@ -86,9 +133,9 @@ const IssuesTable = () => {
             {columns.map(column => (
               <Th
                 key={column.accessor}
-                w="20%"
                 borderRight={'2px dotted gray'}
-                colSpan={column.accessor === 'author' ? '2' : '0'}>
+                colSpan={column.accessor === 'author' ? '2' : '0'}
+                w={column.accessor === 'id' ? '5%' : 'auto'}>
                 {column.Header}
               </Th>
             ))}
@@ -99,14 +146,22 @@ const IssuesTable = () => {
                   <Button
                     bg="gray.100"
                     _hover={{ bg: 'white' }}
-                    onClick={onAddOpen}>
+                    onClick={() => {
+                      locals.length
+                        ? onAddOpen()
+                        : ToastWarning(
+                            toast,
+                            'Nie możesz dodać zgłoszenia nie mając mieszkania',
+                            3000,
+                          );
+                    }}>
                     Dodaj
                   </Button>
                   <CustomModal
                     isOpen={isAddOpen}
                     onClose={onAddClose}
-                    header={'Dodaj ogłoszenie'}>
-                    <AddIssueForm />
+                    header={'Dodaj zgłoszenie'}>
+                    <AddIssueForm locals={locals} onAddClose={closeAdd} />
                   </CustomModal>
                 </Flex>
               </Th>
@@ -118,7 +173,7 @@ const IssuesTable = () => {
             <Tr
               key={issue.id}
               onClick={() => {
-                setDisplayIssue(issue);
+                setSelectedIssue(issue);
                 onDisplayOpen();
               }}
               _hover={{
@@ -131,33 +186,66 @@ const IssuesTable = () => {
                 onClose={onDisplayClose}
                 isOpen={isDisplayOpen}>
                 <Issue
-                  title={displayIssue?.title}
-                  content={displayIssue?.content}
-                  author={displayIssue?.author}
-                  date={displayIssue?.date}
-                  isResolved={displayIssue?.isResolved}
+                  title={selectedIssue?.title}
+                  content={selectedIssue?.content}
+                  author={selectedIssue?.author}
+                  date={selectedIssue?.created}
+                  isResolved={selectedIssue?.resolved}
                 />
               </CustomModal>
-              <Td w="20%">{issue.id}</Td>
+              <Td w="5%">{issue.id}</Td>
+              <Td w="20%">{`${issue.address?.city} ${issue.address?.street} ${issue.sourceBuildingId}/${issue.sourceLocalId}`}</Td>
               <Td w="20%">{issue.title}</Td>
-              <Td w="20%">{issue.date}</Td>
-              <Td w="20%">{issue.isResolved ? 'Zamknięte' : 'W trakcie'}</Td>
+              <Td>{new Date(issue.created).toLocaleDateString()}</Td>
+              <Td>
+                {issue.resolved !== null
+                  ? `Zamknięte: ${issue.resolved}`
+                  : 'W trakcie'}
+              </Td>
               {role !== 'Resident' && (
                 <Td w="20%">{`${issue.author.firstName} ${issue.author.lastName}`}</Td>
               )}
               <Td>
-                <Flex justifyContent="center">
+                <Flex justifyContent="center" gridColumnGap="1">
                   <Button
                     bg="blue.100"
                     _hover={{ bg: 'blue.200' }}
                     onClick={e => {
+                      setSelectedIssue(issue);
+                      onEditOpen();
                       e.stopPropagation();
-                      //   setMode({
-                      //     mode: MODES.EditAnnouncement,
-                      //     contentId: announcement.id,
-                      //   });
                     }}>
                     <FaEdit />
+                    <CustomModal
+                      header="Edytuj zgłoszenie"
+                      size="lg"
+                      onClose={onEditClose}
+                      isOpen={isEditOpen}>
+                      <UpdateIssueForm
+                        onEditClose={closeUpdate}
+                        locals={locals}
+                        issue={selectedIssue}
+                      />
+                    </CustomModal>
+                  </Button>
+                  <Button
+                    bg="red.100"
+                    _hover={{ bg: 'red.200' }}
+                    onClick={e => {
+                      setSelectedIssue(issue);
+                      onAlertOpen();
+                      e.stopPropagation();
+                    }}>
+                    <FaBan />
+                    <CustomAlertDialog
+                      leastDestructiveRef={cancelRef}
+                      onClose={onAlertClose}
+                      isOpen={isAlertOpen}
+                      onAction={cancelIssue}
+                      actionName={'Wycofaj'}
+                      header={'Wycofać zgłoszenie?'}>
+                      <p>Tej operacji nie da się cofnąć.</p>
+                    </CustomAlertDialog>
                   </Button>
                 </Flex>
               </Td>

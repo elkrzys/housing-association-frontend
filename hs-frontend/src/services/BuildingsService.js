@@ -33,6 +33,7 @@ const BuildingsService = {
           return { status: REQUEST_STATUS.ERROR, error };
         }
     },
+    
     addBuilding: async (city, district, street, number, type) => {
       let responseData = null;
       try {
@@ -52,5 +53,14 @@ const BuildingsService = {
         return { status: REQUEST_STATUS.ERROR, error };
       }
   },
+  deleteBuilding: async (id) => {
+    try{
+      let responseData = await axios.delete(`${Endpoints.buildings}/${id}`);
+      return {status: REQUEST_STATUS.SUCCESS, data: responseData.data};
+    }
+    catch (error) {
+      return { status: REQUEST_STATUS.ERROR, error };
+    }
+  }
 }
 export default BuildingsService;

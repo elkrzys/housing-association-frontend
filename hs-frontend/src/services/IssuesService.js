@@ -31,17 +31,47 @@ const IssuesService = {
         let sourceBuildingId = local.buildingId;
 
         try {
-            let responseData = await axios.post(`${Endpoints.issues}`, {
+            let response = await axios.post(`${Endpoints.issues}`, {
               title,
               content,
-              authorId,
+              author:{id: authorId},
               sourceLocalId,
               sourceBuildingId
             });
-            return { status: REQUEST_STATUS.SUCCESS, data: responseData.data };
+            return { status: REQUEST_STATUS.SUCCESS, data: response.data };
           } catch (error) {
             return { status: REQUEST_STATUS.ERROR, error };
           }
+    },
+    cancelIssue: async (id) => {
+      try{
+        let response = axios.put(`${Endpoints.issuesCancel}/${id}`)
+      }catch(error){
+        return { status: REQUEST_STATUS.ERROR, error };
+      }
+    },
+    resolveIssue: async (id) => {
+      try{
+        let response = axios.put(`${Endpoints.issuesResolve}/${id}`)
+      }catch(error){
+        return { status: REQUEST_STATUS.ERROR, error };
+      }
+    },
+    updateIssue: async (id, title, content, author, local) => {
+      let sourceLocalId = local.localId;
+      let sourceBuildingId = local.buildingId;
+      try{
+        const response = axios.put(`${Endpoints.issues}/${id}`, {
+          title: title,
+          content: content,
+          author: author,
+          sourceLocalId,
+          sourceBuildingId
+        });
+        return { status: REQUEST_STATUS.SUCCESS, data: response.data };
+      }catch(error){
+        return { status: REQUEST_STATUS.ERROR, error };
+      }
     },
 }
 export default IssuesService;

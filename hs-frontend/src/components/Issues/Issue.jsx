@@ -9,11 +9,14 @@ import {
   Stack,
 } from '@chakra-ui/react';
 import { AuthContext } from '../../contexts';
+import { UsersService } from '../../services';
 
-const Issue = ({ title, content, author, date, isResolved }) => {
+const Issue = ({ title, content, author, date, resolved }) => {
   const { role } = useContext(AuthContext);
-  const color = isResolved ? 'green' : 'orange';
-  const message = isResolved ? 'Zgłoszenie zamknięte' : 'Zgłoszenie w trakcie';
+  const color = resolved ? 'green' : 'orange';
+  const message = resolved
+    ? `Zgłoszenie zamknięte ${new Date(resolved).toLocaleDateString()}`
+    : 'Zgłoszenie w trakcie';
   return (
     <Box pb="5">
       <Heading textAlign="center" fontSize="1.5rem" p="10">
@@ -31,7 +34,7 @@ const Issue = ({ title, content, author, date, isResolved }) => {
         {role !== 'Resident' && (
           <Box fontWeight="600">{`${author.firstName} ${author.lastName}`}</Box>
         )}
-        <Box fontWeight="100">{date}</Box>
+        <Box fontWeight="100">{new Date(date).toLocaleString()}</Box>
       </HStack>
     </Box>
   );

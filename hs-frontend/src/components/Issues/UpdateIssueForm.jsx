@@ -18,23 +18,33 @@ import { BasicInput, MultiSelect } from '../Inputs';
 import { LocalsService } from '../../services';
 import { ToastError, ToastSuccess } from '../Toasts';
 
-const AddIssueForm = ({ locals, onAddClose }) => {
-  const { user } = useContext(AuthContext);
+const UpdateIssueForm = ({ locals, onEditClose, issue }) => {
   const toast = useToast();
 
   const setSubmit = async (values, actions) => {
-    if (values.local == '')
+    if (values.local == null)
       ToastError(
         toast,
         'Należy wybrać lokal, którego dotyczy zgłoszenie',
         3000,
       );
 
-    let response = await IssuesService.addIssue(
+    let updatedLocal;
+    if (values.local === '') {
+      updatedLocal = {
+        localId: issue.sourceLocalId,
+        buildingId: issue.sourceBuildingId,
+      };
+    } else {
+      updatedLocal = JSON.parse(values.local);
+    }
+
+    let response = await IssuesService.updateIssue(
+      issue.id,
       values.title,
       values.content,
-      JSON.parse(values.local),
-      user.id,
+      issue.author,
+      updatedLocal,
     );
     console.log(response);
 
@@ -46,11 +56,11 @@ const AddIssueForm = ({ locals, onAddClose }) => {
           content: '',
         },
       });
-      ToastSuccess(toast, 'Zgłoszenie dodane pomyślnie');
-      onAddClose();
+      ToastSuccess(toast, 'Zgłoszenie zaktualizowane pomyślnie');
+      onEditClose();
     } else {
       console.log('change failed');
-      ToastError(toast, 'Zgłoszenie nie zostało dodane');
+      ToastError(toast, 'Zgłoszenie nie zostało zaktualizowane');
     }
     actions.setSubmitting(false);
   };
@@ -58,8 +68,8 @@ const AddIssueForm = ({ locals, onAddClose }) => {
   return (
     <Formik
       initialValues={{
-        title: '',
-        content: '',
+        title: issue.title,
+        content: issue.content,
         local: '',
       }}
       onSubmit={setSubmit}>
@@ -118,7 +128,7 @@ const AddIssueForm = ({ locals, onAddClose }) => {
                       }}
                       type="submit"
                       isLoading={isSubmitting}>
-                      Dodaj
+                      Zapisz
                     </Button>
                   </Stack>
                 </Stack>
@@ -130,4 +140,4 @@ const AddIssueForm = ({ locals, onAddClose }) => {
     </Formik>
   );
 };
-export default AddIssueForm;
+export default UpdateIssueForm;
