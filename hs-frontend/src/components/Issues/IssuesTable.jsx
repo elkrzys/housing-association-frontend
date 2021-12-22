@@ -14,50 +14,50 @@ import {
 } from '@chakra-ui/react';
 import { FaArrowDown, FaArrowUp, FaBan, FaEdit } from 'react-icons/fa';
 import CustomModal from '../CustomModal.jsx';
-import CustomAlertDialog from '../CustomAlertDialog.jsx';
-import { ToastSuccess, ToastWarning } from '../Toasts.js';
-import { MODES } from '../../strings';
+import { ToastError, ToastSuccess, ToastWarning } from '../Toasts.js';
 import { AuthContext } from '../../contexts';
 import Issue from './Issue';
 import AddIssueForm from './AddIssueForm';
-import UpdateIssueForm from './UpdateIssueForm';
 import { IssuesService, LocalsService } from '../../services';
+import EditCellBody from './EditCellBody.jsx';
 
 const IssuesTable = () => {
   const { user, role } = useContext(AuthContext);
   const toast = useToast();
   const [issues, setIssues] = useState([]);
   const [locals, setLocals] = useState([]);
+  const [selectedIssue, setSelectedIssue] = useState(null);
   const [refresh, setRefresh] = useState(false);
 
-  const {
-    onOpen: onAlertOpen,
-    onClose: onAlertClose,
-    isOpen: isAlertOpen,
-  } = useDisclosure();
-  const cancelRef = useRef();
-
-  const cancelIssue = async () => {
-    setRefresh(true);
-    await IssuesService.cancelIssue(selectedIssue.id);
+  const handleRefresh = async () => {
     await getIssues();
-    setRefresh(false);
-    ToastSuccess(toast, 'Pomyślnie wycofano zgłoszenie');
+    setRefresh(!refresh);
+  };
+
+  const resolveIssue = async () => {
+    const response = await IssuesService.resolveIssue(selectedIssue.id);
+    onDisplayClose();
+    if (response.status === 'SUCCESS') {
+      ToastSuccess(toast, 'Pomyślnie zatwierdzono zgłoszenie');
+      handleRefresh();
+    } else {
+      ToastError(toast, 'Nie można było zatwierdzić zgłoszenia');
+    }
   };
 
   const getIssues = async () => {
-    let issuesResponse;
-    if (role === 'resident') {
-      issuesResponse = await IssuesService.getAllByAuthorId(user.id);
+    let response;
+    if (role === 'Resident') {
+      response = await IssuesService.getAllByAuthorId(user.id);
     } else {
-      issuesResponse = await IssuesService.getAllNotCancelled();
+      response = await IssuesService.getAllNotCancelled();
     }
 
-    if (issuesResponse.status === 'SUCCESS') {
-      setIssues(issuesResponse.data);
+    if (response.status === 'SUCCESS') {
+      setIssues(response.data);
     } else {
       console.log('failure during fetching issues');
-      return null;
+      ToastError(toast, 'Wystąpił problem podczas wczytywania zgłoszeń');
     }
   };
 
@@ -67,26 +67,19 @@ const IssuesTable = () => {
       setLocals(localsResponse.data);
     } else {
       console.log('failure during fetching locals');
-      return null;
+      ToastError(toast, 'Wystąpił problem podczas wczytywania mieszkań');
     }
   };
 
   useEffect(() => {
     getIssues();
     getLocals();
-    console.log(issues);
   }, [refresh]);
 
   const {
     isOpen: isAddOpen,
     onOpen: onAddOpen,
     onClose: onAddClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isEditOpen,
-    onOpen: onEditOpen,
-    onClose: onEditClose,
   } = useDisclosure();
 
   const {
@@ -97,21 +90,14 @@ const IssuesTable = () => {
 
   const closeAdd = () => {
     onAddClose();
-    getIssues();
-  };
-
-  const closeUpdate = async () => {
-    onEditClose();
-    setRefresh(true);
-    await getIssues();
-    setRefresh(false);
+    handleRefresh();
   };
 
   const defColumns = [
     { Header: 'Nr.', accessor: 'id' },
     { Header: 'Adres', accessor: 'address' },
     { Header: 'Tytuł', accessor: 'title' },
-    { Header: 'Data', accessor: 'created' },
+    { Header: 'Utworzone', accessor: 'created' },
     { Header: 'Stan', accessor: 'resolved' },
     { Header: 'Autor', accessor: 'author' },
   ];
@@ -122,8 +108,6 @@ const IssuesTable = () => {
   else {
     columns = defColumns;
   }
-
-  const [selectedIssue, setSelectedIssue] = useState(null);
 
   return (
     <Box rounded="lg" mx={{ base: '0', md: '5%' }}>
@@ -184,13 +168,24 @@ const IssuesTable = () => {
               <CustomModal
                 size="lg"
                 onClose={onDisplayClose}
-                isOpen={isDisplayOpen}>
+                isOpen={isDisplayOpen}
+                footerContent={
+                  selectedIssue?.isResolved && (
+                    <Button
+                      colorScheme="green"
+                      onClick={async () =>
+                        await resolveIssue(selectedIssue.id)
+                      }>
+                      Zatwierdź sprawę
+                    </Button>
+                  )
+                }>
                 <Issue
                   title={selectedIssue?.title}
                   content={selectedIssue?.content}
                   author={selectedIssue?.author}
                   date={selectedIssue?.created}
-                  isResolved={selectedIssue?.resolved}
+                  resolved={selectedIssue?.resolved}
                 />
               </CustomModal>
               <Td w="5%">{issue.id}</Td>
@@ -199,56 +194,25 @@ const IssuesTable = () => {
               <Td>{new Date(issue.created).toLocaleDateString()}</Td>
               <Td>
                 {issue.resolved !== null
-                  ? `Zamknięte: ${issue.resolved}`
+                  ? `Zamknięte: ${new Date(
+                      issue.resolved,
+                    ).toLocaleDateString()}`
                   : 'W trakcie'}
               </Td>
               {role !== 'Resident' && (
                 <Td w="20%">{`${issue.author.firstName} ${issue.author.lastName}`}</Td>
               )}
-              <Td>
-                <Flex justifyContent="center" gridColumnGap="1">
-                  <Button
-                    bg="blue.100"
-                    _hover={{ bg: 'blue.200' }}
-                    onClick={e => {
-                      setSelectedIssue(issue);
-                      onEditOpen();
-                      e.stopPropagation();
-                    }}>
-                    <FaEdit />
-                    <CustomModal
-                      header="Edytuj zgłoszenie"
-                      size="lg"
-                      onClose={onEditClose}
-                      isOpen={isEditOpen}>
-                      <UpdateIssueForm
-                        onEditClose={closeUpdate}
-                        locals={locals}
-                        issue={selectedIssue}
-                      />
-                    </CustomModal>
-                  </Button>
-                  <Button
-                    bg="red.100"
-                    _hover={{ bg: 'red.200' }}
-                    onClick={e => {
-                      setSelectedIssue(issue);
-                      onAlertOpen();
-                      e.stopPropagation();
-                    }}>
-                    <FaBan />
-                    <CustomAlertDialog
-                      leastDestructiveRef={cancelRef}
-                      onClose={onAlertClose}
-                      isOpen={isAlertOpen}
-                      onAction={cancelIssue}
-                      actionName={'Wycofaj'}
-                      header={'Wycofać zgłoszenie?'}>
-                      <p>Tej operacji nie da się cofnąć.</p>
-                    </CustomAlertDialog>
-                  </Button>
-                </Flex>
-              </Td>
+              {role === 'Resident' && (
+                <Td>
+                  {!issue.resolved && (
+                    <EditCellBody
+                      selectedIssue={issue}
+                      locals={locals}
+                      refresh={handleRefresh}
+                    />
+                  )}
+                </Td>
+              )}
             </Tr>
           ))}
         </Tbody>

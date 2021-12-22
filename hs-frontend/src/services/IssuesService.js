@@ -12,7 +12,7 @@ const IssuesService = {
     },
     getAllByAuthorId: async (authorId) => {
         try {
-            let response = await axios.get(`${Endpoints.issuesByAuthor}${authorId}`);
+            let response = await axios.get(`${Endpoints.issuesByAuthor}/${authorId}`);
             return { status: REQUEST_STATUS.SUCCESS, data: response.data };
           } catch (error) {
             return { status: REQUEST_STATUS.ERROR, error};
@@ -46,6 +46,7 @@ const IssuesService = {
     cancelIssue: async (id) => {
       try{
         let response = axios.put(`${Endpoints.issuesCancel}/${id}`)
+        return { status: REQUEST_STATUS.SUCCESS, data: response.data };
       }catch(error){
         return { status: REQUEST_STATUS.ERROR, error };
       }
@@ -53,6 +54,7 @@ const IssuesService = {
     resolveIssue: async (id) => {
       try{
         let response = axios.put(`${Endpoints.issuesResolve}/${id}`)
+        return { status: REQUEST_STATUS.SUCCESS, data: response.data };
       }catch(error){
         return { status: REQUEST_STATUS.ERROR, error };
       }

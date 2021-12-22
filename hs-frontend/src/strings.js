@@ -36,7 +36,7 @@ export const Endpoints = {
   localsResident: url(Controllers.locals, 'get-by-resident'),
   // issues
   issues: url(Controllers.issues),
-  issuesByAuthor: url(Controllers.issues, 'authorId='),
+  issuesByAuthor: url(Controllers.issues, 'author'),
   issuesCancel: url(Controllers.issues, 'cancel'),
   issuesResolve: url(Controllers.issues, 'resolve'),
   // announcements

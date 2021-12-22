@@ -31,8 +31,11 @@ const Issue = ({ title, content, author, date, resolved }) => {
         <Box fontWeight="100" color={color}>
           {message}
         </Box>
-        {role !== 'Resident' && (
-          <Box fontWeight="600">{`${author.firstName} ${author.lastName}`}</Box>
+        {role !== 'Resident' && 'Autor:' && (
+          <Box fontWeight="600">
+            <Text>Autor:</Text>
+            <Text fontStyle="italic">{`${author.firstName} ${author.lastName}`}</Text>
+          </Box>
         )}
         <Box fontWeight="100">{new Date(date).toLocaleString()}</Box>
       </HStack>

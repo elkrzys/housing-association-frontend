@@ -9,7 +9,14 @@ import {
   Button,
 } from '@chakra-ui/react';
 
-const CustomModal = ({ isOpen, onClose, header, size, children }) => {
+const CustomModal = ({
+  isOpen,
+  onClose,
+  header,
+  size,
+  children,
+  footerContent,
+}) => {
   return (
     <>
       <Modal size={size} isOpen={isOpen} onClose={onClose}>
@@ -18,11 +25,7 @@ const CustomModal = ({ isOpen, onClose, header, size, children }) => {
           <ModalHeader>{header}</ModalHeader>
           <ModalCloseButton />
           <ModalBody p="5">{children}</ModalBody>
-          {/* <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Zamknij
-            </Button>
-          </ModalFooter> */}
+          {footerContent && <ModalFooter>{footerContent}</ModalFooter>}
         </ModalContent>
       </Modal>
     </>
