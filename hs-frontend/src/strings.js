@@ -41,7 +41,8 @@ export const Endpoints = {
   issuesResolve: url(Controllers.issues, 'resolve'),
   // announcements
   announcements: url(Controllers.announcements),
-  announcementsAll: url(Controllers.announcements, 'all'),
+  announcementsNotCancelled: url(Controllers.announcements, 'not-cancelled'),
+  announcementsReceiver: url(Controllers.announcements, 'receiver'),
 };
 
 export const MODES = {

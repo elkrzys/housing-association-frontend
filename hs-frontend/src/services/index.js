@@ -3,3 +3,4 @@ export { default as UsersService } from './UsersService';
 export { default as BuildingsService } from './BuildingsService';
 export { default as IssuesService } from './IssuesService';
 export { default as LocalsService } from './LocalsService';
+export { default as AnnouncementsService } from './AnnouncementsService';

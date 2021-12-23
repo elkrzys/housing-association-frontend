@@ -17,9 +17,10 @@ import UsersService from '../../services/UsersService';
 import { AuthContext } from '../../contexts';
 import { useContext, useState } from 'react';
 import { BasicInput, MultiSelect } from '../Inputs';
+import { useEffect } from 'react/cjs/react.development';
 
-const cities = ['Tychy'];
-const districts = [];
+const cities = ['Tychy', 'Katowice'];
+const districts = ['Osiedle A', 'Osiedle B'];
 const streets = ['Katowicka', 'Bielska', 'Poziomkowa'];
 const buildings = [
   {
@@ -85,9 +86,10 @@ const AddAnnouncementForm = () => {
         cities: [],
         districts: [],
         streets: [],
+        buildings: [],
       }}
       onSubmit={setSubmit}>
-      {props => (
+      {({ values, isSubmitting, handleChange }) => (
         <Form>
           <Flex align="start" justify="center" bg="none">
             <Stack spacing="8" mx="auto" px="6">
@@ -103,14 +105,14 @@ const AddAnnouncementForm = () => {
                     id="title"
                     name="title"
                     placeholder="Tytuł"
-                    defaultValue={props.values.title}
+                    defaultValue={values.title}
                     isRequired
                   />
                   <FormControl id="content" isRequired>
                     <FormLabel>Treść ogłoszenia</FormLabel>
                     <Textarea
                       placeholder="Wpisz treść ogłoszenia"
-                      defaultValue={props.values.content}
+                      defaultValue={values.content}
                       rows="8"
                       p="3"
                     />
@@ -121,29 +123,72 @@ const AddAnnouncementForm = () => {
                       <MultiSelect
                         label="Miasta"
                         options={cities}
+                        onChange={values => {
+                          handleChange({
+                            target: { value: values, id: 'cities' },
+                          });
+                        }}
                         buttonProps={{
                           borderColor: 'gray.600',
                           borderWidth: '1px',
                         }}
                       />
                     )}
-                    {districts.length && (
-                      <MultiSelect label="Dzielnice" options={districts} />
+                    {values.cities.length < 2 && districts.length && (
+                      <MultiSelect
+                        label="Dzielnice"
+                        options={districts}
+                        onChange={values => {
+                          handleChange({
+                            target: { value: values, id: 'districts' },
+                          });
+                        }}
+                        buttonProps={{
+                          borderColor: 'gray.600',
+                          borderWidth: '1px',
+                        }}
+                      />
                     )}
-                    <MultiSelect
-                      label="Ulice"
-                      options={streets}
-                      onChange={values => {
-                        props.handleChange({
-                          target: { value: values, id: 'streets' },
-                        });
-                        console.log(props.values.streets);
-                      }}
-                      buttonProps={{
-                        borderColor: 'gray.600',
-                        borderWidth: '1px',
-                      }}
-                    />
+                    {values.cities.length < 2 &&
+                      values.districts.length < 2 &&
+                      streets.length && (
+                        <MultiSelect
+                          label="Ulice"
+                          options={streets}
+                          onChange={values => {
+                            handleChange({
+                              target: { value: values, id: 'streets' },
+                            });
+                            console.log(values);
+                          }}
+                          buttonProps={{
+                            borderColor: 'gray.600',
+                            borderWidth: '1px',
+                          }}
+                        />
+                      )}
+                    {values.cities.length < 2 &&
+                      values.districts.length < 2 &&
+                      values.streets.length > 0 &&
+                      buildings.length && (
+                        <MultiSelect
+                          label="Budynki"
+                          complexOptions={buildings.map(building => ({
+                            id: building.id,
+                            name: `${building.address.street} ${building.number}`,
+                          }))}
+                          onChange={values => {
+                            handleChange({
+                              target: { value: values, id: 'buildings' },
+                            });
+                            console.log(values);
+                          }}
+                          buttonProps={{
+                            borderColor: 'gray.600',
+                            borderWidth: '1px',
+                          }}
+                        />
+                      )}
                   </Stack>
                   <Stack spacing="10">
                     <Button
@@ -153,7 +198,7 @@ const AddAnnouncementForm = () => {
                         bg: 'green.400',
                       }}
                       type="submit"
-                      isLoading={props.isSubmitting}>
+                      isLoading={isSubmitting}>
                       Dodaj
                     </Button>
                   </Stack>

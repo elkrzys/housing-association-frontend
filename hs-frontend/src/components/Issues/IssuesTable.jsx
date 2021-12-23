@@ -170,7 +170,8 @@ const IssuesTable = () => {
                 onClose={onDisplayClose}
                 isOpen={isDisplayOpen}
                 footerContent={
-                  selectedIssue?.isResolved && (
+                  role !== 'Resident' &&
+                  !selectedIssue?.resolved && (
                     <Button
                       colorScheme="green"
                       onClick={async () =>

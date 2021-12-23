@@ -9,6 +9,7 @@ import {
   Td,
   Button,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { FaArrowDown, FaArrowUp, FaBan, FaEdit } from 'react-icons/fa';
 import React, { useContext, useEffect, useState } from 'react';
@@ -18,9 +19,30 @@ import { MODES } from '../../strings';
 import Announcement from './Announcement';
 import AddAnnouncementForm from './AddAnnouncementForm';
 import { AuthContext } from '../../contexts';
+import { AnnouncementsService } from '../../services';
+import { ToastError, ToastSuccess } from '../Toasts';
 
 const AnnouncementsTable = () => {
   const { user, role } = useContext(AuthContext);
+  const toast = useToast();
+  const [announcements, setSelectedAnnouncements] = useState([]);
+  const getAnnouncements = async () => {
+    let response;
+    if (role !== 'Resident') {
+      response = await AnnouncementsService.getAllNotCancelled();
+    } else {
+      response = await AnnouncementsService.getAllByReceiverId(user.id);
+    }
+    if (response.status === 'SUCCESS') {
+      setSelectedAnnouncements(response.data);
+    } else {
+      ToastError(toast, 'Wystąpił problem podczas wczytywania ogłoszeń');
+    }
+  };
+
+  useEffect(() => {
+    getAnnouncements();
+  }, []);
 
   const {
     isOpen: isAddOpen,
@@ -40,70 +62,15 @@ const AnnouncementsTable = () => {
     onClose: onDisplayClose,
   } = useDisclosure();
 
-  //   const announcement = {
-  //     id: null,
-  //     title: null,
-  //     content: null,
-  //     isCancelledOrExpired: false,
-  //     date: null,
-  //     authorId: null,
-  //     targetBuildingsIds: null,
-  //   };
-
-  // map to:
-
-  //   const announcement = {
-  //     id: null,
-  //     title: null,
-  //     content: null,
-  //     isCancelledOrExpired: false,
-  //     date: null,
-  //     author: { id: null, firstName: null, lastName: null },
-  //     targetBuildingsIds: null,
-  //   };
-
   const columns = [
     { Header: 'Nr.', accessor: 'id' },
     { Header: 'Tytuł', accessor: 'title' },
-    { Header: 'Data', accessor: 'null' },
-    { Header: 'Stan', accessor: 'isCancelledOrExpired' },
+    { Header: 'Utworzono', accessor: 'created' },
+    { Header: 'Wygasa', accessor: 'expirationDate' },
     { Header: 'Autor', accessor: 'author' },
   ];
 
-  const announcements = [
-    {
-      id: 1,
-      title: 'Remont',
-      content:
-        'W najbliższym tygodniu będzie miał miejsce remont klatki schodowej przy ulicy Reymonta 1, 2, 3, 4 i 5. Prosimy o ostrożność podczas trwania remontu i uważanie na narzędzia robotników',
-      isCancelledOrExpired: false,
-      date: '2021-12-06',
-      author: { id: 1, firstName: 'Marek', lastName: 'Towarek' },
-      targetBuildingsIds: [1, 2, 3, 4, 5],
-    },
-    {
-      id: 2,
-      title: 'Koszenie trawy',
-      content:
-        'W dniu 10.09.2021r. będzie miało miejsce koszenie trawy. Uprzejmie prosimy o przeparkowanie samochodów na odległość ok. 1m od trawników.',
-      isCancelledOrExpired: true,
-      date: '2021-09-06',
-      author: { id: 1, firstName: 'Marek', lastName: 'Towarek' },
-      targetBuildingsIds: [1, 2, 3, 4, 5],
-    },
-    {
-      id: 3,
-      title: 'Wymiana gazomierzy',
-      content:
-        'Informujemy, że firma XYZ będzie przeprowadzała wymianę gazomierzy we wszystkich mieszkaniach na ulicy Reymonta. Dotyczy to klatek schodowych od 1 do 5.',
-      isCancelledOrExpired: true,
-      date: '2021-09-03',
-      author: { id: 2, firstName: 'Jerzy', lastName: 'Tramwaj' },
-      targetBuildingsIds: [1, 2, 3, 4, 5],
-    },
-  ];
-
-  const [announcementToDisplay, setAnnouncement] = useState(null);
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
 
   return (
     <Box rounded="lg" mx={{ base: '0', md: '5%' }}>
@@ -111,7 +78,7 @@ const AnnouncementsTable = () => {
         <Thead h="75px">
           <Tr bg="blue.100">
             {columns.map(column => (
-              <Th key={column.accessor} w="20%" borderRight={'2px dotted gray'}>
+              <Th key={column.accessor} borderRight={'2px dotted gray'}>
                 {column.Header}
               </Th>
             ))}
@@ -137,11 +104,11 @@ const AnnouncementsTable = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {announcements.map((announcement, i) => (
+          {announcements.map(announcement => (
             <Tr
-              key={i}
+              key={announcement.id}
               onClick={() => {
-                setAnnouncement(announcement);
+                setSelectedAnnouncement(announcement);
                 onDisplayOpen();
               }}
               _hover={{
@@ -154,17 +121,19 @@ const AnnouncementsTable = () => {
                 onClose={onDisplayClose}
                 isOpen={isDisplayOpen}>
                 <Announcement
-                  title={announcementToDisplay?.title}
-                  content={announcementToDisplay?.content}
-                  author={announcementToDisplay?.author}
-                  date={announcementToDisplay?.date}
+                  title={selectedAnnouncement?.title}
+                  content={selectedAnnouncement?.content}
+                  author={selectedAnnouncement?.author}
+                  date={selectedAnnouncement?.date}
                 />
               </CustomModal>
-              <Td w="20%">{announcement.id}</Td>
+              <Td w="5%">{announcement.id}</Td>
               <Td w="20%">{announcement.title}</Td>
-              <Td w="20%">{announcement.date}</Td>
               <Td w="20%">
-                {announcement.isCancelledOrExpired ? 'Nieaktualne' : 'Aktualne'}
+                {new Date(announcement.created).toLocaleDateString()}
+              </Td>
+              <Td w="20%">
+                {new Date(announcement.expirationDate).toLocaleDateString()}
               </Td>
               <Td w="20%">{`${announcement.author.firstName} ${announcement.author.lastName}`}</Td>
 
