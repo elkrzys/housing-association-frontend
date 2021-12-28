@@ -1,3 +1,4 @@
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -9,86 +10,32 @@ import {
   Td,
   Button,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { FaArrowDown, FaArrowUp, FaTrash, FaEdit } from 'react-icons/fa';
-import React, { useContext, useEffect } from 'react';
 import { ModeContext } from '../../contexts';
 import CustomModal from '../CustomModal';
 import AddBuildingForm from './AddBuildingForm';
 import { MODES } from '../../strings';
 import './buildings.css';
+import { BuildingsService } from '../../services';
+import { ToastError } from '../Toasts';
+import CustomAlertDialog from '../CustomAlertDialog';
 
 const BuildingsTable = () => {
-  const buildings = [
-    {
-      id: 1,
-      type: 'Blok',
-      numberOfLocals: 10,
-      street: 'Opolska',
-      number: 10,
-    },
-    {
-      id: 2,
-      type: 'Blok',
-      numberOfLocals: 12,
-      street: 'Opolska',
-      number: 12,
-    },
-    {
-      id: 3,
-      type: 'Blok',
-      numberOfLocals: 12,
-      street: 'Opolska',
-      number: 14,
-    },
-    {
-      id: 4,
-      type: 'Blok',
-      numberOfLocals: 10,
-      street: 'Opolska',
-      number: 24,
-    },
-    {
-      id: 5,
-      type: 'Blok',
-      numberOfLocals: 10,
-      street: 'Opolska',
-      number: 26,
-    },
-    {
-      id: 6,
-      type: 'Blok',
-      numberOfLocals: 12,
-      street: 'Katowicka',
-      number: 4,
-    },
-    {
-      id: 7,
-      type: 'Blok',
-      numberOfLocals: 10,
-      street: 'Opolska',
-      number: 102,
-    },
-  ];
+  const cancelRef = useRef();
+  const toast = useToast();
+  const { setMode } = useContext(ModeContext);
+  const [buildings, setBuildings] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   const columns = [
-    {
-      Header: 'Ulica',
-      accessor: 'street',
-    },
-    {
-      Header: 'Numer',
-      accessor: 'number',
-    },
-    {
-      Header: 'Typ budynku',
-      accessor: 'type',
-    },
-    {
-      Header: 'Liczba lokali',
-      accessor: 'numberOfLocals',
-      isNumeric: true,
-    },
+    { Header: 'Miasto', accessor: 'city' },
+    { Header: 'Dzielnica', accessor: 'district' },
+    { Header: 'Ulica', accessor: 'street' },
+    { Header: 'Numer', accessor: 'number' },
+    { Header: 'Typ budynku', accessor: 'type' },
+    { Header: 'Liczba lokali', accessor: 'numberOfLocals', isNumeric: true },
   ];
 
   const {
@@ -97,7 +44,34 @@ const BuildingsTable = () => {
     onClose: onAddClose,
   } = useDisclosure();
 
-  const { setMode } = useContext(ModeContext);
+  const {
+    isOpen: isAlertOpen,
+    onOpen: onAlertOpen,
+    onClose: onAlertClose,
+  } = useDisclosure();
+
+  const getBuildings = async () => {
+    let response = await BuildingsService.getBuildings();
+    if (response.status === 'SUCCESS') {
+      setBuildings(response.data);
+    } else {
+      ToastError(toast, 'Wystąpił problem podczas wczytywania budynków');
+    }
+  };
+
+  const deleteBuilding = async id => {
+    let response = await BuildingsService.deleteBuilding(id);
+    if (response.status === 'SUCCESS') {
+      await getBuildings();
+      setRefresh(!refresh);
+    } else {
+      ToastError(toast, 'Wystąpił problem podczas usuwania budynku');
+    }
+  };
+
+  useEffect(() => {
+    getBuildings();
+  }, [refresh]);
 
   return (
     <Box mx={{ base: '0', md: '5%' }}>
@@ -119,7 +93,10 @@ const BuildingsTable = () => {
                 </Button>
                 <CustomModal
                   isOpen={isAddOpen}
-                  onClose={onAddClose}
+                  onClose={() => {
+                    setRefresh(!refresh);
+                    onAddClose();
+                  }}
                   header={'Dodaj budynek'}>
                   <AddBuildingForm />
                 </CustomModal>
@@ -129,30 +106,45 @@ const BuildingsTable = () => {
         </Thead>
         <Tbody>
           {buildings.map(building => (
-            <Tr>
-              <Td w="20%">{building.street}</Td>
-              <Td w="20%">{building.number}</Td>
-              <Td w="20%">{building.type}</Td>
-              <Td w="20%">{building.numberOfLocals}</Td>
+            <Tr key={building.id}>
+              <Td>{building.address.city}</Td>
+              <Td>{building.address.district || '-'}</Td>
+              <Td>{building.address.street}</Td>
+              <Td>{building.number}</Td>
+              <Td>{building.type === 'Block' ? 'Blok' : 'Dom'}</Td>
+              <Td>{building.numberOfLocals}</Td>
               <Td>
                 <Flex maxH="24px" gridColumnGap="10px" justifyContent="center">
                   <Button
                     alignSelf="center"
                     bg="blue.100"
                     _hover={{ bg: 'blue.200' }}
-                    onClick={() =>
+                    onClick={() => {
+                      console.log(building.id);
                       setMode({
                         mode: MODES.BuildingDetails,
                         contentId: building.id,
-                      })
-                    }>
+                      });
+                    }}>
                     <FaEdit />
                   </Button>
                   <Button
                     alignSelf="center"
                     bg="red.100"
-                    _hover={{ bg: 'red.200' }}>
+                    _hover={{ bg: 'red.200' }}
+                    onClick={e => {
+                      onAlertOpen();
+                    }}>
                     <FaTrash />
+                    <CustomAlertDialog
+                      leastDestructiveRef={cancelRef}
+                      onClose={onAlertClose}
+                      isOpen={isAlertOpen}
+                      onAction={async () => await deleteBuilding(building.id)}
+                      actionName={'Usuń'}
+                      header={'Usunąć budynek i powiązane lokale?'}>
+                      <p>Tej operacji nie da się cofnąć.</p>
+                    </CustomAlertDialog>
                   </Button>
                 </Flex>
               </Td>

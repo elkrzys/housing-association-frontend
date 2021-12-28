@@ -1,32 +1,36 @@
 import { useEffect, useState } from 'react';
-import { Flex, Box, Button, Stack, HStack, Heading } from '@chakra-ui/react';
+import {
+  Flex,
+  Box,
+  Button,
+  Stack,
+  HStack,
+  Heading,
+  useToast,
+} from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
 import { BasicInput } from '../Inputs';
 import { BuildingsService } from '../../services';
-
-let tempBuilding = {
-  id: null,
-  number: 10,
-  type: 'block',
-  street: 'Pszczyńska',
-  city: 'Tychy',
-  distric: null,
-};
+import { ToastError, ToastSuccess } from '../Toasts';
 
 const UpdateBuildingForm = ({ buildingId }) => {
-  tempBuilding.id = buildingId;
-  const [building, setBuilding] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
+  const [building, setBuilding] = useState(null);
 
-  const getBuildingById = async () => {
-    const response = await BuildingsService.getBuildingById(buildingId);
+  const toast = useToast();
+
+  const getBuilding = async () => {
+    const response = await BuildingsService.getById(buildingId);
     if (response.status === 'SUCCESS') {
       setBuilding(response.data);
+    } else {
+      ToastError(toast, 'Wystąpił problem przy wczytywaniu budynku');
     }
   };
 
   useEffect(() => {
-    getBuildingById();
+    console.log(buildingId);
+    getBuilding();
   }, []);
 
   const setSubmit = async (values, actions) => {
@@ -41,20 +45,10 @@ const UpdateBuildingForm = ({ buildingId }) => {
 
     if (response.status === 'SUCCESS') {
       console.log('update successful');
-      toast({
-        title: 'Budynek zaktualizowany',
-        status: 'success',
-        isClosable: true,
-        duration: 2500,
-      });
+      ToastSuccess(toast, 'Budynek zaktualizowany');
     } else {
       console.log('update failed');
-      toast({
-        title: 'Wystąpił problem',
-        status: 'error',
-        isClosable: true,
-        duration: 2500,
-      });
+      ToastError(toast, 'Wystąpił problem');
     }
     actions.setSubmitting(false);
   };
@@ -63,9 +57,9 @@ const UpdateBuildingForm = ({ buildingId }) => {
     <Formik
       enableReinitialize
       initialValues={{
-        city: building?.city,
-        district: building?.district,
-        street: building?.street,
+        city: building?.address.city,
+        district: building?.address.district,
+        street: building?.address.street,
         number: building?.number,
         type: building?.type,
       }}

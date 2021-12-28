@@ -11,6 +11,7 @@ const Controllers = {
   locals: 'locals',
   issues: 'issues',
   announcements: 'announcements',
+  addresses: 'addresses'
 };
 
 const url = (controller, endpoint) => `${BASE_URL}/${controller}${endpoint ? `/${endpoint}` : ''}`;
@@ -30,10 +31,12 @@ export const Endpoints = {
   // buildings
   buildings: url(Controllers.buildings),
   buildingsAll: url(Controllers.buildings, 'all'),
+  buildingsByAddress: url(Controllers.buildings, 'address'),
   // locals
   locals: url(Controllers.locals),
   localsAll: url(Controllers.locals, 'all'),
   localsResident: url(Controllers.locals, 'get-by-resident'),
+  localsBuilding: url(Controllers.locals, 'get-by-building'),
   // issues
   issues: url(Controllers.issues),
   issuesByAuthor: url(Controllers.issues, 'author'),
@@ -43,6 +46,13 @@ export const Endpoints = {
   announcements: url(Controllers.announcements),
   announcementsNotCancelled: url(Controllers.announcements, 'not-cancelled'),
   announcementsReceiver: url(Controllers.announcements, 'receiver'),
+  announcementsPostByBuildings: url(Controllers.buildings, 'add-by-buildings'),
+  announcementsPostByAddress: url(Controllers.buildings, 'add-by-address'),
+  //addresses
+  addresses: url(Controllers.addresses),
+  cities: url(Controllers.addresses, 'cities'),
+  districts: url(Controllers.addresses, 'districts'),
+  streets: url(Controllers.addresses, 'streets'),
 };
 
 export const MODES = {

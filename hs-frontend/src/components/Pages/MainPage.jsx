@@ -8,7 +8,8 @@ import Modes from '../Modes/Modes';
 
 const MainPage = () => {
   const { user, role, token } = useContext(AuthContext);
-  const { mode } = useContext(ModeContext);
+  const { mode, contentId } = useContext(ModeContext);
+  console.log(mode);
 
   const smVariant = { navigation: 'drawer', navigationButton: true };
   const mdVariant = { navigation: 'sidebar', navigationButton: false };
@@ -38,7 +39,7 @@ const MainPage = () => {
         />
         <Box minW="100%" justify={'center'} mt={'4vh'}>
           {mode !== null ? (
-            <Modes mode={mode} />
+            <Modes mode={mode} contentId={contentId} />
           ) : (
             <Text px={10} textAlign={'justify'}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent

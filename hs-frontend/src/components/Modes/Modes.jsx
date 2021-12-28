@@ -16,6 +16,7 @@ const Modes = ({ mode, contentId }) => {
     case MODES.HomePage:
       return <Redirect to="/home" />;
     case MODES.BuildingDetails:
+      console.log(contentId);
       return <BuildingDetails buildingId={contentId} />;
     case MODES.Announcements:
       return <AnnouncementsTable />;

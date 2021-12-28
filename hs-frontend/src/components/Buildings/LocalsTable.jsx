@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -9,56 +10,73 @@ import {
   Td,
   Button,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { FaArrowDown, FaArrowUp, FaTrash, FaEdit } from 'react-icons/fa';
-import React, { useMemo } from 'react';
 import CustomModal from '../CustomModal';
-import AddBuildingForm from './AddBuildingForm';
+import CustomAlertDialog from '../CustomAlertDialog';
+import AddBuildingForm from './AddLocalForm';
+import { LocalsService } from '../../services';
+import { ToastError } from '../Toasts';
+import AddLocalForm from './AddLocalForm';
+import EditLocalForm from './EditLocalForm';
 
-const LocalsTable = () => {
-  const locals = [
-    {
-      id: 1,
-      area: 46.5,
-      isOwned: false,
-      number: 1,
-    },
-    {
-      id: 2,
-      area: 46.5,
-      isOwned: false,
-      number: 2,
-    },
-    {
-      id: 3,
-      area: 64.5,
-      isOwned: true,
-      number: 3,
-    },
-    {
-      id: 4,
-      area: 64.5,
-      isOwned: false,
-      number: 4,
-    },
-  ];
+const LocalsTable = ({ buildingId }) => {
+  const [locals, setLocals] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const [selectedLocal, setSelectedLocal] = useState();
+
+  const {
+    onOpen: onAlertOpen,
+    onClose: onAlertClose,
+    isOpen: isAlertOpen,
+  } = useDisclosure();
+
+  const deleteLocal = async localId => {
+    const response = await LocalsService.deleteLocal(localId);
+    if (response.status !== 'SUCCESS') {
+      ToastError(toast, 'Usuwanie nieudane');
+    }
+    setRefresh(!refresh);
+  };
+
+  const cancelRef = useRef();
+  const toast = useToast();
+  const getLocals = async () => {
+    const response = await LocalsService.getAllByBuildingId(buildingId);
+    if (response.status === 'SUCCESS') {
+      setLocals(response.data);
+    } else {
+      ToastError(toast, 'Wystąpił problem podczas wczytywania lokali');
+    }
+  };
+
+  useEffect(() => {
+    getLocals();
+  }, [refresh]);
 
   const columns = [
-    {
-      Header: 'Numer',
-      accessor: 'number',
-    },
-    {
-      Header: 'Powierzchnia',
-      accessor: 'area',
-    },
-    {
-      Header: 'Własnościowe',
-      accessor: 'isOwned',
-    },
+    { Header: 'Numer', accessor: 'number' },
+    { Header: 'Powierzchnia', accessor: 'area' },
+    { Header: 'Własnościowe', accessor: 'isOwned' },
   ];
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isAddOpen,
+    onOpen: onAddOpen,
+    onClose: onAddClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
+
+  const reload = () => {
+    getLocals();
+    setRefresh(!refresh);
+  };
 
   return (
     <Box mx={{ base: '0', md: '5%' }}>
@@ -71,14 +89,20 @@ const LocalsTable = () => {
 
             <Th colSpan={2}>
               <Flex justifyContent="center">
-                <Button bg="gray.100" _hover={{ bg: 'white' }} onClick={onOpen}>
+                <Button
+                  bg="gray.100"
+                  _hover={{ bg: 'white' }}
+                  onClick={onAddOpen}>
                   Dodaj lokal
                 </Button>
                 <CustomModal
-                  isOpen={isOpen}
-                  onClose={onClose}
+                  isOpen={isAddOpen}
+                  onClose={() => {
+                    onAddClose();
+                    reload();
+                  }}
                   header={'Dodaj lokal'}>
-                  <AddBuildingForm />
+                  <AddLocalForm buildingId={buildingId} />
                 </CustomModal>
               </Flex>
             </Th>
@@ -86,23 +110,54 @@ const LocalsTable = () => {
         </Thead>
         <Tbody>
           {locals.map(local => (
-            <Tr>
+            <Tr key={local.id}>
               <Td>{local.number}</Td>
-              <Td>{local.area}</Td>
-              <Td>{local.isOwned ? 'Tak' : 'Nie'}</Td>
+              <Td>
+                {local.area} m<sup>2</sup>
+              </Td>
+              <Td>{local.isFullyOwned ? 'Tak' : 'Nie'}</Td>
               <Td alignItems="end">
                 <Flex maxH="24px" gridColumnGap="10px" justifyContent="center">
                   <Button
                     alignSelf="center"
                     bg="blue.100"
-                    _hover={{ bg: 'blue.200' }}>
+                    _hover={{ bg: 'blue.200' }}
+                    onClick={() => {
+                      onEditOpen();
+                      setSelectedLocal(local);
+                    }}>
                     <FaEdit />
+                    <CustomModal
+                      header="Edytuj lokal"
+                      size="md"
+                      onClose={() => {
+                        onEditClose();
+                        reload();
+                      }}
+                      isOpen={isEditOpen}>
+                      <EditLocalForm local={selectedLocal} />
+                    </CustomModal>
                   </Button>
                   <Button
                     alignSelf="center"
                     bg="red.100"
-                    _hover={{ bg: 'red.200' }}>
+                    _hover={{ bg: 'red.200' }}
+                    onClick={e => {
+                      onAlertOpen();
+                    }}>
                     <FaTrash />
+                    <CustomAlertDialog
+                      leastDestructiveRef={cancelRef}
+                      onClose={() => {
+                        onAlertClose();
+                        reload();
+                      }}
+                      isOpen={isAlertOpen}
+                      onAction={async () => await deleteLocal(local.id)}
+                      actionName={'Usuń'}
+                      header={'Usunąć lokal?'}>
+                      <p>Tej operacji nie da się cofnąć.</p>
+                    </CustomAlertDialog>
                   </Button>
                 </Flex>
               </Td>

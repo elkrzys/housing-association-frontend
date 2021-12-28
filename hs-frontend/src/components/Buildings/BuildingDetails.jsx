@@ -1,11 +1,9 @@
-import { useState } from 'react';
-import { Flex, Stack, Box, Button } from '@chakra-ui/react';
+import { Flex, Stack, Box, Button, useToast } from '@chakra-ui/react';
 import UpdateBuildingForm from './UpdateBuildingForm';
 import LocalsTable from './LocalsTable';
 
 const BuildingDetails = ({ buildingId }) => {
-  const [building, setBuilding] = useState(null);
-
+  console.log(buildingId);
   // UpdateBuildingForm + LocalsTable
   // todo: function to get building by id
   // also: get all buiding locals (add table for locals)
