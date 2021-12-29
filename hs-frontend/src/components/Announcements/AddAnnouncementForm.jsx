@@ -2,31 +2,27 @@ import {
   Flex,
   Box,
   Stack,
-  HStack,
   Button,
   FormLabel,
   FormControl,
-  Heading,
-  InputGroup,
-  useColorModeValue,
   Textarea,
   useToast,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
-import UsersService from '../../services/UsersService';
 import { AnnouncementsService, BuildingsService } from '../../services';
 import { AuthContext } from '../../contexts';
 import { useContext, useState } from 'react';
 import { BasicInput, MultiSelect } from '../Inputs';
 import { useEffect } from 'react/cjs/react.development';
 import { ToastError, ToastSuccess } from '../Toasts';
+import CustomDatePicker from '../CustomDatePicker';
 
 const buttonProps = {
   borderColor: 'gray.600',
   borderWidth: '1px',
 };
 
-const AddAnnouncementForm = () => {
+const AddAnnouncementForm = ({ onAddClose }) => {
   const { user } = useContext(AuthContext);
   const [cities, setCities] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -34,6 +30,10 @@ const AddAnnouncementForm = () => {
   const [buildings, setBuildings] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const toast = useToast();
+
+  let defaultExpirationDate = new Date();
+  defaultExpirationDate.setDate(defaultExpirationDate.getDate() + 7);
+  const [expirationDate, setExpirationDate] = useState(defaultExpirationDate);
 
   const getCities = async () => {
     const response = await BuildingsService.getCities();
@@ -61,6 +61,7 @@ const AddAnnouncementForm = () => {
       ToastError(toast, 'Wystąpił problem podczas wczytywania ulic');
     }
   };
+
   const getBuildings = async (city, streets, district = null) => {
     const response = await BuildingsService.getBuildingsByAddresses(
       city,
@@ -82,16 +83,18 @@ const AddAnnouncementForm = () => {
   const setSubmit = async (values, actions) => {
     let response;
     if (values.buildings.length) {
-      response = AnnouncementsService.addByBuildings(
+      response = await AnnouncementsService.addByBuildings(
         values.title,
         values.content,
+        values.expirationDate,
         user.id,
         values.buildings,
       );
     } else {
-      response = AnnouncementsService.addByAddress(
+      response = await AnnouncementsService.addByAddress(
         values.title,
         values.content,
+        values.expirationDate,
         user.id,
         values.cities,
         values.districts,
@@ -99,7 +102,6 @@ const AddAnnouncementForm = () => {
       );
     }
     if (response.status === 'SUCCESS') {
-      console.log('change successful');
       actions.resetForm({
         values: {
           title: '',
@@ -111,15 +113,16 @@ const AddAnnouncementForm = () => {
         },
       });
       ToastSuccess(toast, 'Ogłoszenie dodane pomyślnie');
+      onAddClose();
     } else {
-      console.log('change failed');
-      toast(toast, 'Ogłoszenie nie zostało dodane');
+      ToastError(toast, 'Ogłoszenie nie zostało dodane');
     }
     actions.setSubmitting(false);
   };
 
   return (
     <Formik
+      enableReinitialize
       initialValues={{
         title: '',
         content: '',
@@ -127,6 +130,7 @@ const AddAnnouncementForm = () => {
         districts: [],
         streets: [],
         buildings: [],
+        expirationDate: expirationDate,
       }}
       onSubmit={setSubmit}>
       {({ values, isSubmitting, handleChange }) => (
@@ -143,16 +147,20 @@ const AddAnnouncementForm = () => {
                     defaultValue={values.title}
                     isRequired
                   />
+                  <Box>
+                    <p>Data wygaśnięcia</p>
+                    <CustomDatePicker name="expirationDate" w="50%" />
+                  </Box>
                   <FormControl id="content" isRequired>
                     <FormLabel>Treść ogłoszenia</FormLabel>
                     <Textarea
                       placeholder="Wpisz treść ogłoszenia"
                       defaultValue={values.content}
+                      onChange={handleChange}
                       rows="8"
                       p="3"
                     />
                   </FormControl>
-
                   <Stack>
                     {cities.length && (
                       <MultiSelect
@@ -179,7 +187,8 @@ const AddAnnouncementForm = () => {
                             target: { value: vals, id: 'districts' },
                           });
                           if (vals.length < 2) {
-                            await getStreets(vals[0], vals[0]);
+                            await getStreets(values.cities[0], vals[0]);
+                            await getBuildings(values.cities[0], vals[0]);
                           }
                         }}
                         buttonProps={buttonProps}
@@ -195,7 +204,11 @@ const AddAnnouncementForm = () => {
                             handleChange({
                               target: { value: vals, id: 'streets' },
                             });
-                            await getBuildings(values.cities[0], vals[0]);
+                            await getBuildings(
+                              values.cities[0],
+                              vals,
+                              values.districts[0],
+                            );
                           }}
                           buttonProps={buttonProps}
                         />
@@ -210,11 +223,11 @@ const AddAnnouncementForm = () => {
                             id: building.id,
                             name: `${building.address.street} ${building.number}`,
                           }))}
-                          onChange={values => {
+                          onChange={vals =>
                             handleChange({
-                              target: { value: values, id: 'buildings' },
-                            });
-                          }}
+                              target: { value: vals, id: 'buildings' },
+                            })
+                          }
                           buttonProps={buttonProps}
                         />
                       )}

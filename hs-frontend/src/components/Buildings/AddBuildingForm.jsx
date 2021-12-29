@@ -31,7 +31,7 @@ const AddBuildingForm = () => {
       actions.resetForm({
         values: {
           city: '',
-          district: '',
+          district: null,
           street: '',
           number: '',
           type: 'block',
@@ -59,7 +59,7 @@ const AddBuildingForm = () => {
     <Formik
       initialValues={{
         city: '',
-        district: '',
+        district: null,
         street: '',
         number: '',
         type: 'block',

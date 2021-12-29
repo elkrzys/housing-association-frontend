@@ -21,12 +21,13 @@ const BuildingsService = {
     getBuildingsByAddresses: async (city, district = null, streets) =>{
       let buildings = [];
       district = district !== null ? district : "";
+      console.log(streets)
       try {
         if(streets?.length){
-          streets.foreach(async street => {
-            const response = await axios.get(`${Endpoints.buildingsByAddress}`,{params:{city: city, street: street, district: district}});
+          for(const street of streets){
+            const response = await axios.get(`${Endpoints.buildingsByAddress}/${city}/${street}/${district}`)
             buildings = buildings.concat(response.data);
-          })
+          }
         }else{
           const response = await axios.get(`${Endpoints.buildingsByAddress}/${city}/${district}`);
           buildings = response.data;

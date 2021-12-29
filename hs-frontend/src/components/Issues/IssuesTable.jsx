@@ -88,11 +88,6 @@ const IssuesTable = () => {
     onClose: onDisplayClose,
   } = useDisclosure();
 
-  const closeAdd = () => {
-    onAddClose();
-    handleRefresh();
-  };
-
   const defColumns = [
     { Header: 'Nr.', accessor: 'id' },
     { Header: 'Adres', accessor: 'address' },
@@ -145,7 +140,13 @@ const IssuesTable = () => {
                     isOpen={isAddOpen}
                     onClose={onAddClose}
                     header={'Dodaj zgłoszenie'}>
-                    <AddIssueForm locals={locals} onAddClose={closeAdd} />
+                    <AddIssueForm
+                      locals={locals}
+                      onAddClose={() => {
+                        handleRefresh();
+                        onAddClose();
+                      }}
+                    />
                   </CustomModal>
                 </Flex>
               </Th>
@@ -174,9 +175,10 @@ const IssuesTable = () => {
                   !selectedIssue?.resolved && (
                     <Button
                       colorScheme="green"
-                      onClick={async () =>
-                        await resolveIssue(selectedIssue.id)
-                      }>
+                      onClick={async () => {
+                        await resolveIssue(selectedIssue.id);
+                        await handleRefresh();
+                      }}>
                       Zatwierdź sprawę
                     </Button>
                   )

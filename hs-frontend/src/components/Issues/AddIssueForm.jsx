@@ -49,7 +49,6 @@ const AddIssueForm = ({ locals, onAddClose }) => {
       ToastSuccess(toast, 'Zgłoszenie dodane pomyślnie');
       onAddClose();
     } else {
-      console.log('change failed');
       ToastError(toast, 'Zgłoszenie nie zostało dodane');
     }
     actions.setSubmitting(false);

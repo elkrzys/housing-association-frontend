@@ -25,7 +25,10 @@ import { ToastError, ToastSuccess } from '../Toasts';
 const AnnouncementsTable = () => {
   const { user, role } = useContext(AuthContext);
   const toast = useToast();
-  const [announcements, setSelectedAnnouncements] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+
   const getAnnouncements = async () => {
     let response;
     if (role !== 'Resident') {
@@ -34,15 +37,20 @@ const AnnouncementsTable = () => {
       response = await AnnouncementsService.getAllByReceiverId(user.id);
     }
     if (response.status === 'SUCCESS') {
-      setSelectedAnnouncements(response.data);
+      setAnnouncements(response.data);
     } else {
       ToastError(toast, 'Wystąpił problem podczas wczytywania ogłoszeń');
     }
   };
 
+  const handleRefresh = async () => {
+    await getAnnouncements();
+    setRefresh(!refresh);
+  };
+
   useEffect(() => {
     getAnnouncements();
-  }, []);
+  }, [refresh]);
 
   const {
     isOpen: isAddOpen,
@@ -70,8 +78,6 @@ const AnnouncementsTable = () => {
     { Header: 'Autor', accessor: 'author' },
   ];
 
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-
   return (
     <Box rounded="lg" mx={{ base: '0', md: '5%' }}>
       <Table variant="striped" colorScheme="gray">
@@ -95,8 +101,14 @@ const AnnouncementsTable = () => {
                   <CustomModal
                     isOpen={isAddOpen}
                     onClose={onAddClose}
-                    header={'Dodaj ogłoszenie'}>
-                    <AddAnnouncementForm />
+                    size="lg"
+                    header="Dodaj ogłoszenie">
+                    <AddAnnouncementForm
+                      onAddClose={() => {
+                        handleRefresh();
+                        onAddClose();
+                      }}
+                    />
                   </CustomModal>
                 </Flex>
               </Th>

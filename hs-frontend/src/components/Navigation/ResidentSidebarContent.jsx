@@ -60,7 +60,13 @@ const SidebarContent = () => {
           title="Zgłoszenia"
           onClick={() => setMode({ mode: MODES.Issues, contentId: null })}
         />
-        <NavItem icon={FaBuilding} title="Lokale" />
+        <NavItem
+          icon={FaBuilding}
+          title="Lokale"
+          onClick={() =>
+            setMode({ mode: MODES.ResidentLocals, contentId: null })
+          }
+        />
         <NavItem icon={FaBriefcase} title="Dokumenty" />
         <NavItem
           icon={FaUser}

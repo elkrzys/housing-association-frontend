@@ -45,12 +45,7 @@ const AddLocalForm = ({ buildingId }) => {
         <Form>
           <Flex align="start" justify="center" bg="none">
             <Stack spacing="8" mx="auto" px="6">
-              <Box
-                rounded="lg"
-                bg="white"
-                // boxShadow={'lg'}
-                w="md"
-                px="8">
+              <Box rounded="lg" bg="white" w="md" px="8">
                 <Stack spacing="4">
                   <HStack alignItems="end">
                     <BasicInput
@@ -71,7 +66,6 @@ const AddLocalForm = ({ buildingId }) => {
                       isRequired
                     />
                   </HStack>
-
                   <Stack spacing="10">
                     <Button
                       bg="green.300"

@@ -57,7 +57,6 @@ const MultiSelect = ({
                 onClick={() => {
                   setSelectedOptions([]);
                   onClose();
-                  console.log(selectedOptions);
                 }}>
                 Wyczyść wybór
               </MenuItem>
@@ -68,8 +67,10 @@ const MultiSelect = ({
               value={selectedOptions}
               type="checkbox"
               onChange={values => {
-                setSelectedOptions(values.filter(_ => _.length));
+                //setSelectedOptions(values.filter(_ => _.length));
+                setSelectedOptions(values);
                 onChange?.(values);
+                console.log(selectedOptions.length);
               }}>
               {complexOptions !== null
                 ? complexOptions.map(option => (

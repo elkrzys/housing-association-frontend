@@ -36,7 +36,10 @@ export const Endpoints = {
   locals: url(Controllers.locals),
   localsAll: url(Controllers.locals, 'all'),
   localsResident: url(Controllers.locals, 'get-by-resident'),
+  localsAddResident: url(Controllers.locals, 'add-resident'),
+  localsRemoveResident: url(Controllers.locals, 'remove-resident'),
   localsBuilding: url(Controllers.locals, 'get-by-building'),
+  localByDetails: url(Controllers.locals, 'get-by-details'),
   // issues
   issues: url(Controllers.issues),
   issuesByAuthor: url(Controllers.issues, 'author'),
@@ -46,8 +49,8 @@ export const Endpoints = {
   announcements: url(Controllers.announcements),
   announcementsNotCancelled: url(Controllers.announcements, 'not-cancelled'),
   announcementsReceiver: url(Controllers.announcements, 'receiver'),
-  announcementsPostByBuildings: url(Controllers.buildings, 'add-by-buildings'),
-  announcementsPostByAddress: url(Controllers.buildings, 'add-by-address'),
+  announcementsPostByBuildings: url(Controllers.announcements, 'add-by-buildings'),
+  announcementsPostByAddress: url(Controllers.announcements, 'add-by-address'),
   //addresses
   addresses: url(Controllers.addresses),
   cities: url(Controllers.addresses, 'cities'),
@@ -59,8 +62,9 @@ export const MODES = {
   UserProfile: 'Profil użytkownika',
   Buildings: 'Budynki wspólnoty',
   HomePage: 'Strona główna',
-  BuildingDetails: "Szczegóły budynku",
-  Announcements: "Tablica ogłoszeń",
-  UsersTables: "Użytkownicy",
-  Issues: "Tablica zgłoszeń"
+  BuildingDetails: 'Szczegóły budynku',
+  Announcements: 'Tablica ogłoszeń',
+  UsersTables: 'Użytkownicy',
+  Issues: 'Tablica zgłoszeń',
+  ResidentLocals: 'Twoje lokale'
 };
