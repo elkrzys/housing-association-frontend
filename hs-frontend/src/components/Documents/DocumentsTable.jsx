@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -17,66 +17,48 @@ import CustomModal from '../CustomModal.jsx';
 import { ToastError, ToastSuccess, ToastWarning } from '../Toasts.js';
 import { AuthContext } from '../../contexts';
 import Issue from './Issue';
-import AddIssueForm from './AddIssueForm';
-import { IssuesService, LocalsService } from '../../services';
+import { DocumentsService } from '../../services';
 import EditCellBody from './EditCellBody.jsx';
 
-const IssuesTable = () => {
+const DocumentsTable = () => {
   const { user, role } = useContext(AuthContext);
   const toast = useToast();
-  const [issues, setIssues] = useState([]);
-  const [locals, setLocals] = useState([]);
-  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [documentsByAuthor, setDocumentsByAuthor] = useState([]);
+  const [documentsByReceiver, setDocumentsByReceiver] = useState([]);
+  const [allDocuments, setAllDocuments] = useState([]);
+  const [selectedDocument, setSelectedDocument] = useState(null);
   const [refresh, setRefresh] = useState(false);
 
   const handleRefresh = async () => {
-    await getIssues();
+    await getDocuments();
     setRefresh(!refresh);
   };
 
-  const closeAndRefresh = closeAction => {
-    closeAction();
-    handleRefresh();
-  };
-
-  const resolveIssue = async () => {
-    const response = await IssuesService.resolveIssue(selectedIssue.id);
-    if (response.status === 'SUCCESS') {
-      await handleRefresh();
-      onDisplayClose();
-      ToastSuccess(toast, 'Pomyślnie zatwierdzono zgłoszenie');
-    } else {
-      ToastError(toast, 'Nie można było zatwierdzić zgłoszenia');
-    }
-  };
-
-  const getIssues = async () => {
-    let response;
+  const getDocuments = async () => {
     if (role === 'Resident') {
-      response = await IssuesService.getAllByAuthorId(user.id);
+      const authorResponse = await DocumentsService.getByAuthor(user.id);
+      const receiverResponse = await DocumentsService.getByReceiver(user.id);
+      if (
+        authorResponse.status === 'SUCCESS' &&
+        receiverResponse.status === 'SUCCESS'
+      ) {
+        setDocumentsByAuthor(authorResponse.data);
+        setDocumentsByReceiver(receiverResponse.data);
+      } else {
+        ToastError(toast, 'Wystąpił problem podczas wczytywania zgłoszeń');
+      }
     } else {
-      response = await IssuesService.getAllNotCancelled();
-    }
-
-    if (response.status === 'SUCCESS') {
-      setIssues(response.data);
-    } else {
-      ToastError(toast, 'Wystąpił problem podczas wczytywania zgłoszeń');
-    }
-  };
-
-  const getLocals = async () => {
-    const localsResponse = await LocalsService.getAllByResidentId(user.id);
-    if (localsResponse.status === 'SUCCESS') {
-      setLocals(localsResponse.data);
-    } else {
-      ToastError(toast, 'Wystąpił problem podczas wczytywania mieszkań');
+      const allDocsResponse = await DocumentsService.getAll();
+      if (allDocsResponse.status === 'SUCCESS') {
+        setAllDocuments(response.data);
+      } else {
+        ToastError(toast, 'Wystąpił problem podczas wczytywania zgłoszeń');
+      }
     }
   };
 
   useEffect(() => {
-    getIssues();
-    getLocals();
+    getDocuments();
   }, [refresh]);
 
   const {
@@ -93,10 +75,9 @@ const IssuesTable = () => {
 
   const defColumns = [
     { Header: 'Nr.', accessor: 'id' },
-    { Header: 'Adres', accessor: 'address' },
     { Header: 'Tytuł', accessor: 'title' },
-    { Header: 'Utworzone', accessor: 'created' },
-    { Header: 'Stan', accessor: 'resolved' },
+    { Header: 'Data dodania', accessor: 'created' },
+    { Header: 'Termin ważności', accessor: 'removes' },
     { Header: 'Autor', accessor: 'author' },
   ];
 
@@ -145,7 +126,10 @@ const IssuesTable = () => {
                     header={'Dodaj zgłoszenie'}>
                     <AddIssueForm
                       locals={locals}
-                      onAddClose={() => closeAndRefresh(onAddClose)}
+                      onAddClose={() => {
+                        handleRefresh();
+                        onAddClose();
+                      }}
                     />
                   </CustomModal>
                 </Flex>
@@ -169,7 +153,7 @@ const IssuesTable = () => {
               <CustomModal
                 size="lg"
                 onClose={onDisplayClose}
-                isOpen={isDisplayOpen && selectedIssue?.id === issue.id}
+                isOpen={isDisplayOpen}
                 footerContent={
                   role !== 'Resident' &&
                   !selectedIssue?.resolved && (
@@ -177,6 +161,7 @@ const IssuesTable = () => {
                       colorScheme="green"
                       onClick={async () => {
                         await resolveIssue(selectedIssue.id);
+                        await handleRefresh();
                       }}>
                       Zatwierdź sprawę
                     </Button>
@@ -222,4 +207,4 @@ const IssuesTable = () => {
     </Box>
   );
 };
-export default IssuesTable;
+export default DocumentsTable;

@@ -7,7 +7,7 @@ import pl from 'date-fns/locale/pl';
 import { useField, useFormikContext } from 'formik';
 registerLocale('pl', pl);
 
-const ExampleCustomInput = forwardRef(({ value, onClick, w }, ref) => (
+const CustomInput = forwardRef(({ value, onClick, w }, ref) => (
   <Button
     w={w}
     bg="none"
@@ -44,7 +44,7 @@ const DatePickerField = ({ ...props }) => {
       minDate={today}
       todayButton={'Dzisiaj'}
       locale="pl"
-      customInput={<ExampleCustomInput w={props.w} />}
+      customInput={<CustomInput w={props.w} />}
     />
   );
 };

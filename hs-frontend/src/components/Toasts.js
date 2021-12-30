@@ -1,6 +1,3 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import { useToast } from '@chakra-ui/react';
-
 export const ToastWarning = (toast, title, duration = 2500) => toast({
     title: title,
     status: 'warning',

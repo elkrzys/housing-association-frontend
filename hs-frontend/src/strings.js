@@ -11,6 +11,7 @@ const Controllers = {
   locals: 'locals',
   issues: 'issues',
   announcements: 'announcements',
+  documents: 'documents',
   addresses: 'addresses'
 };
 
@@ -51,6 +52,10 @@ export const Endpoints = {
   announcementsReceiver: url(Controllers.announcements, 'receiver'),
   announcementsPostByBuildings: url(Controllers.announcements, 'add-by-buildings'),
   announcementsPostByAddress: url(Controllers.announcements, 'add-by-address'),
+  // documents
+  documents: url(Controllers.documents),
+  documentsByAuthor: url(Controllers.documents, 'author'),
+  documentsByReceiver: url(Controllers.documents, 'receiver'),
   //addresses
   addresses: url(Controllers.addresses),
   cities: url(Controllers.addresses, 'cities'),

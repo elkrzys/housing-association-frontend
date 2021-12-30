@@ -1,12 +1,4 @@
-import {
-  Flex,
-  Box,
-  HStack,
-  Heading,
-  Text,
-  Divider,
-  Stack,
-} from '@chakra-ui/react';
+import { Box, HStack, Heading, Text, Divider } from '@chakra-ui/react';
 
 const Announcement = ({ title, content, author, date }) => {
   return (

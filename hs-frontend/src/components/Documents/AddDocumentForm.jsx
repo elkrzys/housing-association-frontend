@@ -1,3 +1,4 @@
+import { useContext, useEffect, useState } from 'react';
 import {
   Flex,
   Box,
@@ -10,20 +11,26 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
+import Select from 'react-select';
 import { Field, Form, Formik } from 'formik';
 import { IssuesService } from '../../services';
 import { AuthContext } from '../../contexts';
-import { useContext, useEffect, useState } from 'react';
 import { BasicInput, MultiSelect } from '../Inputs';
 import { LocalsService } from '../../services';
 import { ToastError, ToastSuccess } from '../Toasts';
 
-const AddIssueForm = ({ locals, onAddClose }) => {
+const AddDocumentForm = ({ locals, onAddClose }) => {
   const { user } = useContext(AuthContext);
   const toast = useToast();
 
+  const options = [
+    { value: 'chocolate', label: 'Chocolate' },
+    { value: 'strawberry', label: 'Strawberry' },
+    { value: 'vanilla', label: 'Vanilla' },
+  ];
+
   const setSubmit = async (values, actions) => {
-    values.local === '' &&
+    if (values.local == '')
       ToastError(
         toast,
         'Należy wybrać lokal, którego dotyczy zgłoszenie',
@@ -35,25 +42,23 @@ const AddIssueForm = ({ locals, onAddClose }) => {
       values.content,
       JSON.parse(values.local),
       user.id,
-      onSuccess,
     );
+    console.log(response);
 
     if (response.status === 'SUCCESS') {
+      console.log('add successful');
       actions.resetForm({
         values: {
           title: '',
           content: '',
         },
       });
+      ToastSuccess(toast, 'Zgłoszenie dodane pomyślnie');
+      onAddClose();
     } else {
       ToastError(toast, 'Zgłoszenie nie zostało dodane');
     }
     actions.setSubmitting(false);
-  };
-
-  const onSuccess = () => {
-    ToastSuccess(toast, 'Zgłoszenie dodane pomyślnie');
-    onAddClose();
   };
 
   return (
@@ -78,37 +83,12 @@ const AddIssueForm = ({ locals, onAddClose }) => {
                     defaultValue={values.title}
                     isRequired
                   />
-                  <FormControl id="content" isRequired>
-                    <FormLabel>Treść zgłoszenia</FormLabel>
-                    <Textarea
-                      placeholder="Wpisz treść zgłoszenia"
-                      defaultValue={values.content}
-                      rows="8"
-                      onChange={handleChange}
-                      p="3"
-                    />
-                  </FormControl>
-
-                  <Select
-                    placeholder="Wybierz lokal"
-                    name="local"
-                    onChange={handleChange}
-                    values={values.local}>
-                    {locals.map(local => {
-                      let localNumber =
-                        local.number !== '0' ? `/${local.number}` : '';
-                      return (
-                        <option
-                          key={local.id}
-                          value={JSON.stringify({
-                            localId: local.id,
-                            buildingId: local.buildingId,
-                          })}
-                          label={`${local.address?.street} ${local.buildingNumber}${localNumber}`}
-                        />
-                      );
-                    })}
-                  </Select>
+                  {role !== 'Resident' && (
+                    <FormControl id="targetUsers" isRequired>
+                      <FormLabel>Wybierz odbiorców</FormLabel>
+                      <Select options={options} />
+                    </FormControl>
+                  )}
 
                   <Stack spacing="10">
                     <Button
@@ -131,4 +111,4 @@ const AddIssueForm = ({ locals, onAddClose }) => {
     </Formik>
   );
 };
-export default AddIssueForm;
+export default AddDocumentForm;

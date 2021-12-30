@@ -16,20 +16,17 @@ const MultiSelect = ({
   buttonProps,
   options = null,
   complexOptions = null,
+  preSelectedOptions,
 }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
-  useEffect(() => {}, [selectedOptions]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // useEffect(() => {
-  //   if (options?.length > 0 && options?.length < 2) {
-  //     setSelectedOptions(options.slice(0));
-  //   }
-  //   if (complexOptions?.length > 0 && complexOptions?.length < 2) {
-  //     setSelectedOptions(complexOptions.slice(0));
-  //   }
-  // }, []);
-
-  //console.log(options.slice(0));
+  useEffect(() => {
+    if (preSelectedOptions?.length && !isLoaded) {
+      setSelectedOptions(preSelectedOptions);
+      setIsLoaded(true);
+    }
+  }, [selectedOptions]);
 
   return (
     <Menu closeOnSelect={false}>
@@ -70,7 +67,6 @@ const MultiSelect = ({
                 //setSelectedOptions(values.filter(_ => _.length));
                 setSelectedOptions(values);
                 onChange?.(values);
-                console.log(selectedOptions.length);
               }}>
               {complexOptions !== null
                 ? complexOptions.map(option => (

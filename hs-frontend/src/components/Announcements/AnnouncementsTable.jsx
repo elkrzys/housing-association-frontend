@@ -21,6 +21,8 @@ import AddAnnouncementForm from './AddAnnouncementForm';
 import { AuthContext } from '../../contexts';
 import { AnnouncementsService } from '../../services';
 import { ToastError, ToastSuccess } from '../Toasts';
+import EditAnnouncementForm from './EditAnnouncementForm';
+import EditAnnouncementsCellBody from './EditAnnouncementsCellBody';
 
 const AnnouncementsTable = () => {
   const { user, role } = useContext(AuthContext);
@@ -46,6 +48,11 @@ const AnnouncementsTable = () => {
   const handleRefresh = async () => {
     await getAnnouncements();
     setRefresh(!refresh);
+  };
+
+  const closeAndRefresh = closeAction => {
+    closeAction();
+    handleRefresh();
   };
 
   useEffect(() => {
@@ -104,10 +111,7 @@ const AnnouncementsTable = () => {
                     size="lg"
                     header="Dodaj ogłoszenie">
                     <AddAnnouncementForm
-                      onAddClose={() => {
-                        handleRefresh();
-                        onAddClose();
-                      }}
+                      onAddClose={() => closeAndRefresh(onAddClose)}
                     />
                   </CustomModal>
                 </Flex>
@@ -131,7 +135,9 @@ const AnnouncementsTable = () => {
               <CustomModal
                 size="lg"
                 onClose={onDisplayClose}
-                isOpen={isDisplayOpen}>
+                isOpen={
+                  isDisplayOpen && announcement.id === selectedAnnouncement?.id
+                }>
                 <Announcement
                   title={selectedAnnouncement?.title}
                   content={selectedAnnouncement?.content}
@@ -148,23 +154,12 @@ const AnnouncementsTable = () => {
                 {new Date(announcement.expirationDate).toLocaleDateString()}
               </Td>
               <Td w="20%">{`${announcement.author.firstName} ${announcement.author.lastName}`}</Td>
-
               {role !== 'Resident' && (
                 <Td>
-                  <Flex justifyContent="center">
-                    <Button
-                      bg="blue.100"
-                      _hover={{ bg: 'blue.200' }}
-                      onClick={e => {
-                        e.stopPropagation();
-                        //   setMode({
-                        //     mode: MODES.EditAnnouncement,
-                        //     contentId: announcement.id,
-                        //   });
-                      }}>
-                      <FaEdit />
-                    </Button>
-                  </Flex>
+                  <EditAnnouncementsCellBody
+                    announcement={announcement}
+                    refresh={() => handleRefresh()}
+                  />
                 </Td>
               )}
             </Tr>
