@@ -97,6 +97,7 @@ const OwnedDocumentsTable = () => {
             <Th>
               <Flex justifyContent="center">
                 <Button
+                  w="100%"
                   bg="gray.100"
                   _hover={{ bg: 'white' }}
                   onClick={onAddOpen}>

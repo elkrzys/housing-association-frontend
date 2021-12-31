@@ -1,44 +1,48 @@
 import React, { useState } from 'react';
-import { FileUploader } from 'react-drag-drop-files';
 import { useField, useFormikContext } from 'formik';
 import { Box, Text } from '@chakra-ui/react';
+import { FilePond, registerPlugin } from 'react-filepond';
+import 'filepond/dist/filepond.min.css';
+import '../filepond.css';
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+registerPlugin(FilePondPluginFileValidateType);
 
-const fileTypes = ['PDF'];
+const fileTypes = ['application/pdf'];
+
+const labels = {
+  labelIdle:
+    'Przeciągnij i upuść dokument pdf lub <span class="filepond--label-action"> przeglądaj </span>',
+  labelFileTypeNotAllowed: 'Pole zawiera nieprawidłowy plik',
+  fileValidateTypeLabelExpectedTypes: 'Plik powinien być w formacie pdf',
+};
 
 const FileDragAndDrop = ({ ...props }) => {
   const { setFieldValue } = useFormikContext();
   const [field] = useField(props);
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState();
 
-  const handleChange = file => {
-    setFile(file);
-    setFieldValue(field.name, file);
+  const handleFileUpload = files => {
+    const [currentFile] = files.map(item => item.file);
+    setFiles(files);
+    setFieldValue(field.name, currentFile);
+    if (currentFile) console.log(currentFile);
   };
 
   return (
-    <FileUploader
-      {...props}
-      {...field}
-      handleChange={handleChange}
-      types={fileTypes}>
-      <Box
-        p="10"
-        fontSize="md"
-        textAlign="center"
-        rounded="md"
-        bg={file ? 'blue.100' : 'white'}
-        border="1px solid"
-        borderColor={file ? 'blue.500' : 'gray.400'}
-        _hover={{ bg: 'gray.100' }}>
-        {!file ? (
-          <Text>Kliknj, aby wybrać plik lub upuść go tutaj</Text>
-        ) : (
-          <Text textColor={'gray.600'}>
-            Wybrany plik: <b>{file.name}</b>
-          </Text>
-        )}
-      </Box>
-    </FileUploader>
+    <div class="filepond-wrapper" style={{ hover: 'background: blue' }}>
+      <FilePond
+        {...props}
+        {...field}
+        credits={null}
+        acceptedFileTypes={fileTypes}
+        instantUpload={false}
+        files={files}
+        maxFiles={1}
+        onupdatefiles={files => handleFileUpload(files)}
+        {...labels}
+        dropValidation
+      />
+    </div>
   );
 };
 export default FileDragAndDrop;

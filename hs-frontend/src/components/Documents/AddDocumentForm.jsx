@@ -10,7 +10,7 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import { Select } from 'react-select';
+import Select from 'react-select';
 import { Field, Form, Formik } from 'formik';
 import { DocumentsService, IssuesService } from '../../services';
 import { AuthContext } from '../../contexts';
@@ -19,7 +19,9 @@ import { LocalsService } from '../../services';
 import { ToastError, ToastSuccess } from '../Toasts';
 import FileDragAndDrop from '../FileDragAndDrop';
 
-const AddDocumentForm = ({ locals, onAddClose }) => {
+const acceptedFileTypes = ['application/pdf'];
+
+const AddDocumentForm = ({ onAddClose }) => {
   const { user, role } = useContext(AuthContext);
   const toast = useToast();
 
@@ -30,9 +32,11 @@ const AddDocumentForm = ({ locals, onAddClose }) => {
   ];
 
   const setSubmit = async (values, actions) => {
-    if (!values.file)
-      ToastError(toast, 'Należy wybrać dokument do przesłania', 3000);
-    console.log(values.file.name);
+    console.log(values.file.type);
+    if (!values.file) ToastError(toast, 'Należy wybrać dokument do przesłania');
+    if (!acceptedFileTypes.some(type => type === values.file.type))
+      ToastError(toast, 'Dokument ma nieprawidłowy format');
+
     // let response = await DocumentsService.uploadDocument(
     //   values.title,
     //   values.content,
@@ -83,7 +87,11 @@ const AddDocumentForm = ({ locals, onAddClose }) => {
                   {role !== 'Resident' && (
                     <FormControl id="targetUsers" isRequired>
                       <FormLabel>Wybierz odbiorców</FormLabel>
-                      <ReactSelect options={options} />
+                      <Select
+                        options={options}
+                        openMenuOnClick={false}
+                        isMulti
+                      />
                     </FormControl>
                   )}
                   <Stack spacing="10">
