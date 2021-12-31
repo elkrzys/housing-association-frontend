@@ -7,57 +7,52 @@ import {
   Button,
   FormLabel,
   FormControl,
-  Select,
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import Select from 'react-select';
+import { Select } from 'react-select';
 import { Field, Form, Formik } from 'formik';
-import { IssuesService } from '../../services';
+import { DocumentsService, IssuesService } from '../../services';
 import { AuthContext } from '../../contexts';
 import { BasicInput, MultiSelect } from '../Inputs';
 import { LocalsService } from '../../services';
 import { ToastError, ToastSuccess } from '../Toasts';
+import FileDragAndDrop from '../FileDragAndDrop';
 
 const AddDocumentForm = ({ locals, onAddClose }) => {
-  const { user } = useContext(AuthContext);
+  const { user, role } = useContext(AuthContext);
   const toast = useToast();
 
   const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' },
+    { value: '1', label: 'Jan Kowalski' },
+    { value: '2', label: 'Marek Pieczarek' },
+    { value: '3', label: 'Janina Koniczyna' },
   ];
 
   const setSubmit = async (values, actions) => {
-    if (values.local == '')
-      ToastError(
-        toast,
-        'Należy wybrać lokal, którego dotyczy zgłoszenie',
-        3000,
-      );
+    if (!values.file)
+      ToastError(toast, 'Należy wybrać dokument do przesłania', 3000);
+    console.log(values.file.name);
+    // let response = await DocumentsService.uploadDocument(
+    //   values.title,
+    //   values.content,
+    //   JSON.parse(values.local),
+    //   user.id,
+    // );
 
-    let response = await IssuesService.addIssue(
-      values.title,
-      values.content,
-      JSON.parse(values.local),
-      user.id,
-    );
-    console.log(response);
-
-    if (response.status === 'SUCCESS') {
-      console.log('add successful');
-      actions.resetForm({
-        values: {
-          title: '',
-          content: '',
-        },
-      });
-      ToastSuccess(toast, 'Zgłoszenie dodane pomyślnie');
-      onAddClose();
-    } else {
-      ToastError(toast, 'Zgłoszenie nie zostało dodane');
-    }
+    // if (response.status === 'SUCCESS') {
+    //   console.log('add successful');
+    //   actions.resetForm({
+    //     values: {
+    //       title: '',
+    //       content: '',
+    //     },
+    //   });
+    //   ToastSuccess(toast, 'Zgłoszenie dodane pomyślnie');
+    //   onAddClose();
+    // } else {
+    //   ToastError(toast, 'Zgłoszenie nie zostało dodane');
+    // }
     actions.setSubmitting(false);
   };
 
@@ -65,8 +60,7 @@ const AddDocumentForm = ({ locals, onAddClose }) => {
     <Formik
       initialValues={{
         title: '',
-        content: '',
-        local: '',
+        file: null,
       }}
       onSubmit={setSubmit}>
       {({ values, isSubmitting, handleChange }) => (
@@ -83,13 +77,15 @@ const AddDocumentForm = ({ locals, onAddClose }) => {
                     defaultValue={values.title}
                     isRequired
                   />
+                  <Box>
+                    <FileDragAndDrop name="file" />
+                  </Box>
                   {role !== 'Resident' && (
                     <FormControl id="targetUsers" isRequired>
                       <FormLabel>Wybierz odbiorców</FormLabel>
-                      <Select options={options} />
+                      <ReactSelect options={options} />
                     </FormControl>
                   )}
-
                   <Stack spacing="10">
                     <Button
                       bg="green.300"

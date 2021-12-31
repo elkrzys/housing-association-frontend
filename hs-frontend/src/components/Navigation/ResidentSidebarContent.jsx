@@ -67,7 +67,13 @@ const SidebarContent = () => {
             setMode({ mode: MODES.ResidentLocals, contentId: null })
           }
         />
-        <NavItem icon={FaBriefcase} title="Dokumenty" />
+        <NavItem
+          icon={FaBriefcase}
+          title="Dokumenty"
+          onClick={() =>
+            setMode({ mode: MODES.ResidentDocuments, contentId: null })
+          }
+        />
         <NavItem
           icon={FaUser}
           title="Twój profil"

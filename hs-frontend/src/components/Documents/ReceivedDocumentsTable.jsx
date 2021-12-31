@@ -34,7 +34,7 @@ const ReceivedDocumentsTable = () => {
 
   useEffect(() => {
     getDocuments();
-  }, [refresh]);
+  }, []);
 
   const columns = [
     { Header: 'Nr.', accessor: 'id' },

@@ -16,12 +16,16 @@ import { FaArrowDown, FaArrowUp, FaBan, FaEdit } from 'react-icons/fa';
 import { ToastError, ToastSuccess, ToastWarning } from '../Toasts.js';
 import { AuthContext } from '../../contexts';
 import { DocumentsService } from '../../services';
+import CustomModal from '../CustomModal.jsx';
+import CustomAlertDialog from '../CustomAlertDialog';
+import AddDocumentForm from './AddDocumentForm.jsx';
 
 const OwnedDocumentsTable = () => {
-  const { user, role } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const toast = useToast();
   const [documents, setDocuments] = useState([]);
   const [selectedDocumentId, setSelectedDocumentId] = useState(null);
+  const [refresh, setRefresh] = useState(false);
   const cancelRef = useRef();
 
   const getDocuments = async () => {

@@ -2,9 +2,9 @@ import { Box, Button } from '@chakra-ui/react';
 import React, { useState, forwardRef } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useField, useFormikContext } from 'formik';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import pl from 'date-fns/locale/pl';
-import { useField, useFormikContext } from 'formik';
 registerLocale('pl', pl);
 
 const CustomInput = forwardRef(({ value, onClick, w }, ref) => (

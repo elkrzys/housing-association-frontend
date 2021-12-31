@@ -7,7 +7,7 @@ import {
   AccordionIcon,
 } from '@chakra-ui/react';
 
-const AccordionTable = ({ header, table }) => {
+const AccordionTable = ({ header, children }) => {
   return (
     <AccordionItem>
       <h2>
@@ -19,8 +19,9 @@ const AccordionTable = ({ header, table }) => {
         </AccordionButton>
       </h2>
       <AccordionPanel pb={4} w="100%">
-        {table}
+        {children}
       </AccordionPanel>
     </AccordionItem>
   );
 };
+export default AccordionTable;
