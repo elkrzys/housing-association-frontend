@@ -61,17 +61,17 @@ const DocumentsTable = () => {
     getDocuments();
   }, [refresh]);
 
-  const {
-    isOpen: isAddOpen,
-    onOpen: onAddOpen,
-    onClose: onAddClose,
-  } = useDisclosure();
+  // const {
+  //   isOpen: isAddOpen,
+  //   onOpen: onAddOpen,
+  //   onClose: onAddClose,
+  // } = useDisclosure();
 
-  const {
-    isOpen: isDisplayOpen,
-    onOpen: onDisplayOpen,
-    onClose: onDisplayClose,
-  } = useDisclosure();
+  // const {
+  //   isOpen: isDisplayOpen,
+  //   onOpen: onDisplayOpen,
+  //   onClose: onDisplayClose,
+  // } = useDisclosure();
 
   const defColumns = [
     { Header: 'Nr.', accessor: 'id' },

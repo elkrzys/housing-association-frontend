@@ -20,6 +20,15 @@ import CustomModal from '../CustomModal.jsx';
 import CustomAlertDialog from '../CustomAlertDialog';
 import AddDocumentForm from './AddDocumentForm.jsx';
 
+const openInNewTab = url => {
+  const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+  if (newWindow) newWindow.opener = null;
+};
+
+const onClickUrl = url => {
+  return () => openInNewTab(url);
+};
+
 const OwnedDocumentsTable = () => {
   const { user } = useContext(AuthContext);
   const toast = useToast();
@@ -117,9 +126,9 @@ const OwnedDocumentsTable = () => {
           {documents.map(document => (
             <Tr
               key={document.id}
-              onClick={() => {
-                //download
-              }}
+              onClick={onClickUrl(
+                `http://localhost:5000/documents/${document.filePath}`,
+              )}
               _hover={{
                 boxShadow: '0px 0px 4px 0px rgba(66, 68, 90, 0.52);',
                 transition: '0.1s',
@@ -130,27 +139,29 @@ const OwnedDocumentsTable = () => {
               </Td>
               <Td w="20%">{document.title}</Td>
               <Td>{new Date(document.created).toLocaleDateString()}</Td>
-              <Td>{document.removes}</Td>
+              <Td>{document.removes || 'Nie określono'}</Td>
               <Td>
-                <Button
-                  bg="red.100"
-                  _hover={{ bg: 'red.200' }}
-                  onClick={e => {
-                    setSelectedDocumentId(document.id);
-                    onAlertOpen();
-                    e.stopPropagation();
-                  }}>
-                  <FaBan />
-                  <CustomAlertDialog
-                    leastDestructiveRef={cancelRef}
-                    onClose={onAlertClose}
-                    isOpen={isAlertOpen && selectedDocumentId === document.id}
-                    onAction={() => deleteDocument(selectedDocumentId)}
-                    actionName={'Usuń'}
-                    header={'Usunąć dokument?'}>
-                    <p>Tej operacji nie da się cofnąć.</p>
-                  </CustomAlertDialog>
-                </Button>
+                <Flex justifyContent="center">
+                  <Button
+                    bg="red.100"
+                    _hover={{ bg: 'red.200' }}
+                    onClick={e => {
+                      setSelectedDocumentId(document.id);
+                      onAlertOpen();
+                      e.stopPropagation();
+                    }}>
+                    <FaBan />
+                    <CustomAlertDialog
+                      leastDestructiveRef={cancelRef}
+                      onClose={onAlertClose}
+                      isOpen={isAlertOpen && selectedDocumentId === document.id}
+                      onAction={() => deleteDocument(selectedDocumentId)}
+                      actionName={'Usuń'}
+                      header={'Usunąć dokument?'}>
+                      <p>Tej operacji nie da się cofnąć.</p>
+                    </CustomAlertDialog>
+                  </Button>
+                </Flex>
               </Td>
             </Tr>
           ))}
