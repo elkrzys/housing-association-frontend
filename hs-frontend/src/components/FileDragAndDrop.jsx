@@ -29,20 +29,18 @@ const FileDragAndDrop = ({ ...props }) => {
   };
 
   return (
-    <div class="filepond-wrapper" style={{ hover: 'background: blue' }}>
-      <FilePond
-        {...props}
-        {...field}
-        credits={null}
-        acceptedFileTypes={fileTypes}
-        instantUpload={false}
-        files={files}
-        maxFiles={1}
-        onupdatefiles={files => handleFileUpload(files)}
-        {...labels}
-        dropValidation
-      />
-    </div>
+    <FilePond
+      {...props}
+      {...field}
+      credits={null}
+      acceptedFileTypes={fileTypes}
+      instantUpload={false}
+      files={files}
+      maxFiles={1}
+      onupdatefiles={files => handleFileUpload(files)}
+      {...labels}
+      dropValidation
+    />
   );
 };
 export default FileDragAndDrop;

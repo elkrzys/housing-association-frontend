@@ -14,7 +14,6 @@ const CustomInput = forwardRef(({ value, onClick, w }, ref) => (
     border={'2px solid'}
     borderColor="blue.100"
     rounded="md"
-    // bg="cyan.100"
     _hover={{ bg: 'blue.100' }}
     _active={{ bg: 'blue.100' }}
     onClick={onClick}
@@ -26,10 +25,10 @@ const CustomInput = forwardRef(({ value, onClick, w }, ref) => (
 const DatePickerField = ({ ...props }) => {
   const { setFieldValue } = useFormikContext();
   const [field] = useField(props);
-  //const [startDate, setDate] = useState(props.selectedDate);
+  const [startDate, setDate] = useState(props.selectedDate);
 
   const selectDateHandler = date => {
-    //setDate(date);
+    setDate(date);
     setFieldValue(field.name, date);
   };
   const today = new Date();
@@ -39,7 +38,7 @@ const DatePickerField = ({ ...props }) => {
       {...field}
       {...props}
       dateFormat="dd-MM-yyyy"
-      selected={(field.value && new Date(field.value)) || null}
+      selected={field.value && new Date(field.value)}
       onChange={selectDateHandler}
       minDate={today}
       todayButton={'Dzisiaj'}
