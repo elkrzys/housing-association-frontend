@@ -5,16 +5,14 @@ import {
   HStack,
   Button,
   Heading,
-  useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
-import { useContext } from 'react';
-import { BasicInput, PasswordInput } from '../Inputs';
-import { AuthContext } from '../../contexts/AuthContext';
+import { BasicInput } from '../Inputs';
 import { ToastError, ToastSuccess } from '../Toasts';
+import { UsersService } from '../../services';
 
-const AddWorkerForm = onClose => {
+const AddWorkerForm = ({ onClose }) => {
   const toast = useToast();
 
   const setSubmit = async (values, actions) => {
@@ -24,7 +22,9 @@ const AddWorkerForm = onClose => {
       phoneNumber: values.phoneNumber,
       email: values.email,
     };
-    if (await UsersService.addWorker(worker)) {
+
+    const response = await UsersService.addWorker(worker);
+    if (response.status === 'SUCCESS') {
       actions.resetForm();
       onClose();
       ToastSuccess(toast, 'Pomyślnie dodano pracownika');
@@ -48,7 +48,7 @@ const AddWorkerForm = onClose => {
           <Flex align="start" justify="center">
             <Stack w="100%" spacing="8" mx="auto" py="6" px="6">
               <Stack align="center">
-                <Heading fontSize="2xl">Utwórz konto</Heading>
+                <Heading fontSize="2xl">Dodaj konto pracownika</Heading>
               </Stack>
               <Box rounded="lg" bg="white" boxShadow="lg" py="6" px="8">
                 <Stack spacing="4">
@@ -86,14 +86,14 @@ const AddWorkerForm = onClose => {
                     type="email"
                     isRequired
                   />
-                  <Stack pt={4}>
+                  <Stack pt="4">
                     <Button
                       bg="blue.400"
                       color="white"
                       _hover={{ bg: 'blue.500' }}
                       type="submit"
                       isLoading={isSubmitting}>
-                      Zarejestruj
+                      Zarejestruj pracownika
                     </Button>
                   </Stack>
                 </Stack>

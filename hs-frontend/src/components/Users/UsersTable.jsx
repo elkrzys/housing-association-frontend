@@ -18,6 +18,7 @@ import CustomModal from '../CustomModal.jsx';
 import { MODES } from '../../strings';
 import { UsersService } from '../../services';
 import { ToastError } from '../Toasts';
+import AddWorkerForm from './AddWorkerForm';
 
 const UsersTable = ({ usersRole }) => {
   const [users, setUsers] = useState([]);
@@ -38,8 +39,7 @@ const UsersTable = ({ usersRole }) => {
     }
   };
 
-  const handleCloseAndRefresh = async () => {
-    await getUsers();
+  const handleCloseAndRefresh = () => {
     setRefresh(!refresh);
     onAddClose();
   };
