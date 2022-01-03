@@ -3,24 +3,22 @@ import { Endpoints, REQUEST_STATUS } from '../strings';
 
 const UsersService = {
   getUser: async id => {
-    let responseData = null;
     try {
-      responseData = await axios.get(`${Endpoints.users}/${id}`);
-      return { status: REQUEST_STATUS.SUCCESS, data: responseData.data };
+      const response = await axios.get(`${Endpoints.users}/${id}`);
+      return { status: REQUEST_STATUS.SUCCESS, data: response.data };
     } catch (error) {
       return { status: REQUEST_STATUS.ERROR, error };
     }
   },
   updateUser: async (id, firstName, lastName, phoneNumber, email) => {
-    let responseData = null;
     try {
-      responseData = await axios.put(`${Endpoints.users}/${id}`, {
+      const response = await axios.put(`${Endpoints.users}/${id}`, {
         firstName,
         lastName,
         phoneNumber,
         email
       });
-      return { status: REQUEST_STATUS.SUCCESS, data: responseData.data };
+      return { status: REQUEST_STATUS.SUCCESS, data: response.data };
     } catch (error) {
       return { status: REQUEST_STATUS.ERROR, error };
     }
@@ -45,6 +43,21 @@ const UsersService = {
       return { status: REQUEST_STATUS.ERROR, error};
     }
   },
- 
+  unregisterUser: async (userId, password) => {
+    try{
+      const response = await axios.put(`${Endpoints.usersUnregister}/${userId}`, password, { headers: {'Content-Type': 'application/json'} });
+      return { status: REQUEST_STATUS.SUCCESS, data: response.data };
+    } catch (error) {
+      return { status: REQUEST_STATUS.ERROR, error};
+    }
+  },
+  banUser: async (userId) => {
+    try{
+      const response = await axios.put(`${Endpoints.usersBan}/${userId}`);
+      return { status: REQUEST_STATUS.SUCCESS, data: response.data };
+    } catch (error) {
+      return { status: REQUEST_STATUS.ERROR, error};
+    }
+  }
 };
 export default UsersService;

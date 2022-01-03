@@ -12,10 +12,9 @@ import { Form, Formik } from 'formik';
 import { useContext } from 'react';
 import { BasicInput, PasswordInput } from '../Inputs';
 import { AuthContext } from '../../contexts/AuthContext';
+import { ToastError, ToastSuccess } from '../Toasts';
 
 const RegisterForm = () => {
-  const flexBg = useColorModeValue('none', 'gray.800');
-  const boxBg = useColorModeValue('white', 'gray.700');
   const { signUp } = useContext(AuthContext);
   const toast = useToast();
 
@@ -29,22 +28,10 @@ const RegisterForm = () => {
         values.password,
       )
     ) {
-      console.log('registration successful');
       actions.resetForm();
-      toast({
-        title: 'Pomyślnie zarejestrowano',
-        status: 'success',
-        isClosable: true,
-        duration: 2500,
-      });
+      ToastSuccess(toast, 'Pomyślnie zarejestrowano');
     } else {
-      console.log('registration failed');
-      toast({
-        title: 'Użytkownik już istnieje',
-        status: 'error',
-        isClosable: true,
-        duration: 2500,
-      });
+      ToastError(toast, 'Użytkownik już istnieje');
     }
     actions.setSubmitting(false);
   };
@@ -62,12 +49,12 @@ const RegisterForm = () => {
       onSubmit={setSubmit}>
       {props => (
         <Form>
-          <Flex align="start" justify="center" bg={flexBg}>
+          <Flex align="start" justify="center">
             <Stack w="100%" spacing={8} mx="auto" py={6} px={6}>
               <Stack align="center">
                 <Heading fontSize="2xl">Utwórz konto</Heading>
               </Stack>
-              <Box rounded="lg" bg={boxBg} boxShadow="lg" py={6} px={8}>
+              <Box rounded="lg" bg="white" boxShadow="lg" py={6} px={8}>
                 <Stack spacing={4}>
                   <HStack spacing={2}>
                     <BasicInput

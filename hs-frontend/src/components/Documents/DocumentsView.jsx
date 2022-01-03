@@ -1,21 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Flex, Accordion } from '@chakra-ui/react';
 import OwnedDocumentsTable from './OwnedDocumentsTable';
 import ReceivedDocumentsTable from './ReceivedDocumentsTable';
 import AccordionTable from '../AccordionTable';
+import { AuthContext } from '../../contexts';
 
-const ResidentDocumentsView = () => {
+const DocumentsView = () => {
+  const { role } = useContext(AuthContext);
   return (
     <Flex w="full">
       <Accordion allowMultiple w="100%">
-        <AccordionTable header="Własne dokumenty">
+        <AccordionTable header="Wysłane dokumenty">
           <OwnedDocumentsTable />
         </AccordionTable>
-        <AccordionTable header="Otrzymane dokumenty">
+        <AccordionTable
+          header={
+            role === 'Resident'
+              ? 'Otrzymane dokumenty'
+              : 'Dokumenty od mieszkańców'
+          }>
           <ReceivedDocumentsTable />
         </AccordionTable>
       </Accordion>
     </Flex>
   );
 };
-export default ResidentDocumentsView;
+export default DocumentsView;

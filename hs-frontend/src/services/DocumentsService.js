@@ -2,6 +2,19 @@ import axios from 'axios';
 import { Endpoints, REQUEST_STATUS } from '../strings';
 
 const DocumentsService = {
+  getFrom: async (from) => {
+    let response;
+    try{
+        if(from === 'residents'){
+          response = await axios.get(Endpoints.documentsFromResidents);
+        }else{
+          response = await axios.get(Endpoints.documentsFromAssociation);
+        }
+        return { status: REQUEST_STATUS.SUCCESS, data: response.data }; 
+    }catch(error){
+      return { status: REQUEST_STATUS.ERROR, error }; 
+    }
+  },
   getByAuthor: async (userId) => {
     try{
         const response = await axios.get(`${Endpoints.documentsByAuthor}/${userId}`);
@@ -32,12 +45,11 @@ const DocumentsService = {
       formData.append('documentFile', file);
       formData.append('authorId', authorId);
       if(removeDate){
-        formData.append('removes', removeDate);
+        formData.append('removes', removeDate.toISOString());
       }
       if(receiversIds.length){
         formData.append('receiversIds', receiversIds);
       }
-
       try{
         const response = await axios.post(Endpoints.documents, formData);
         return {status: REQUEST_STATUS.SUCCESS, data: response.data}

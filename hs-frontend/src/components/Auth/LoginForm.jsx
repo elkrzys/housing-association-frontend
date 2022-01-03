@@ -2,32 +2,30 @@ import {
   Flex,
   Box,
   Stack,
-  Link,
   Button,
   Heading,
-  useColorModeValue,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import { useContext } from 'react';
 import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { BasicInput, PasswordInput } from '../Inputs';
+import { ToastError } from '../Toasts';
 import ResetPasswordModal from './ResetPasswordModal';
 
 const LoginForm = () => {
-  const flexBg = useColorModeValue('none', 'gray.800');
-  const boxBg = useColorModeValue('white', 'gray.700');
   const { signIn } = useContext(AuthContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
   // eslint-disable-next-line consistent-return
   const setSubmit = async (values, actions) => {
     if (await signIn(values.email, values.password)) {
-      console.log('login successful');
       return <Redirect to="/home" />;
     }
-    console.log('login failed');
+    ToastError(toast, 'Błędne logowanie, spróbuj ponownie.');
     actions.setSubmitting(false);
   };
 
@@ -40,16 +38,12 @@ const LoginForm = () => {
       onSubmit={setSubmit}>
       {props => (
         <Form>
-          <Flex
-            // minH={'100vh'}
-            align="start"
-            justify="center"
-            bg={flexBg}>
+          <Flex align="start" justify="center">
             <Stack w="100%" spacing={8} mx="auto" py={6} px={6}>
               <Stack align="center">
                 <Heading fontSize="2xl">Zaloguj się</Heading>
               </Stack>
-              <Box rounded="lg" bg={boxBg} boxShadow="lg" p={8}>
+              <Box rounded="lg" bg="white" boxShadow="lg" p={8}>
                 <Stack spacing={4}>
                   <BasicInput
                     id="email"

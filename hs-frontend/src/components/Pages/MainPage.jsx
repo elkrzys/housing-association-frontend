@@ -9,14 +9,8 @@ import Modes from '../Modes/Modes';
 const MainPage = () => {
   const { user, role, token } = useContext(AuthContext);
   const { mode, contentId } = useContext(ModeContext);
-  console.log(mode);
-
   const smVariant = { navigation: 'drawer', navigationButton: true };
   const mdVariant = { navigation: 'sidebar', navigationButton: false };
-
-  console.log('firstname: ', user.firstName);
-  console.log('lastname: ', user.lastName);
-
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const variants = useBreakpointValue({ base: smVariant, md: mdVariant });
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);

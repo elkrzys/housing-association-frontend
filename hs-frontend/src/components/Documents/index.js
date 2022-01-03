@@ -1,1 +1,1 @@
-export {default as DocumentsTable} from './DocumentsTable'
+export {default as DocumentsView} from './DocumentsView'

@@ -7,7 +7,7 @@ import { IssuesTable } from '../Issues';
 import { CollapsedUsersTables } from '../Users';
 import { Redirect } from 'react-router';
 import LocalsTable from '../Buildings/LocalsTable';
-import ResidentDocumentsView from '../Documents/ResidentsDocumentsView';
+import { DocumentsView } from '../Documents';
 
 const Modes = ({ mode, contentId }) => {
   switch (mode) {
@@ -28,8 +28,8 @@ const Modes = ({ mode, contentId }) => {
       return <IssuesTable />;
     case MODES.ResidentLocals:
       return <LocalsTable />;
-    case MODES.ResidentDocuments:
-      return <ResidentDocumentsView />;
+    case MODES.Documents:
+      return <DocumentsView />;
     default:
       return null;
   }

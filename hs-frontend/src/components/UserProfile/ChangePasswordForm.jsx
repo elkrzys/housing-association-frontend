@@ -77,20 +77,16 @@ const ChangePasswordForm = () => {
       onSubmit={setSubmit}>
       {props => (
         <Form>
-          <Flex
-            // minH={'100vh'}
-            align={'start'}
-            justify={'center'}
-            bg={flexBg}>
+          <Flex align={'start'} justify={'center'}>
             <Stack spacing={8} mx={'auto'} px={6}>
               {/* <Stack align={'center'}>
                         <Heading fontSize={'2xl'}>Zresetuj hasło</Heading>
                     </Stack> */}
               <Box
-                rounded={'lg'}
-                bg={boxBg}
+                rounded="lg"
+                bg="white"
                 // boxShadow={'lg'}
-                w={'md'}
+                w="md"
                 px={8}>
                 <Stack spacing={4}>
                   <PasswordInput

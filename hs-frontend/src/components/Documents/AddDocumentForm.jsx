@@ -3,11 +3,9 @@ import {
   Flex,
   Box,
   Stack,
-  HStack,
   Button,
   FormLabel,
   FormControl,
-  Textarea,
   useToast,
 } from '@chakra-ui/react';
 import Select from 'react-select';
@@ -29,7 +27,12 @@ const AddDocumentForm = ({ onClose }) => {
   const getResidents = async () => {
     const response = await UsersService.getUsersByRole('residents');
     if (response.status === 'SUCCESS') {
-      setResidents(response.data);
+      setResidents(
+        response.data.map(item => ({
+          value: item.id,
+          label: `${item.firstName} ${item.lastName}`,
+        })),
+      );
     } else {
       ToastError(toast, 'Wystąpił problem podczas wczytywania mieszkańców');
     }
@@ -41,34 +44,25 @@ const AddDocumentForm = ({ onClose }) => {
     }
   }, []);
 
-  const options = [
-    { value: '1', label: 'Jan Kowalski' },
-    { value: '2', label: 'Marek Pieczarek' },
-    { value: '3', label: 'Janina Koniczyna' },
-  ];
-
-  let receiversIds = [];
-
   const setSubmit = async (values, actions) => {
     if (!values.file) {
       ToastError(toast, 'Należy wybrać dokument do przesłania');
     } else if (!acceptedFileTypes.some(type => type === values.file.type)) {
       ToastError(toast, 'Dokument ma nieprawidłowy format');
     } else {
-      console.log(values.receiversIds);
-      // const response = await DocumentsService.uploadDocument(
-      //   user.id,
-      //   values.title,
-      //   values.file,
-      //   values.removes,
-      //   receiversIds,
-      // );
-      // if (response.status === 'SUCCESS') {
-      //   ToastSuccess(toast, 'Dokument przesłany');
-      //   onClose();
-      // } else {
-      //   ToastError(toast, 'Dokument nie został przesłany');
-      // }
+      const response = await DocumentsService.uploadDocument(
+        user.id,
+        values.title,
+        values.file,
+        values.removes,
+        values.receiversIds,
+      );
+      if (response.status === 'SUCCESS') {
+        ToastSuccess(toast, 'Dokument przesłany');
+        onClose();
+      } else {
+        ToastError(toast, 'Dokument nie został przesłany');
+      }
     }
     actions.setSubmitting(false);
   };
@@ -99,9 +93,9 @@ const AddDocumentForm = ({ onClose }) => {
                   <Box>
                     <FileDragAndDrop name="file" />
                   </Box>
-                  {role === 'Resident' && (
+                  {role !== 'Resident' && (
                     <>
-                      <Box zIndex={1000}>
+                      <Box zIndex="1000">
                         <p>Data wygaśnięcia</p>
                         <DatePickerField name="removes" w="50%" />
                       </Box>
@@ -109,7 +103,7 @@ const AddDocumentForm = ({ onClose }) => {
                         <FormLabel>Wybierz odbiorców</FormLabel>
                         <ReactMultiSelect
                           isMulti={true}
-                          options={options}
+                          options={residents}
                           name="receiversIds"
                         />
                       </FormControl>

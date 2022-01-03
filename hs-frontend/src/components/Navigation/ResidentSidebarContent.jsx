@@ -70,9 +70,7 @@ const SidebarContent = () => {
         <NavItem
           icon={FaBriefcase}
           title="Dokumenty"
-          onClick={() =>
-            setMode({ mode: MODES.ResidentDocuments, contentId: null })
-          }
+          onClick={() => setMode({ mode: MODES.Documents, contentId: null })}
         />
         <NavItem
           icon={FaUser}

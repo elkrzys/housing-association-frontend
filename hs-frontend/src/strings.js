@@ -29,6 +29,8 @@ export const Endpoints = {
   usersUnconfirmed: url(Controllers.users, 'not-enabled'),
   usersResidents: url(Controllers.users, 'residents'),
   usersWorkers: url(Controllers.users, 'workers'),
+  usersUnregister: url(Controllers.users, 'unregister'),
+  usersBan: url(Controllers.users, 'ban'),
   // buildings
   buildings: url(Controllers.buildings),
   buildingsAll: url(Controllers.buildings, 'all'),
@@ -56,6 +58,8 @@ export const Endpoints = {
   documents: url(Controllers.documents),
   documentsByAuthor: url(Controllers.documents, 'author'),
   documentsByReceiver: url(Controllers.documents, 'receiver'),
+  documentsFromAssociation: url(Controllers.documents, 'all-from-association'),
+  documentsFromResidents: url(Controllers.documents, 'all-from-residents'),
   //addresses
   addresses: url(Controllers.addresses),
   cities: url(Controllers.addresses, 'cities'),
@@ -72,5 +76,5 @@ export const MODES = {
   UsersTables: 'Użytkownicy',
   Issues: 'Tablica zgłoszeń',
   ResidentLocals: 'Twoje lokale',
-  ResidentDocuments: 'Dokumenty',
+  Documents: 'Dokumenty',
 };

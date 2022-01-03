@@ -1,3 +1,5 @@
+import { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Flex,
   Box,
@@ -8,40 +10,52 @@ import {
   Heading,
   useColorModeValue,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
-import { useContext, useEffect, useState } from 'react';
-// import { Redirect } from 'react-router-dom';
 import { BasicInput } from '../Inputs';
 import { AuthContext } from '../../contexts/AuthContext';
 import { UsersService } from '../../services';
 import CustomModal from '../CustomModal';
 import ChangePasswordForm from './ChangePasswordForm';
+import UnregisterForm from './UnregisterForm';
+import { ToastError, ToastSuccess } from '../Toasts';
 
 const UserProfile = () => {
-  const flexBg = useColorModeValue('none', 'gray.800');
   const boxBg = useColorModeValue('white', 'gray.700');
 
-  const { user, refreshUser } = useContext(AuthContext);
+  const { user, refreshUser, signOut } = useContext(AuthContext);
+  const toast = useToast();
+  const history = useHistory();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
 
   const [fullUser, setUser] = useState(null);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isRedirected, setIsRedirected] = useState(false);
 
   const getUser = async () => {
     const response = await UsersService.getUser(user.id);
     if (response.status === 'SUCCESS') {
       setUser(response.data);
-      return response.data;
     } else {
-      console.log('failure dirung user fething');
       return null;
     }
   };
 
   useEffect(() => {
-    getUser();
+    !isRedirected && getUser();
   }, [user]);
+
+  const onUnregisterSuccess = () => {
+    setIsRedirected(true);
+    signOut();
+    history.replace('/');
+  };
 
   const setSubmit = async (values, actions) => {
     let response = await UsersService.updateUser(
@@ -58,9 +72,8 @@ const UserProfile = () => {
       );
       refreshUser(newUser);
       setIsDisabled(true);
-      console.log('update successful: ' + response);
+      ToastSuccess(toast, 'Pomyślnie zapisano');
     } else {
-      console.log('update failed: ' + response);
     }
     actions.setSubmitting(false);
   };
@@ -83,7 +96,7 @@ const UserProfile = () => {
               w={{ base: '100%', md: '50%' }}
               mx={{ base: '0', md: 'auto' }}
               rounded="lg"
-              bg={boxBg}
+              bg="white"
               boxShadow="lg"
               p={8}>
               <Stack spacing={4}>
@@ -134,6 +147,15 @@ const UserProfile = () => {
                     </Button>
                     <CustomModal isOpen={isOpen} onClose={onClose}>
                       <ChangePasswordForm />
+                    </CustomModal>
+                    <Button onClick={onDeleteOpen} color="red.400">
+                      Usuń konto
+                    </Button>
+                    <CustomModal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+                      <UnregisterForm
+                        onClose={onDeleteClose}
+                        onUnregister={onUnregisterSuccess}
+                      />
                     </CustomModal>
                   </Stack>
                   <HStack>
