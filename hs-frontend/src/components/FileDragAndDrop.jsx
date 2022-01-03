@@ -25,7 +25,6 @@ const FileDragAndDrop = ({ ...props }) => {
     const [currentFile] = files.map(item => item.file);
     setFiles(files);
     setFieldValue(field.name, currentFile);
-    if (currentFile) console.log(currentFile);
   };
 
   return (

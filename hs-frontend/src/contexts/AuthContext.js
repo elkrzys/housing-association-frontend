@@ -40,7 +40,6 @@ const AuthContextProvider = ({ children }) => {
 
   const signIn = useCallback(async (email, password) => {
     const response = await AuthService.signIn(email, password);
-    console.log(response);
     if (response.status === 'SUCCESS') {
       setLocalStorageData(response);
       setState({
@@ -49,7 +48,6 @@ const AuthContextProvider = ({ children }) => {
         user: getUserFromResponse(response),
         role: response.data.role
       });
-      console.log(`state: ${  state}`);
       return true;
     }
     return false;
@@ -64,7 +62,6 @@ const AuthContextProvider = ({ children }) => {
         email,
         password,
       );
-      console.log(response);
       if (response.status === 'SUCCESS') {
         return true;
       }
@@ -83,7 +80,6 @@ const AuthContextProvider = ({ children }) => {
       phoneNumber,
       password,
     );
-    console.log(response);
     if (response.status === 'SUCCESS') {
       return true;
     }
@@ -97,8 +93,6 @@ const AuthContextProvider = ({ children }) => {
       return newState
     }));
     localStorage.setItem('user', JSON.stringify(newUser))
-    console.log("current state:");
-    console.log(state);
   }, []);
 
   // const refreshToken = useCallback(async () => {

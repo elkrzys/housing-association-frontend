@@ -120,7 +120,6 @@ const BuildingsTable = () => {
                     bg="blue.100"
                     _hover={{ bg: 'blue.200' }}
                     onClick={() => {
-                      console.log(building.id);
                       setMode({
                         mode: MODES.BuildingDetails,
                         contentId: building.id,

@@ -58,6 +58,14 @@ const UsersService = {
     } catch (error) {
       return { status: REQUEST_STATUS.ERROR, error};
     }
+  },
+  addWorker: async (user) => {
+    try{
+      const response = await axios.post(Endpoints.usersWorkers, user);
+      return { status: REQUEST_STATUS.SUCCESS, data: response.data };
+    } catch (error) {
+      return { status: REQUEST_STATUS.ERROR, error};
+    }
   }
 };
 export default UsersService;

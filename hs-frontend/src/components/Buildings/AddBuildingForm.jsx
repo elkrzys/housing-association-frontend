@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Flex,
   Box,
@@ -13,6 +12,7 @@ import {
 import { Form, Formik } from 'formik';
 import { BuildingsService } from '../../services';
 import { BasicInput } from '../Inputs';
+import { ToastSuccess, ToastError } from '../Toasts';
 
 const AddBuildingForm = () => {
   const toast = useToast();
@@ -25,9 +25,7 @@ const AddBuildingForm = () => {
       values.number,
       values.type,
     );
-    console.log(values);
     if (response.status === 'SUCCESS') {
-      console.log('add successful');
       actions.resetForm({
         values: {
           city: '',
@@ -37,20 +35,9 @@ const AddBuildingForm = () => {
           type: 'block',
         },
       });
-      toast({
-        title: 'Budynek dodany',
-        status: 'success',
-        isClosable: true,
-        duration: 2500,
-      });
+      ToastSuccess(toast, 'Budynek dodany');
     } else {
-      console.log('add failed');
-      toast({
-        title: 'Budynek nie został dodany',
-        status: 'error',
-        isClosable: true,
-        duration: 2500,
-      });
+      ToastError(toast, 'Budynek nie został dodany');
     }
     actions.setSubmitting(false);
   };

@@ -1,13 +1,8 @@
-import { Flex, Stack, Box, Button, useToast } from '@chakra-ui/react';
+import { Flex, Stack } from '@chakra-ui/react';
 import UpdateBuildingForm from './UpdateBuildingForm';
 import LocalsTable from './LocalsTable';
 
 const BuildingDetails = ({ buildingId }) => {
-  console.log(buildingId);
-  // UpdateBuildingForm + LocalsTable
-  // todo: function to get building by id
-  // also: get all buiding locals (add table for locals)
-
   return (
     <Flex bg="none" justifyContent="center">
       <Stack

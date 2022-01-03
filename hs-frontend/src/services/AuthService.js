@@ -8,10 +8,8 @@ const AuthService = {
         email,
         password,
       });
-      console.log('response', response);
       return { status: REQUEST_STATUS.SUCCESS, data: response.data };
     } catch (error) {
-      console.log(error);
       return { status: REQUEST_STATUS.ERROR, error };
     }
   },
@@ -24,10 +22,8 @@ const AuthService = {
         email,
         password,
       });
-      console.log('response', response);
       return { status: REQUEST_STATUS.SUCCESS, data: response.data };
     } catch (error) {
-      console.log(error);
       return { status: REQUEST_STATUS.ERROR, error };
     }
   },
@@ -38,10 +34,8 @@ const AuthService = {
         phoneNumber,
         password,
       });
-      console.log('response', response);
       return { status: REQUEST_STATUS.SUCCESS, data: response.data };
     } catch (error) {
-      console.log(error);
       return { status: REQUEST_STATUS.ERROR, error };
     }
   },
@@ -52,7 +46,6 @@ const AuthService = {
       });
       return { status: REQUEST_STATUS.SUCCESS, data: response.data };
     } catch (error) {
-      console.log(error);
       return { status: REQUEST_STATUS.ERROR, error };
     }
   },

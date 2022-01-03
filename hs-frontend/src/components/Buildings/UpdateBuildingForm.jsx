@@ -8,7 +8,7 @@ import {
   Heading,
   useToast,
 } from '@chakra-ui/react';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { BasicInput } from '../Inputs';
 import { BuildingsService } from '../../services';
 import { ToastError, ToastSuccess } from '../Toasts';
@@ -29,7 +29,6 @@ const UpdateBuildingForm = ({ buildingId }) => {
   };
 
   useEffect(() => {
-    console.log(buildingId);
     getBuilding();
   }, []);
 
@@ -44,10 +43,8 @@ const UpdateBuildingForm = ({ buildingId }) => {
     );
 
     if (response.status === 'SUCCESS') {
-      console.log('update successful');
       ToastSuccess(toast, 'Budynek zaktualizowany');
     } else {
-      console.log('update failed');
       ToastError(toast, 'Wystąpił problem');
     }
     actions.setSubmitting(false);
@@ -67,9 +64,9 @@ const UpdateBuildingForm = ({ buildingId }) => {
       {props => (
         <Form>
           <Flex align="start" justify="center" bg="white">
-            <Stack spacing={8} mx={'auto'} px={6}>
-              <Box rounded={'lg'} w={'md'} px={8}>
-                <Stack spacing={4}>
+            <Stack spacing="8" mx="auto" px="6">
+              <Box rounded="lg" w="md" px="8">
+                <Stack spacing="4">
                   <Stack align="left">
                     <Heading fontSize="md">Adres</Heading>
                   </Stack>

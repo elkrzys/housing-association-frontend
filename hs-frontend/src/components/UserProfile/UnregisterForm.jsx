@@ -9,16 +9,16 @@ import {
   useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import UsersService from '../../services/UsersService';
 import { AuthContext } from '../../contexts';
 import { useContext, useState } from 'react';
 import { PasswordInput } from '../Inputs';
 import { ToastError } from '../Toasts';
 
-const ChangePasswordForm = ({ onClose, onUnregister }) => {
+const UnregisterForm = ({ onClose, onUnregister }) => {
   const toast = useToast();
-  const { user, signOut } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const setSubmit = async (values, actions) => {
     const response = await UsersService.unregisterUser(
@@ -84,4 +84,4 @@ const ChangePasswordForm = ({ onClose, onUnregister }) => {
     </Formik>
   );
 };
-export default ChangePasswordForm;
+export default UnregisterForm;

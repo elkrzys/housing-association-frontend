@@ -1,3 +1,4 @@
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
   Flex,
@@ -9,30 +10,43 @@ import {
   Td,
   Button,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { FaArrowDown, FaArrowUp, FaBan, FaEdit } from 'react-icons/fa';
-import React, { useContext, useEffect, useState } from 'react';
 import { ModeContext } from '../../contexts';
 import CustomModal from '../CustomModal.jsx';
 import { MODES } from '../../strings';
 import { UsersService } from '../../services';
+import { ToastError } from '../Toasts';
 
 const UsersTable = ({ usersRole }) => {
   const [users, setUsers] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const toast = useToast();
+  const {
+    onOpen: onAddOpen,
+    isOpen: isAddOpen,
+    onClose: onAddClose,
+  } = useDisclosure();
 
   const getUsers = async () => {
     const response = await UsersService.getUsersByRole(usersRole);
     if (response.status === 'SUCCESS') {
       setUsers(response.data);
     } else {
-      console.log('failure during users fething');
-      return null;
+      ToastError(toast, 'Wystąpił problem podczas wczytywania użytkowników');
     }
+  };
+
+  const handleCloseAndRefresh = async () => {
+    await getUsers();
+    setRefresh(!refresh);
+    onAddClose();
   };
 
   useEffect(() => {
     getUsers();
-  }, []);
+  }, [refresh]);
 
   const columns = [
     { Header: 'Imię', accessor: 'firstName' },
@@ -59,10 +73,12 @@ const UsersTable = ({ usersRole }) => {
                   <Button
                     bg="gray.100"
                     _hover={{ bg: 'white' }}
-                    //onClick={onAddOpen}
-                  >
-                    Dodaj
+                    onClick={onAddOpen}>
+                    Dodaj pracownika
                   </Button>
+                  <CustomModal onClose={onAddClose} isOpen={isAddOpen}>
+                    <AddWorkerForm onClose={handleCloseAndRefresh} />
+                  </CustomModal>
                 </Flex>
               )}
             </Th>

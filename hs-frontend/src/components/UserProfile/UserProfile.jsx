@@ -1,18 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
-  Flex,
   Box,
   Stack,
   HStack,
-  Link,
   Button,
-  Heading,
-  useColorModeValue,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { BasicInput } from '../Inputs';
 import { AuthContext } from '../../contexts/AuthContext';
 import { UsersService } from '../../services';
@@ -22,8 +18,6 @@ import UnregisterForm from './UnregisterForm';
 import { ToastError, ToastSuccess } from '../Toasts';
 
 const UserProfile = () => {
-  const boxBg = useColorModeValue('white', 'gray.700');
-
   const { user, refreshUser, signOut } = useContext(AuthContext);
   const toast = useToast();
   const history = useHistory();
@@ -74,6 +68,7 @@ const UserProfile = () => {
       setIsDisabled(true);
       ToastSuccess(toast, 'Pomyślnie zapisano');
     } else {
+      ToastError(toast, 'Wystąpił problem.');
     }
     actions.setSubmitting(false);
   };
@@ -88,9 +83,8 @@ const UserProfile = () => {
         phoneNumber: fullUser?.phoneNumber,
       }}
       onSubmit={setSubmit}>
-      {props => (
+      {({ values, isSubmitting }) => (
         <Form>
-          {/* <Flex minH="100%" align="start" justify="center" bg={flexBg}> */}
           <Stack spacing={8}>
             <Box
               w={{ base: '100%', md: '50%' }}
@@ -98,13 +92,13 @@ const UserProfile = () => {
               rounded="lg"
               bg="white"
               boxShadow="lg"
-              p={8}>
+              p="8">
               <Stack spacing={4}>
                 <BasicInput
                   id="firstName"
                   name="firstName"
                   label="Imię"
-                  defaultValue={props.values.firstName}
+                  defaultValue={values.firstName}
                   type="text"
                   isDisabled={isDisabled}
                   isRequired={!isDisabled}
@@ -113,7 +107,7 @@ const UserProfile = () => {
                   id="lastName"
                   name="lastName"
                   label="Nazwisko"
-                  defaultValue={props.values.lastName}
+                  defaultValue={values.lastName}
                   type="text"
                   isDisabled={isDisabled}
                   isRequired={!isDisabled}
@@ -122,7 +116,7 @@ const UserProfile = () => {
                   id="email"
                   name="email"
                   label="Email"
-                  defaultValue={props.values.email}
+                  defaultValue={values.email}
                   type="email"
                   isDisabled={isDisabled}
                   isRequired={!isDisabled}
@@ -131,7 +125,7 @@ const UserProfile = () => {
                   id="phoneNumber"
                   name="phoneNumber"
                   label="Numer telefonu"
-                  defaultValue={props.values.phoneNumber}
+                  defaultValue={values.phoneNumber}
                   type="tel"
                   isDisabled={isDisabled}
                   isRequired={!isDisabled}
@@ -178,7 +172,7 @@ const UserProfile = () => {
                       }}
                       type="submit"
                       isDisabled={isDisabled}
-                      isLoading={props.isSubmitting}>
+                      isLoading={isSubmitting}>
                       Zaktualizuj dane
                     </Button>
                   </HStack>
@@ -186,7 +180,6 @@ const UserProfile = () => {
               </Stack>
             </Box>
           </Stack>
-          {/* </Flex> */}
         </Form>
       )}
     </Formik>

@@ -21,7 +21,6 @@ const BuildingsService = {
     getBuildingsByAddresses: async (city, district = null, streets) =>{
       let buildings = [];
       district = district !== null ? district : "";
-      console.log(streets)
       try {
         if(streets?.length){
           for(const street of streets){

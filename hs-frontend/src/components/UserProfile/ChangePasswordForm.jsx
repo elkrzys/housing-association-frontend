@@ -13,6 +13,7 @@ import UsersService from '../../services/UsersService';
 import { AuthContext } from '../../contexts';
 import { useContext, useState } from 'react';
 import { PasswordInput } from '../Inputs';
+import { ToastError, ToastSuccess, ToastWarning } from '../Toasts';
 
 const ChangePasswordForm = () => {
   const flexBg = useColorModeValue('none', 'gray.800');
@@ -22,12 +23,7 @@ const ChangePasswordForm = () => {
 
   const checkPasswords = (password1, password2) => {
     if (password1 !== password2) {
-      toast({
-        title: 'Nowe hasło musi się zgadzać z potwierdzonym',
-        status: 'warning',
-        isClosable: true,
-        duration: 3000,
-      });
+      ToastWarning(toast, 'Nowe hasło musi się zgadzać z potwierdzonym');
       return false;
     }
     return true;
@@ -41,7 +37,6 @@ const ChangePasswordForm = () => {
       values.newPassword,
     );
     if (response.status === 'SUCCESS') {
-      console.log('change successful');
       actions.resetForm({
         values: {
           oldPassword: '',
@@ -49,20 +44,9 @@ const ChangePasswordForm = () => {
           confirmPassword: '',
         },
       });
-      toast({
-        title: 'Hasło zmienione pomyślnie',
-        status: 'success',
-        isClosable: true,
-        duration: 2500,
-      });
+      ToastSuccess(toast, 'Hasło zmienione pomyślnie');
     } else {
-      console.log('change failed');
-      toast({
-        title: 'Hasło nie zostało zmienione',
-        status: 'error',
-        isClosable: true,
-        duration: 2500,
-      });
+      ToastError(toast, 'Hasło nie zostało zmienione');
     }
     actions.setSubmitting(false);
   };
@@ -75,25 +59,20 @@ const ChangePasswordForm = () => {
         confirmPassword: '',
       }}
       onSubmit={setSubmit}>
-      {props => (
+      {({ values, isSubmitting }) => (
         <Form>
-          <Flex align={'start'} justify={'center'}>
-            <Stack spacing={8} mx={'auto'} px={6}>
+          <Flex align="start" justify="center">
+            <Stack spacing="8" mx="auto" px="6">
               {/* <Stack align={'center'}>
                         <Heading fontSize={'2xl'}>Zresetuj hasło</Heading>
                     </Stack> */}
-              <Box
-                rounded="lg"
-                bg="white"
-                // boxShadow={'lg'}
-                w="md"
-                px={8}>
+              <Box rounded="lg" bg="white" w="md" px="8">
                 <Stack spacing={4}>
                   <PasswordInput
                     id="oldPassword"
                     name="oldPassword"
                     label="Stare hasło"
-                    defaultValue={props.values.oldPassword}
+                    defaultValue={values.oldPassword}
                     isRequired
                   />
 
@@ -101,7 +80,7 @@ const ChangePasswordForm = () => {
                     id="newPassword"
                     name="newPassword"
                     label="Nowe hasło"
-                    defaultValue={props.values.newPassword}
+                    defaultValue={values.newPassword}
                     isRequired
                   />
 
@@ -109,19 +88,19 @@ const ChangePasswordForm = () => {
                     id="confirmPassword"
                     name="confirmPassword"
                     label="Potwierdź hasło"
-                    defaultValue={props.values.confirmPassword}
+                    defaultValue={values.confirmPassword}
                     isRequired
                   />
 
-                  <Stack spacing={10}>
+                  <Stack spacing="10">
                     <Button
-                      bg={'green.300'}
-                      color={'white'}
+                      bg="green.300"
+                      color="white"
                       _hover={{
                         bg: 'green.400',
                       }}
-                      type={'submit'}
-                      isLoading={props.isSubmitting}>
+                      type="submit"
+                      isLoading={isSubmitting}>
                       Zresetuj
                     </Button>
                   </Stack>

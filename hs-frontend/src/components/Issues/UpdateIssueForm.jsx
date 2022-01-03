@@ -46,10 +46,8 @@ const UpdateIssueForm = ({ locals, onEditClose, issue }) => {
       issue.author,
       updatedLocal,
     );
-    console.log(response);
 
     if (response.status === 'SUCCESS') {
-      console.log('add successful');
       actions.resetForm({
         values: {
           title: '',
@@ -59,7 +57,6 @@ const UpdateIssueForm = ({ locals, onEditClose, issue }) => {
       ToastSuccess(toast, 'Zgłoszenie zaktualizowane pomyślnie');
       onEditClose();
     } else {
-      console.log('change failed');
       ToastError(toast, 'Zgłoszenie nie zostało zaktualizowane');
     }
     actions.setSubmitting(false);

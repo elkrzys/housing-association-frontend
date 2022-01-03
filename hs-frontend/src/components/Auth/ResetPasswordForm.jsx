@@ -12,10 +12,9 @@ import { Field, Form, Formik } from 'formik';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useContext, useState } from 'react';
 import { BasicInput, PasswordInput } from '../Inputs';
+import { ToastError, ToastSuccess } from '../Toasts';
 
-const ResetPasswordForm = props => {
-  const flexBg = useColorModeValue('none', 'gray.800');
-  const boxBg = useColorModeValue('white', 'gray.700');
+const ResetPasswordForm = () => {
   const { resetPassword } = useContext(AuthContext);
   const toast = useToast();
 
@@ -23,7 +22,6 @@ const ResetPasswordForm = props => {
     if (
       await resetPassword(values.email, values.phoneNumber, values.password)
     ) {
-      console.log('reset successful');
       actions.resetForm({
         values: {
           email: '',
@@ -32,20 +30,9 @@ const ResetPasswordForm = props => {
           confirmPassword: '',
         },
       });
-      toast({
-        title: 'Hasło zresetowane pomyślnie',
-        status: 'success',
-        isClosable: true,
-        duration: 2500,
-      });
+      ToastSuccess(toast, 'Hasło zresetowane pomyślnie');
     } else {
-      console.log('reset failed');
-      toast({
-        title: 'Hasło nie zostało zresetowane',
-        status: 'error',
-        isClosable: true,
-        duration: 2500,
-      });
+      ToastError(toast, 'Hasło nie zostało zresetowane');
     }
     actions.setSubmitting(false);
   };
@@ -58,27 +45,20 @@ const ResetPasswordForm = props => {
         password: '',
         confirmPassword: '',
       }}
-      onSubmit={setSubmit}
-    >
+      onSubmit={setSubmit}>
       {props => (
         <Form>
-          <Flex
-            // minH={'100vh'}
-            align={'start'}
-            justify={'center'}
-            bg={flexBg}
-          >
+          <Flex align={'start'} justify={'center'}>
             <Stack spacing={8} mx={'auto'} px={6}>
               {/* <Stack align={'center'}>
                         <Heading fontSize={'2xl'}>Zresetuj hasło</Heading>
                     </Stack> */}
               <Box
                 rounded={'lg'}
-                bg={boxBg}
+                bg="white"
                 // boxShadow={'lg'}
                 w={'md'}
-                px={8}
-              >
+                px={8}>
                 <Stack spacing={4}>
                   <BasicInput
                     id="email"
@@ -122,8 +102,7 @@ const ResetPasswordForm = props => {
                         bg: 'green.400',
                       }}
                       type={'submit'}
-                      isLoading={props.isSubmitting}
-                    >
+                      isLoading={props.isSubmitting}>
                       Zresetuj
                     </Button>
                   </Stack>
