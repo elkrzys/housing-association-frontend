@@ -9,6 +9,7 @@ import {
   Th,
   Td,
   Button,
+  Text,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
@@ -23,10 +24,11 @@ import EditLocalForm from './EditLocalForm';
 import EditLocalsCellBody from './EditLocalsCellBody';
 import { AuthContext } from '../../contexts';
 
-const LocalsTable = ({ buildingId }) => {
+const LocalsTable = ({ buildingId, residentId }) => {
   const { role, user } = useContext(AuthContext);
   const [locals, setLocals] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const [showAddress, setShowAddress] = useState(false);
   const [selectedLocal, setSelectedLocal] = useState();
 
   const cancelRef = useRef();
@@ -34,8 +36,10 @@ const LocalsTable = ({ buildingId }) => {
 
   const getLocals = async () => {
     let response;
-    if (role !== 'Resident') {
+    if (role !== 'Resident' && buildingId) {
       response = await LocalsService.getAllByBuildingId(buildingId);
+    } else if (role !== 'Resident' && residentId) {
+      response = await LocalsService.getAllByResidentId(residentId);
     } else {
       response = await LocalsService.getAllByResidentId(user.id);
     }
@@ -47,6 +51,7 @@ const LocalsTable = ({ buildingId }) => {
   };
 
   useEffect(() => {
+    if (user.role === 'Resident' || residentId) setShowAddress(true);
     getLocals();
   }, [refresh]);
 
@@ -69,42 +74,52 @@ const LocalsTable = ({ buildingId }) => {
 
   return (
     <Box mx={{ base: '0', md: '5%' }}>
+      <Text
+        fontSize={{ base: '16px', lg: '18px' }}
+        color="green.600"
+        fontWeight={'500'}
+        textTransform={'uppercase'}
+        mb={'4'}>
+        Lokale
+      </Text>
       <Table variant="striped" colorScheme="gray">
         <Thead h="75px">
           <Tr bg="blue.100">
-            {role === 'Resident' && <Th>Adres</Th>}
+            {showAddress && <Th>Adres</Th>}
             {columns.map(column => (
               <Th>{column.Header}</Th>
             ))}
-            <Th colSpan={2}>
-              <Flex justifyContent="center">
-                <Button
-                  bg="gray.100"
-                  _hover={{ bg: 'white' }}
-                  onClick={onAddOpen}>
-                  Dodaj lokal
-                </Button>
-                <CustomModal
-                  isOpen={isAddOpen}
-                  onClose={() => {
-                    onAddClose();
-                    reload();
-                  }}
-                  header={'Dodaj lokal'}>
-                  {role !== 'Resident' ? (
-                    <AddLocalForm buildingId={buildingId} />
-                  ) : (
-                    <AddLocalByResidentForm />
-                  )}
-                </CustomModal>
-              </Flex>
-            </Th>
+            {!residentId && (
+              <Th colSpan={2}>
+                <Flex justifyContent="center">
+                  <Button
+                    bg="gray.100"
+                    _hover={{ bg: 'white' }}
+                    onClick={onAddOpen}>
+                    Dodaj lokal
+                  </Button>
+                  <CustomModal
+                    isOpen={isAddOpen}
+                    onClose={() => {
+                      onAddClose();
+                      reload();
+                    }}
+                    header={'Dodaj lokal'}>
+                    {role !== 'Resident' ? (
+                      <AddLocalForm buildingId={buildingId} />
+                    ) : (
+                      <AddLocalByResidentForm />
+                    )}
+                  </CustomModal>
+                </Flex>
+              </Th>
+            )}
           </Tr>
         </Thead>
         <Tbody>
           {locals.map(local => (
             <Tr key={local.id}>
-              {role === 'Resident' && (
+              {showAddress && (
                 <Td>{`${local.address.city}, ${local.address.street} ${local.buildingNumber}`}</Td>
               )}
               <Td>{local.number}</Td>
@@ -112,13 +127,15 @@ const LocalsTable = ({ buildingId }) => {
                 {local.area} m<sup>2</sup>
               </Td>
               <Td>{local.isFullyOwned ? 'Tak' : 'Nie'}</Td>
-              <Td alignItems="end">
-                <EditLocalsCellBody
-                  selectedLocal={local}
-                  buildingId={buildingId}
-                  reload={reload}
-                />
-              </Td>
+              {!residentId && (
+                <Td alignItems="end">
+                  <EditLocalsCellBody
+                    selectedLocal={local}
+                    buildingId={buildingId}
+                    reload={reload}
+                  />
+                </Td>
+              )}
             </Tr>
           ))}
         </Tbody>

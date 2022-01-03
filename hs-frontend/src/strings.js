@@ -77,4 +77,5 @@ export const MODES = {
   Issues: 'Tablica zgłoszeń',
   ResidentLocals: 'Twoje lokale',
   Documents: 'Dokumenty',
+  UserDetails: 'Szczegóły użytkownika'
 };

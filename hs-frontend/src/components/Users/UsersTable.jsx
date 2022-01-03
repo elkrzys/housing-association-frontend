@@ -21,7 +21,9 @@ import { ToastError } from '../Toasts';
 import AddWorkerForm from './AddWorkerForm';
 
 const UsersTable = ({ usersRole }) => {
+  const { setMode } = useContext(ModeContext);
   const [users, setUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(0);
   const [refresh, setRefresh] = useState(false);
   const toast = useToast();
   const {
@@ -88,9 +90,13 @@ const UsersTable = ({ usersRole }) => {
           {users?.map(user => (
             <Tr
               key={user.id}
-              //   onClick={() => {
-              //     onDisplayOpen();
-              //   }}
+              onClick={() => {
+                setSelectedUserId(user.id);
+                setMode({
+                  mode: MODES.UserDetails,
+                  contentId: user.id,
+                });
+              }}
               _hover={{
                 boxShadow: '0px 0px 4px 0px rgba(66, 68, 90, 0.52);',
                 transition: '0.1s',

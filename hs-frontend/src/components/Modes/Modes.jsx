@@ -8,6 +8,7 @@ import { CollapsedUsersTables } from '../Users';
 import { Redirect } from 'react-router';
 import LocalsTable from '../Buildings/LocalsTable';
 import { DocumentsView } from '../Documents';
+import UserDetails from '../Users/UserDetails';
 
 const Modes = ({ mode, contentId }) => {
   switch (mode) {
@@ -30,6 +31,8 @@ const Modes = ({ mode, contentId }) => {
       return <LocalsTable />;
     case MODES.Documents:
       return <DocumentsView />;
+    case MODES.UserDetails:
+      return <UserDetails userId={contentId} />;
     default:
       return null;
   }
