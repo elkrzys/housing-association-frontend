@@ -19,10 +19,11 @@ import DatePickerField from '../DatePickerField';
 
 const acceptedFileTypes = ['application/pdf'];
 
-const AddDocumentForm = ({ onClose }) => {
+const AddDocumentForm = ({ onClose, preSelectedUserId }) => {
   const { user, role } = useContext(AuthContext);
   const toast = useToast();
   const [residents, setResidents] = useState([]);
+  const [selectedResident, setSelectedResident] = useState();
 
   const getResidents = async () => {
     const response = await UsersService.getUsersByRole('residents');
@@ -38,11 +39,21 @@ const AddDocumentForm = ({ onClose }) => {
     }
   };
 
+  const handleSelectedResident = () => {
+    if (preSelectedUserId !== null) {
+      const r = residents.find(
+        resident => resident.value === preSelectedUserId,
+      );
+      setSelectedResident(r);
+    }
+  };
+
   useEffect(() => {
-    if (role !== 'Resident') {
+    if (role !== 'Resident' && !residents.length) {
       getResidents();
     }
-  }, []);
+    if (residents.length) handleSelectedResident();
+  }, [residents.length]);
 
   const setSubmit = async (values, actions) => {
     if (!values.file) {
@@ -59,7 +70,7 @@ const AddDocumentForm = ({ onClose }) => {
       );
       if (response.status === 'SUCCESS') {
         ToastSuccess(toast, 'Dokument przesłany');
-        onClose();
+        onClose?.();
       } else {
         ToastError(toast, 'Dokument nie został przesłany');
       }
@@ -73,7 +84,7 @@ const AddDocumentForm = ({ onClose }) => {
         title: '',
         file: null,
         removes: null,
-        receiversIds: [],
+        receiversIds: [preSelectedUserId] || [],
       }}
       onSubmit={setSubmit}>
       {({ values, isSubmitting, handleChange }) => (
@@ -100,12 +111,20 @@ const AddDocumentForm = ({ onClose }) => {
                         <DatePickerField name="removes" w="50%" />
                       </Box>
                       <FormControl id="receiversIds">
-                        <FormLabel>Wybierz odbiorców</FormLabel>
-                        <ReactMultiSelect
-                          isMulti={true}
-                          options={residents}
-                          name="receiversIds"
-                        />
+                        <FormLabel>
+                          {!preSelectedUserId
+                            ? 'Wybierz odbiorców'
+                            : 'Odbiorca'}
+                        </FormLabel>
+                        {!preSelectedUserId ? (
+                          <ReactMultiSelect
+                            isMulti={true}
+                            options={residents}
+                            name="receiversIds"
+                          />
+                        ) : (
+                          selectedResident?.label
+                        )}
                       </FormControl>
                     </>
                   )}

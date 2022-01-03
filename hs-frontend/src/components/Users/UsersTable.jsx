@@ -94,7 +94,7 @@ const UsersTable = ({ usersRole }) => {
                 setSelectedUserId(user.id);
                 setMode({
                   mode: MODES.UserDetails,
-                  contentId: user.id,
+                  contentId: selectedUserId,
                 });
               }}
               _hover={{
