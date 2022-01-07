@@ -12,7 +12,7 @@ import {
 import { Form, Formik } from 'formik';
 import { AnnouncementsService, BuildingsService } from '../../services';
 import { AuthContext } from '../../contexts';
-import { BasicInput, ReactMultiSelect } from '../Inputs';
+import { BasicInput, ReactSelect } from '../Inputs';
 import { useEffect } from 'react/cjs/react.development';
 import { ToastError, ToastSuccess } from '../Toasts';
 import DatePickerField from '../DatePickerField';
@@ -173,7 +173,7 @@ const AddAnnouncementForm = ({ onAddClose }) => {
                   </FormControl>
                   <Stack>
                     {cities.length && (
-                      <ReactMultiSelect
+                      <ReactSelect
                         options={cities.map(c => ({ value: c, label: c }))}
                         isMulti={true}
                         name="cities"
@@ -183,7 +183,7 @@ const AddAnnouncementForm = ({ onAddClose }) => {
                       />
                     )}
                     {values.cities.length < 2 && districts.length && (
-                      <ReactMultiSelect
+                      <ReactSelect
                         options={districts.map(d => ({ value: d, label: d }))}
                         isMulti={true}
                         name="districts"
@@ -197,7 +197,7 @@ const AddAnnouncementForm = ({ onAddClose }) => {
                     {values.cities.length < 2 &&
                       values.districts.length < 2 &&
                       streets.length && (
-                        <ReactMultiSelect
+                        <ReactSelect
                           options={streets.map(s => ({ value: s, label: s }))}
                           isMulti={true}
                           name="streets"
@@ -214,9 +214,9 @@ const AddAnnouncementForm = ({ onAddClose }) => {
                       )}
                     {values.cities.length < 2 &&
                       values.districts.length < 2 &&
-                      values.streets.length > 0 &&
+                      values.streets.length === 1 &&
                       buildings.length && (
-                        <ReactMultiSelect
+                        <ReactSelect
                           options={buildings.map(b => ({
                             value: b.id,
                             label: `${b.address.street} ${b.number}`,

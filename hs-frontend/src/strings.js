@@ -35,6 +35,7 @@ export const Endpoints = {
   buildings: url(Controllers.buildings),
   buildingsAll: url(Controllers.buildings, 'all'),
   buildingsByAddress: url(Controllers.buildings, 'address'),
+  buildingsByIds: url(Controllers.buildings, 'get-all-by-ids'),
   // locals
   locals: url(Controllers.locals),
   localsAll: url(Controllers.locals, 'all'),

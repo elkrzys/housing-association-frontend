@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import {
   Flex,
   Box,
+  Heading,
   Stack,
   Button,
   FormLabel,
@@ -12,14 +13,9 @@ import {
 import { Field, Form, Formik } from 'formik';
 import { AnnouncementsService, BuildingsService } from '../../services';
 import { AuthContext } from '../../contexts';
-import { BasicInput, MultiSelect } from '../Inputs';
+import { BasicInput, ReactSelect } from '../Inputs';
 import { ToastError, ToastSuccess } from '../Toasts';
 import DatePickerField from '../DatePickerField';
-
-const buttonProps = {
-  borderColor: 'gray.600',
-  borderWidth: '1px',
-};
 
 const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
   const { user } = useContext(AuthContext);
@@ -28,7 +24,7 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
   const [streets, setStreets] = useState([]);
   const [buildings, setBuildings] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const [selectionChanged, setSelectionChanged] = useState(false);
+  const [reselectedAddress, setReselectedAddress] = useState(false);
   const toast = useToast();
 
   let defaultExpirationDate = new Date();
@@ -39,6 +35,7 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
     cities: [],
     districts: [],
     streets: [],
+    buildingsIds: [],
     buildings: [],
   };
 
@@ -59,25 +56,26 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
           ...new Set(announcement.addresses.map(address => address.street)),
         ];
         if (selections.streets.length) {
-          selections.buildings = [...announcement.targetBuildingsIds];
+          selections.buildingsIds = [...announcement.targetBuildingsIds];
+          if (
+            selections.cities.length === 1 ||
+            selections.districts.length === 1
+          ) {
+            const buildingsResponse = await BuildingsService.getBuildingsByIds(
+              selections.buildingsIds,
+            );
+            if (buildingsResponse.status === 'SUCCESS')
+              selections.buildings = buildingsResponse.data;
+            else
+              ToastError(
+                toast,
+                'Wystąpił problem podczas wczytywania aktualnych budynków',
+              );
+          }
         }
       }
     }
     setPrevSelections(selections);
-
-    if (prevSelections.cities.length < 2) {
-      await getDistricts(prevSelections.cities[0]);
-      if (prevSelections.districts.length < 2) {
-        await getStreets(prevSelections.cities[0], prevSelections.districts[0]);
-        if (prevSelections.streets.length) {
-          await getBuildings(
-            prevSelections.cities[0],
-            prevSelections.streets,
-            prevSelections.districts[0],
-          );
-        }
-      }
-    }
   };
 
   const getCities = async () => {
@@ -88,25 +86,24 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
       ToastError(toast, 'Wystąpił problem podczas wczytywania miast');
     }
   };
-
   const getDistricts = async city => {
     const response = await BuildingsService.getDistricts(city);
     if (response.status === 'SUCCESS') {
       setDistricts(response.data);
+      setRefresh(!refresh);
     } else {
       ToastError(toast, 'Wystąpił problem podczas wczytywania dzielnic');
     }
   };
-
   const getStreets = async (city, district) => {
     const response = await BuildingsService.getStreets(city, district);
     if (response.status === 'SUCCESS') {
       setStreets(response.data);
+      setRefresh(!refresh);
     } else {
       ToastError(toast, 'Wystąpił problem podczas wczytywania ulic');
     }
   };
-
   const getBuildings = async (city, streets, district = null) => {
     const response = await BuildingsService.getBuildingsByAddresses(
       city,
@@ -115,14 +112,64 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
     );
     if (response.status === 'SUCCESS') {
       setBuildings(response.data);
+      setRefresh(!refresh);
     } else {
       ToastError(toast, 'Wystąpił problem podczas wczytywania budynków');
     }
   };
+  const handleSelectCities = async values => {
+    if (values.length === 1) {
+      await getDistricts(values[0]);
+      await getStreets(values[0]);
+    }
+    setReselectedAddress(true);
+  };
+  const handleSelectDistricts = async values => {
+    if (values.length === 1) {
+      await getStreets(values.cities[0], values.districts[0]);
+    }
+  };
+  const handleSelectStreets = async (city, values, district) => {
+    if (values.length) {
+      await getBuildings(city, values, district);
+    }
+  };
+
+  const showActualAddresses = () => {
+    return (
+      <>
+        <Text>Miasta: {prevSelections.cities.map(c => `${c}, `)}</Text>
+        <br />
+        {prevSelections.districts.length && (
+          <>
+            <Text>
+              Dzielnice: {prevSelections.districts.map(d => `${d}, `)}
+            </Text>
+            <br />
+          </>
+        )}
+        {prevSelections.streets.length && (
+          <>
+            <Text>Ulice: {prevSelections.streets.map(s => `${s}, `)}</Text>
+            <br />
+          </>
+        )}
+        {prevSelections.streets.length === 1 && (
+          <>
+            <Text>
+              Numery budynków:{' '}
+              {prevSelections.buildings.map(b => `${b.number}, `)}
+            </Text>
+            <br />
+          </>
+        )}
+      </>
+    );
+  };
 
   useEffect(() => {
     getCities();
-    getCurrentSelections();
+    if (!reselectedAddress) getCurrentSelections();
   }, [refresh]);
 
   const initialValues = {
@@ -170,35 +217,6 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
     actions.setSubmitting(false);
   };
 
-  const clearValues = (changedVals, values, newVals) => {
-    switch (changedVals) {
-      case 'cities':
-        values.cities = newVals;
-        values.districts = [];
-        values.streets = [];
-        values.buildings = [];
-        break;
-      case 'districts':
-        values.districts = newVals;
-        values.streets = [];
-        values.buildings = [];
-        break;
-      case 'streets':
-        values.streets = newVals;
-        values.buildings = [];
-        break;
-      case 'buildings':
-        values.buildings = newVals;
-        break;
-      default:
-        break;
-    }
-    // if (!selectionChanged) {
-    //   setPrevSelections(null);
-    //   setSelectionChanged(true);
-    // }
-  };
-
   return (
     <Formik
       enableReinitialize
@@ -232,84 +250,68 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
                       p="3"
                     />
                   </FormControl>
+                  {!reselectedAddress && (
+                    <Box>
+                      <Heading>Aktualne adresy</Heading>
+                      <Box maxH="250px" overflow="auto">
+                        {showActualAddresses}
+                      </Box>
+                    </Box>
+                  )}
                   <Stack>
                     {cities.length && (
-                      <MultiSelect
-                        label="Miasta"
-                        options={cities}
-                        preSelectedOptions={prevSelections?.cities}
-                        onChange={async vals => {
-                          handleChange({
-                            target: { value: vals, id: 'cities' },
-                          });
-                          clearValues('cities', values, vals);
-                          if (vals.length < 2) {
-                            await getDistricts(vals[0]);
-                            await getStreets(vals[0]);
-                          }
-                        }}
-                        buttonProps={buttonProps}
+                      <ReactSelect
+                        options={cities.map(c => ({ value: c, label: c }))}
+                        isMulti={true}
+                        name="cities"
+                        openMenuOnClick={true}
+                        onChange={async vals => await handleSelectCities(vals)}
+                        placeholder="Miasta"
                       />
                     )}
                     {values.cities.length < 2 && districts.length && (
-                      <MultiSelect
-                        label="Dzielnice"
-                        options={districts}
-                        preSelectedOptions={prevSelections?.districts}
-                        onChange={async vals => {
-                          handleChange({
-                            target: { value: vals, id: 'districts' },
-                          });
-                          clearValues('districts', values, vals);
-                          if (vals.length === 1) {
-                            await getStreets(values.cities[0], vals[0]);
-                            await getBuildings(values.cities[0], vals[0]);
-                          }
-                        }}
-                        buttonProps={buttonProps}
+                      <ReactSelect
+                        options={districts.map(d => ({ value: d, label: d }))}
+                        isMulti={true}
+                        name="districts"
+                        openMenuOnClick={true}
+                        onChange={async vals =>
+                          await handleSelectDistricts(vals)
+                        }
+                        placeholder="Dzielnice"
                       />
                     )}
-                    {values.cities.length === 1 &&
+                    {values.cities.length < 2 &&
                       values.districts.length < 2 &&
                       streets.length && (
-                        <MultiSelect
-                          label="Ulice"
-                          options={streets}
-                          preSelectedOptions={prevSelections?.streets}
-                          onChange={async vals => {
-                            handleChange({
-                              target: { value: vals, id: 'streets' },
-                            });
-                            clearValues('streets', values, vals);
-                            if (vals.length === 1) {
-                              await getBuildings(
-                                values.cities[0],
-                                vals,
-                                values.districts[0],
-                              );
-                            }
-                          }}
-                          buttonProps={buttonProps}
+                        <ReactSelect
+                          options={streets.map(s => ({ value: s, label: s }))}
+                          isMulti={true}
+                          name="streets"
+                          openMenuOnClick={true}
+                          onChange={async vals =>
+                            await handleSelectStreets(
+                              values.cities[0],
+                              vals,
+                              values.districts?.[0],
+                            )
+                          }
+                          placeholder="Ulice"
                         />
                       )}
-                    {values.cities.length === 1 &&
+                    {values.cities.length < 2 &&
                       values.districts.length < 2 &&
-                      values.streets.length === 1 &&
+                      values.streets.length > 0 &&
                       buildings.length && (
-                        <MultiSelect
-                          label="Budynki"
-                          preSelectedOptions={prevSelections?.buildings}
-                          complexOptions={buildings.map(building => ({
-                            id: building.id,
-                            name: `${building.address.street} ${building.number}`,
+                        <ReactSelect
+                          options={buildings.map(b => ({
+                            value: b.id,
+                            label: `${b.address.street} ${b.number}`,
                           }))}
-                          onChange={vals => {
-                            handleChange({
-                              target: { value: vals, id: 'buildings' },
-                            });
-                            clearValues('buildings', values, vals);
-                          }}
-                          buttonProps={buttonProps}
+                          isMulti={true}
+                          name="buildings"
+                          openMenuOnClick={true}
+                          placeholder="Budynki"
                         />
                       )}
                   </Stack>

@@ -2,7 +2,7 @@ import React from 'react';
 import Select from 'react-select';
 import { useField, useFormikContext } from 'formik';
 
-export const ReactMultiSelect = ({
+export const ReactSelect = ({
   options,
   isMulti,
   openMenuOnClick,
@@ -41,4 +41,4 @@ export const ReactMultiSelect = ({
     />
   );
 };
-export default ReactMultiSelect;
+export default ReactSelect;

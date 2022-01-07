@@ -36,6 +36,14 @@ const BuildingsService = {
         return { status: REQUEST_STATUS.ERROR, error };
       }
     },
+    getBuildingsByIds: async (ids) =>{
+      try {
+        const response = await axios.post(Endpoints.buildingsByIds, ids);
+        return { status: REQUEST_STATUS.SUCCESS, data: response.data };
+      } catch (error) {
+        return { status: REQUEST_STATUS.ERROR, error };
+      }
+    },
     updateBuilding: async (id, city, district, street, number, type) => {
       let building =  {
         number,

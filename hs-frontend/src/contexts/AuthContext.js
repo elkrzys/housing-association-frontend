@@ -98,12 +98,13 @@ const AuthContextProvider = ({ children }) => {
   const refreshToken = useCallback(async () => {
     const response = await AuthService.refreshToken();
     if (response.status === 'SUCCESS') {
+      clearUserData()
       setLocalStorageData(response);
       setState({
-        token: response.data.accessToken,
+        token: localStorage.getItem('accessToken'),
         refreshToken: Cookies.get('refreshToken'),
         user: getUserFromResponse(response),
-        role: response.data.role
+        role: localStorage.getItem('role')
       });
       return true;
     }
@@ -125,7 +126,8 @@ const AuthContextProvider = ({ children }) => {
       if(error.response.status === 401) {
         const result = await refreshToken();
         if(result){
-          request.headers.Authorization = `Bearer ${state.token}`;
+          request.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
+          axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
           return axios(request)
         }
       }

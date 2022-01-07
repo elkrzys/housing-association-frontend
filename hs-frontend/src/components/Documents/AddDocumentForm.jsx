@@ -12,7 +12,7 @@ import Select from 'react-select';
 import { Form, Formik } from 'formik';
 import { DocumentsService, UsersService } from '../../services';
 import { AuthContext } from '../../contexts';
-import { BasicInput, ReactMultiSelect } from '../Inputs';
+import { BasicInput, ReactSelect } from '../Inputs';
 import { ToastError, ToastSuccess } from '../Toasts';
 import FileDragAndDrop from '../FileDragAndDrop';
 import DatePickerField from '../DatePickerField';
@@ -117,7 +117,7 @@ const AddDocumentForm = ({ onClose, preSelectedUserId }) => {
                             : 'Odbiorca'}
                         </FormLabel>
                         {!preSelectedUserId ? (
-                          <ReactMultiSelect
+                          <ReactSelect
                             isMulti={true}
                             options={residents}
                             name="receiversIds"
