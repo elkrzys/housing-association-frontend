@@ -14,11 +14,13 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { BasicInput, PasswordInput } from '../Inputs';
 import { ToastError } from '../Toasts';
 import ResetPasswordModal from './ResetPasswordModal';
+import { ValidationSchemas } from '../ValidationSchemas';
 
 const LoginForm = () => {
   const { signIn } = useContext(AuthContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const errorBox = error => <Box color="red.500">{error}</Box>;
 
   // eslint-disable-next-line consistent-return
   const setSubmit = async (values, actions) => {
@@ -35,32 +37,39 @@ const LoginForm = () => {
         email: '',
         password: '',
       }}
+      validationSchema={ValidationSchemas.signInSchema}
       onSubmit={setSubmit}>
-      {props => (
+      {({ values, isSubmitting, errors, touched }) => (
         <Form>
           <Flex align="start" justify="center">
-            <Stack w="100%" spacing={8} mx="auto" py={6} px={6}>
+            <Stack w="100%" spacing="8" mx="auto" py="6" px="6">
               <Stack align="center">
                 <Heading fontSize="2xl">Zaloguj się</Heading>
               </Stack>
-              <Box rounded="lg" bg="white" boxShadow="lg" p={8}>
-                <Stack spacing={4}>
+              <Box rounded="lg" bg="white" boxShadow="lg" p="8">
+                <Stack spacing="4">
                   <BasicInput
                     id="email"
                     name="email"
                     label="Email"
-                    defaultValue={props.values.email}
+                    defaultValue={values.email}
                     type="email"
                     isRequired
                   />
+                  {errors.email && touched.email
+                    ? errorBox(errors.email)
+                    : null}
 
                   <PasswordInput
                     id="password"
                     name="password"
                     label="Hasło"
-                    defaultValue={props.values.password}
+                    defaultValue={values.password}
                     isRequired
                   />
+                  {errors.password && touched.password
+                    ? errorBox(errors.password)
+                    : null}
 
                   <Stack spacing={10}>
                     <Stack
@@ -84,7 +93,7 @@ const LoginForm = () => {
                         bg: 'blue.500',
                       }}
                       type="submit"
-                      isLoading={props.isSubmitting}>
+                      isLoading={isSubmitting}>
                       Zaloguj
                     </Button>
                   </Stack>

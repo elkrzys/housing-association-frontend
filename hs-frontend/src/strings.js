@@ -54,6 +54,7 @@ export const Endpoints = {
   announcementsReceiver: url(Controllers.announcements, 'receiver'),
   announcementsPostByBuildings: url(Controllers.announcements, 'add-by-buildings'),
   announcementsPostByAddress: url(Controllers.announcements, 'add-by-address'),
+  announcementsCancel: url(Controllers.announcements, 'cancel'),
   // documents
   documents: url(Controllers.documents),
   documentsByAuthor: url(Controllers.documents, 'author'),

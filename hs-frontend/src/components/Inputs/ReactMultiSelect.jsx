@@ -2,7 +2,12 @@ import React from 'react';
 import Select from 'react-select';
 import { useField, useFormikContext } from 'formik';
 
-export const ReactMultiSelect = ({ options, isMulti, ...props }) => {
+export const ReactMultiSelect = ({
+  options,
+  isMulti,
+  openMenuOnClick,
+  ...props
+}) => {
   const { setFieldValue } = useFormikContext();
   const [field] = useField(props);
 
@@ -11,6 +16,7 @@ export const ReactMultiSelect = ({ options, isMulti, ...props }) => {
       field.name,
       isMulti ? option.map(item => item.value) : option.value,
     );
+    props.onChange?.(option.map(item => item.value));
   };
 
   const getValue = () => {
@@ -30,8 +36,8 @@ export const ReactMultiSelect = ({ options, isMulti, ...props }) => {
       onChange={onChange}
       options={options}
       isMulti={isMulti}
-      openMenuOnClick={false}
-      placeholder="Wyszukaj..."
+      openMenuOnClick={openMenuOnClick || false}
+      placeholder={props.placeholder || 'Wyszukaj...'}
     />
   );
 };

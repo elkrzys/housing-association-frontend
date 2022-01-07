@@ -5,7 +5,7 @@ import CustomModal from '../CustomModal';
 import CustomAlertDialog from '../CustomAlertDialog';
 import { AnnouncementsService } from '../../services';
 import { ToastError } from '../Toasts';
-import EditAnnouncementForm from './EditAnnouncementForm';
+import UpdateAnnouncementForm from './UpdateAnnouncementForm';
 
 const EditAnnouncementsCellBody = ({ announcement, refresh }) => {
   const cancelRef = useRef();
@@ -39,7 +39,6 @@ const EditAnnouncementsCellBody = ({ announcement, refresh }) => {
     if (response.status !== 'SUCCESS') {
       ToastError(toast, 'Usuwanie nieudane');
     }
-    refresh();
   };
 
   return (
@@ -55,7 +54,7 @@ const EditAnnouncementsCellBody = ({ announcement, refresh }) => {
           size="lg"
           onClose={onEditClose}
           isOpen={isEditOpen}>
-          <EditAnnouncementForm
+          <UpdateAnnouncementForm
             announcement={announcement}
             onEditClose={() => closeAndRefresh(onEditClose)}
           />

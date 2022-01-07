@@ -1,3 +1,4 @@
+import React, { useContext, useState } from 'react';
 import {
   Flex,
   Box,
@@ -8,19 +9,13 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { AnnouncementsService, BuildingsService } from '../../services';
 import { AuthContext } from '../../contexts';
-import { useContext, useState } from 'react';
-import { BasicInput, MultiSelect } from '../Inputs';
+import { BasicInput, ReactMultiSelect } from '../Inputs';
 import { useEffect } from 'react/cjs/react.development';
 import { ToastError, ToastSuccess } from '../Toasts';
 import DatePickerField from '../DatePickerField';
-
-const buttonProps = {
-  borderColor: 'gray.600',
-  borderWidth: '1px',
-};
 
 const AddAnnouncementForm = ({ onAddClose }) => {
   const { user } = useContext(AuthContext);
@@ -33,7 +28,7 @@ const AddAnnouncementForm = ({ onAddClose }) => {
 
   let defaultExpirationDate = new Date();
   defaultExpirationDate.setDate(defaultExpirationDate.getDate() + 7);
-  const [expirationDate, setExpirationDate] = useState(defaultExpirationDate);
+  const [expirationDate] = useState(defaultExpirationDate);
 
   const getCities = async () => {
     const response = await BuildingsService.getCities();
@@ -61,7 +56,6 @@ const AddAnnouncementForm = ({ onAddClose }) => {
       ToastError(toast, 'Wystąpił problem podczas wczytywania ulic');
     }
   };
-
   const getBuildings = async (city, streets, district = null) => {
     const response = await BuildingsService.getBuildingsByAddresses(
       city,
@@ -75,9 +69,25 @@ const AddAnnouncementForm = ({ onAddClose }) => {
       ToastError(toast, 'Wystąpił problem podczas wczytywania budynków');
     }
   };
+  const handleSelectCities = async values => {
+    if (values.length === 1) {
+      await getDistricts(values[0]);
+      await getStreets(values[0]);
+    }
+  };
+  const handleSelectDistricts = async values => {
+    if (values.length === 1) {
+      await getStreets(values.cities[0], values.districts[0]);
+    }
+  };
+  const handleSelectStreets = async (city, values, district) => {
+    if (values.length) {
+      await getBuildings(city, values, district);
+    }
+  };
 
   useEffect(() => {
-    getCities();
+    if (!cities.length) getCities();
   }, [refresh]);
 
   const setSubmit = async (values, actions) => {
@@ -163,72 +173,58 @@ const AddAnnouncementForm = ({ onAddClose }) => {
                   </FormControl>
                   <Stack>
                     {cities.length && (
-                      <MultiSelect
-                        label="Miasta"
-                        options={cities}
-                        onChange={async vals => {
-                          handleChange({
-                            target: { value: vals, id: 'cities' },
-                          });
-                          if (vals.length < 2) {
-                            await getDistricts(vals[0]);
-                            await getStreets(vals[0]);
-                          }
-                        }}
-                        buttonProps={buttonProps}
+                      <ReactMultiSelect
+                        options={cities.map(c => ({ value: c, label: c }))}
+                        isMulti={true}
+                        name="cities"
+                        openMenuOnClick={true}
+                        onChange={async vals => await handleSelectCities(vals)}
+                        placeholder="Miasta"
                       />
                     )}
                     {values.cities.length < 2 && districts.length && (
-                      <MultiSelect
-                        label="Dzielnice"
-                        options={districts}
-                        onChange={async vals => {
-                          handleChange({
-                            target: { value: vals, id: 'districts' },
-                          });
-                          if (vals.length < 2) {
-                            await getStreets(values.cities[0], vals[0]);
-                            await getBuildings(values.cities[0], vals[0]);
-                          }
-                        }}
-                        buttonProps={buttonProps}
+                      <ReactMultiSelect
+                        options={districts.map(d => ({ value: d, label: d }))}
+                        isMulti={true}
+                        name="districts"
+                        openMenuOnClick={true}
+                        onChange={async vals =>
+                          await handleSelectDistricts(vals)
+                        }
+                        placeholder="Dzielnice"
                       />
                     )}
                     {values.cities.length < 2 &&
                       values.districts.length < 2 &&
                       streets.length && (
-                        <MultiSelect
-                          label="Ulice"
-                          options={streets}
-                          onChange={async vals => {
-                            handleChange({
-                              target: { value: vals, id: 'streets' },
-                            });
-                            await getBuildings(
+                        <ReactMultiSelect
+                          options={streets.map(s => ({ value: s, label: s }))}
+                          isMulti={true}
+                          name="streets"
+                          openMenuOnClick={true}
+                          onChange={async vals =>
+                            await handleSelectStreets(
                               values.cities[0],
                               vals,
-                              values.districts[0],
-                            );
-                          }}
-                          buttonProps={buttonProps}
+                              values.districts?.[0],
+                            )
+                          }
+                          placeholder="Ulice"
                         />
                       )}
                     {values.cities.length < 2 &&
                       values.districts.length < 2 &&
                       values.streets.length > 0 &&
                       buildings.length && (
-                        <MultiSelect
-                          label="Budynki"
-                          complexOptions={buildings.map(building => ({
-                            id: building.id,
-                            name: `${building.address.street} ${building.number}`,
+                        <ReactMultiSelect
+                          options={buildings.map(b => ({
+                            value: b.id,
+                            label: `${b.address.street} ${b.number}`,
                           }))}
-                          onChange={vals =>
-                            handleChange({
-                              target: { value: vals, id: 'buildings' },
-                            })
-                          }
-                          buttonProps={buttonProps}
+                          isMulti={true}
+                          name="buildings"
+                          openMenuOnClick={true}
+                          placeholder="Budynki"
                         />
                       )}
                   </Stack>

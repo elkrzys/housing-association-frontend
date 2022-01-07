@@ -21,7 +21,6 @@ import AddAnnouncementForm from './AddAnnouncementForm';
 import { AuthContext } from '../../contexts';
 import { AnnouncementsService } from '../../services';
 import { ToastError, ToastSuccess } from '../Toasts';
-import EditAnnouncementForm from './EditAnnouncementForm';
 import EditAnnouncementsCellBody from './EditAnnouncementsCellBody';
 
 const AnnouncementsTable = () => {

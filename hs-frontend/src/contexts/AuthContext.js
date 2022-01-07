@@ -95,16 +95,41 @@ const AuthContextProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(newUser))
   }, []);
 
-  // const refreshToken = useCallback(async () => {
-  // TODO
-  // });
+  const refreshToken = useCallback(async () => {
+    const response = await AuthService.refreshToken();
+    if (response.status === 'SUCCESS') {
+      setLocalStorageData(response);
+      setState({
+        token: response.data.accessToken,
+        refreshToken: Cookies.get('refreshToken'),
+        user: getUserFromResponse(response),
+        role: response.data.role
+      });
+      return true;
+    }
+    return false;
+  }, []);
 
   useMemo(() => {
     axios.interceptors.request.use(config => {
       config.withCredentials = true;
       return config;
     });
-    
+
+    axios.interceptors.response.use((response)=> response, async error => {
+      const request = error.config;
+      if(error.response.status === 401 && request?.url?.includes('/auth/refresh-token')){
+        signOut();
+        return;
+      }
+      if(error.response.status === 401) {
+        const result = await refreshToken();
+        if(result){
+          request.headers.Authorization = `Bearer ${state.token}`;
+          return axios(request)
+        }
+      }
+    });
   }, []);
 
   return (

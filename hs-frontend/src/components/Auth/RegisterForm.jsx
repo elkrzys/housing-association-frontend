@@ -13,10 +13,12 @@ import { useContext } from 'react';
 import { BasicInput, PasswordInput } from '../Inputs';
 import { AuthContext } from '../../contexts/AuthContext';
 import { ToastError, ToastSuccess } from '../Toasts';
+import { ValidationSchemas } from '../ValidationSchemas';
 
 const RegisterForm = () => {
   const { signUp } = useContext(AuthContext);
   const toast = useToast();
+  const errorBox = error => <Box color="red.500">{error}</Box>;
 
   const setSubmit = async (values, actions) => {
     if (
@@ -46,8 +48,9 @@ const RegisterForm = () => {
         password: '',
         confirmPassword: '',
       }}
+      validationSchema={ValidationSchemas.signUpSchema}
       onSubmit={setSubmit}>
-      {props => (
+      {({ values, isSubmitting, errors, touched }) => (
         <Form>
           <Flex align="start" justify="center">
             <Stack w="100%" spacing={8} mx="auto" py={6} px={6}>
@@ -61,7 +64,7 @@ const RegisterForm = () => {
                       id="firstName"
                       name="firstName"
                       label="Imię"
-                      defaultValue={props.values.firstName}
+                      defaultValue={values.firstName}
                       type="text"
                       isRequired
                     />
@@ -70,45 +73,63 @@ const RegisterForm = () => {
                       id="lastName"
                       name="lastName"
                       label="Nazwisko"
-                      defaultValue={props.values.lastName}
+                      defaultValue={values.lastName}
                       type="text"
                       isRequired
                     />
                   </HStack>
+                  {errors.firstName && touched.firstName
+                    ? errorBox(errors.firstName)
+                    : null}
+                  {errors.lastName && touched.lastName
+                    ? errorBox(errors.lastName)
+                    : null}
 
                   <BasicInput
                     id="phoneNumber"
                     name="phoneNumber"
                     label="Numer telefonu"
-                    defaultValue={props.values.phoneNumber}
+                    defaultValue={values.phoneNumber}
                     type="tel"
                     isRequired
                   />
+                  {errors.phoneNumber && touched.phoneNumber
+                    ? errorBox(errors.phoneNumber)
+                    : null}
 
                   <BasicInput
                     id="email"
                     name="email"
                     label="Email"
-                    defaultValue={props.values.email}
+                    defaultValue={values.email}
                     type="email"
                     isRequired
                   />
+                  {errors.email && touched.email
+                    ? errorBox(errors.email)
+                    : null}
 
                   <PasswordInput
                     id="password"
                     name="password"
                     label="Hasło"
-                    defaultValue={props.values.password}
+                    defaultValue={values.password}
                     isRequired
                   />
+                  {errors.password && touched.password
+                    ? errorBox(errors.password)
+                    : null}
 
                   <PasswordInput
                     id="confirmPassword"
                     name="confirmPassword"
                     label="Potwierdź hasło"
-                    defaultValue={props.values.confirmPassword}
+                    defaultValue={values.confirmPassword}
                     isRequired
                   />
+                  {errors.confirmPassword && touched.confirmPassword
+                    ? errorBox(errors.confirmPassword)
+                    : null}
 
                   <Stack pt={4}>
                     <Button
@@ -116,7 +137,7 @@ const RegisterForm = () => {
                       color="white"
                       _hover={{ bg: 'blue.500' }}
                       type="submit"
-                      isLoading={props.isSubmitting}>
+                      isLoading={isSubmitting}>
                       Zarejestruj
                     </Button>
                   </Stack>

@@ -39,11 +39,9 @@ const AuthService = {
       return { status: REQUEST_STATUS.ERROR, error };
     }
   },
-  refreshToken: async token => {
+  refreshToken: async () => {
     try {
-      const response = await axios.post(Endpoints.refreshToken, {
-        token,
-      });
+      const response = await axios.post(Endpoints.refreshToken);
       return { status: REQUEST_STATUS.SUCCESS, data: response.data };
     } catch (error) {
       return { status: REQUEST_STATUS.ERROR, error };

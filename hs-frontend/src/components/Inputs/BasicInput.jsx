@@ -21,6 +21,7 @@ const BasicInput = ({
   label,
   type,
   placeholder,
+  validationMessage,
 }) => {
   let leftIcon = null;
   if (type === null) type = 'text';

@@ -25,7 +25,7 @@ const UsersService = {
   },
   changePassword: async (id, oldPassword, newPassword) => {
     try {
-       let response = await axios.put(`${Endpoints.users}/${id}/change-password`, {
+      let response = await axios.put(`${Endpoints.users}/${id}/change-password`, {
         oldPassword,
         newPassword
       });

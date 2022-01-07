@@ -2,15 +2,16 @@ import axios from 'axios';
 import { Endpoints, REQUEST_STATUS } from '../strings';
 
 const mapAddresses = (cities, districts, streets) => {
-    let addresses;
-    if(cities.length){
-        addresses = cities.map(city => ({city: city, district: null, street: null}));
-    }else if(districts.length > 1){
-        addresses = streets.map(district => ({city: cities[0], district: district, street: null}))   
-    }else if(streets.length){
-        addresses = streets.map(street => ({city: cities[0], district: districts?.[0], street: street}))   
+    if(cities.length > 1){
+        return cities.map(city => ({city: city, district: null, street: null}));
     }
-    return addresses;
+    if(districts.length > 1){
+        return districts.map(district => ({city: cities[0], district: district, street: null}))
+    }
+    if(streets.length){
+        return streets.map(street => ({city: cities[0], district: districts?.[0], street: street}))
+    }
+    throw 'Niepoprawny adres';
 }
 
 const AnnouncementsService = {
@@ -61,20 +62,18 @@ const AnnouncementsService = {
     },
     cancelAnnouncement: async (id) => {
         try{
-            const response = await axios.put(`${Endpoints.announcements}/${id}`);
-            return {status: REQUEST_STATUS, data: response.data};
+            const response = await axios.put(`${Endpoints.announcementsCancel}/${id}`);
+            return {status: REQUEST_STATUS.SUCCESS, data: response.data};
         }catch(error){
             return {status: REQUEST_STATUS.ERROR, error}
         }
     },
     updateAnnouncement: async (announcement, cities, districts, streets, buildingsIds) => {
-        
         announcement.addresses = mapAddresses(cities, districts, streets);;
         announcement.targetBuildingsIds = buildingsIds;
-        
         try{
             const response = await axios.put(`${Endpoints.announcements}/${announcement.id}`, {...announcement});
-            return {status: REQUEST_STATUS, data: response.data};
+            return {status: REQUEST_STATUS.SUCCESS, data: response.data};
         }catch(error){
             return {status: REQUEST_STATUS.ERROR, error}
         }

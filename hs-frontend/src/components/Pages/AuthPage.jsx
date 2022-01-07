@@ -7,7 +7,7 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 import { useContext } from 'react';
-import background from '../../assets/images/park-background.jpg';
+import background from '../../assets/images/city_bg.jpg';
 import { AuthTabs } from '../Auth';
 import { AuthContext } from '../../contexts/AuthContext';
 import { Redirect } from 'react-router-dom';
