@@ -15,7 +15,7 @@ import { LocalsService } from '../../services';
 import { BasicInput } from '../Inputs';
 import { ToastError, ToastSuccess } from '../Toasts';
 
-const AddLocalForm = ({ buildingId }) => {
+const AddLocalForm = ({ buildingId, refresh }) => {
   const toast = useToast();
   const setSubmit = async (values, actions) => {
     let local = { number: values.number, area: values.area };
@@ -28,6 +28,7 @@ const AddLocalForm = ({ buildingId }) => {
         },
       });
       ToastSuccess(toast, 'Lokal dodany');
+      refresh();
     } else {
       ToastError(toast, 'Lokal nie został dodany');
     }

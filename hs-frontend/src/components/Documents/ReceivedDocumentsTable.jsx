@@ -56,7 +56,6 @@ const ReceivedDocumentsTable = () => {
             {columns.map(column => (
               <Th
                 key={column.accessor}
-                borderRight={'2px dotted gray'}
                 colSpan={column.accessor === 'author' ? '2' : '0'}
                 w={column.accessor === 'id' ? '5%' : 'auto'}>
                 {column.Header}
@@ -81,7 +80,11 @@ const ReceivedDocumentsTable = () => {
               </Td>
               <Td>{document.title}</Td>
               <Td>{new Date(document.created).toLocaleDateString()}</Td>
-              <Td>{document.removes}</Td>
+              <Td>
+                {(document.removes &&
+                  new Date(document.removes).toLocaleDateString()) ||
+                  'Nie określono'}
+              </Td>
               <Td>{`${document.author.firstName} ${document.author.lastName}`}</Td>
             </Tr>
           ))}

@@ -129,8 +129,8 @@ const UserInfo = ({ selectedUser }) => {
             onAction={async () => handleUserBan()}
             actionName="Zablokuj"
             header="Zablokuj użytkownika">
-            Na pewno zablokować użytkownika? Jest to operacja, której nie można
-            cofnąć.
+            Na pewno zablokować użytkownika? <br /> Jest to operacja, której nie
+            można cofnąć.
           </CustomAlertDialog>
         </Button>
       )}

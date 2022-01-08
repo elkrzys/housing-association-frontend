@@ -7,7 +7,7 @@ const Announcement = ({ title, content, author, date }) => {
         {title}
       </Heading>
       <Divider w="75%" mx="auto" />
-      <Text px="4" py="6" textAlign="justify">
+      <Text whiteSpace="pre-wrap" px="4" py="6" textAlign="justify">
         {content}
       </Text>
       <Divider w="75%" mx="auto" />

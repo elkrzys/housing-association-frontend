@@ -134,8 +134,6 @@ const OwnedDocumentsTable = () => {
               {columns.map(column => (
                 <Th
                   key={column.accessor}
-                  borderRight={'2px dotted gray'}
-                  //colSpan={column.accessor === 'author' ? '2' : '0'}
                   w={column.accessor === 'id' ? '5%' : 'auto'}>
                   {column.Header}
                 </Th>

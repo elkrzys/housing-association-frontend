@@ -47,7 +47,7 @@ const DocumentsService = {
       if(removeDate){
         formData.append('removes', removeDate.toISOString());
       }
-      if(receiversIds.length){
+      if(receiversIds !== null){
         formData.append('receiversIds', receiversIds);
       }
       try{

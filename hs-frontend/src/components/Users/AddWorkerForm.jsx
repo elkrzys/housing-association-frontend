@@ -50,7 +50,7 @@ const AddWorkerForm = ({ onClose }) => {
               <Stack align="center">
                 <Heading fontSize="2xl">Dodaj konto pracownika</Heading>
               </Stack>
-              <Box rounded="lg" bg="white" boxShadow="lg" py="6" px="8">
+              <Box rounded="lg" bg="white" py="6" px="8">
                 <Stack spacing="4">
                   <HStack spacing="2">
                     <BasicInput

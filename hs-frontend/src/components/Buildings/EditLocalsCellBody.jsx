@@ -8,7 +8,7 @@ import { ToastError } from '../Toasts';
 import EditLocalForm from './EditLocalForm';
 import { AuthContext } from '../../contexts';
 
-const EditLocalsCellBody = ({ selectedLocal, buildingId, reload }) => {
+const EditLocalsCellBody = ({ selectedLocal, refresh }) => {
   const { user, role } = useContext(AuthContext);
   const cancelRef = useRef();
   const toast = useToast();
@@ -35,7 +35,7 @@ const EditLocalsCellBody = ({ selectedLocal, buildingId, reload }) => {
     if (response.status !== 'SUCCESS') {
       ToastError(toast, 'Usuwanie nieudane');
     }
-    reload();
+    refresh();
   };
 
   return (
@@ -54,7 +54,7 @@ const EditLocalsCellBody = ({ selectedLocal, buildingId, reload }) => {
             size="md"
             onClose={() => {
               onEditClose();
-              reload();
+              refresh();
             }}
             isOpen={isEditOpen}>
             <EditLocalForm local={selectedLocal} />
@@ -69,10 +69,7 @@ const EditLocalsCellBody = ({ selectedLocal, buildingId, reload }) => {
         <FaTrash />
         <CustomAlertDialog
           leastDestructiveRef={cancelRef}
-          onClose={() => {
-            onAlertClose();
-            reload();
-          }}
+          onClose={onAlertClose}
           isOpen={isAlertOpen}
           onAction={async () => await deleteLocal(selectedLocal.id)}
           actionName={'Usuń'}

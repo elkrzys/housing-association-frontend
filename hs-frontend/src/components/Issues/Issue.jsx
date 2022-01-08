@@ -1,17 +1,23 @@
 import { useContext } from 'react';
-import {
-  Flex,
-  Box,
-  HStack,
-  Heading,
-  Text,
-  Divider,
-  Stack,
-} from '@chakra-ui/react';
+import { Box, HStack, Heading, Text, Divider } from '@chakra-ui/react';
 import { AuthContext } from '../../contexts';
-import { UsersService } from '../../services';
 
 const Issue = ({ title, content, author, date, resolved }) => {
+  const getFormattedDate = () => {
+    const dt = new Date(date);
+    const year = dt.getFullYear();
+    const month = dt.getMonth() + 1;
+    const day = dt.getDay();
+    const hours = dt.getHours();
+    const minutes = dt.getMinutes();
+
+    return `${day < 10 ? '0' : ''}${day}.${
+      month < 10 ? '0' : ''
+    }${month}.${year}, ${hours < 10 ? '0' : ''}${hours}:${
+      minutes < 10 ? '0' : ''
+    }${minutes}`;
+  };
+
   const { role } = useContext(AuthContext);
   const color = resolved ? 'green' : 'orange';
   const message = resolved
@@ -23,11 +29,11 @@ const Issue = ({ title, content, author, date, resolved }) => {
         {title}
       </Heading>
       <Divider w="75%" mx="auto" />
-      <Text px="4" py="6" textAlign="justify">
+      <Text whiteSpace="pre-wrap" px="4" py="6" textAlign="justify">
         {content}
       </Text>
       <Divider w="75%" mx="auto" />
-      <HStack px="2" py="4" justifyContent="end" direction="column">
+      <HStack px="2" py="4" justifyContent="space-between" direction="column">
         <Box fontWeight="100" color={color}>
           {message}
         </Box>
@@ -37,7 +43,7 @@ const Issue = ({ title, content, author, date, resolved }) => {
             <Text fontStyle="italic">{`${author.firstName} ${author.lastName}`}</Text>
           </Box>
         )}
-        <Box fontWeight="100">{new Date(date).toLocaleString()}</Box>
+        <Box fontWeight="100">{getFormattedDate()}</Box>
       </HStack>
     </Box>
   );

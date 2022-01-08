@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { ModeContext } from '../../contexts';
 import { Flex, Box, IconButton, Center, Text } from '@chakra-ui/react';
 import { FaBars } from 'react-icons/fa';
+import { MODES } from '../../strings';
 
 const Header = ({ showSidebarButton = true, onShowSidebar }) => {
   const { mode } = useContext(ModeContext);
@@ -21,7 +22,7 @@ const Header = ({ showSidebarButton = true, onShowSidebar }) => {
         )}
       </Box>
       <Center flex="1" h="40px">
-        <Text fontSize="xl">{mode}</Text>
+        <Text fontSize="xl">{mode !== null ? mode : MODES.Announcements}</Text>
       </Center>
       <Box flex="1" />
     </Flex>

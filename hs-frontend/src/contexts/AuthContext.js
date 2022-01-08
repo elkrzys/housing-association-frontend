@@ -127,7 +127,6 @@ const AuthContextProvider = ({ children }) => {
         const result = await refreshToken();
         if(result){
           request.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
-          axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
           return axios(request)
         }
       }

@@ -90,9 +90,7 @@ const AnnouncementsTable = () => {
         <Thead h="75px">
           <Tr bg="blue.100">
             {columns.map(column => (
-              <Th key={column.accessor} borderRight={'2px dotted gray'}>
-                {column.Header}
-              </Th>
+              <Th key={column.accessor}>{column.Header}</Th>
             ))}
 
             {role !== 'Resident' && (

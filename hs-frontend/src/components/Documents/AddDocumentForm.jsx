@@ -61,13 +61,17 @@ const AddDocumentForm = ({ onClose, preSelectedUserId }) => {
     } else if (!acceptedFileTypes.some(type => type === values.file.type)) {
       ToastError(toast, 'Dokument ma nieprawidłowy format');
     } else {
+      let receiversIds;
+      if (role === 'Resident') receiversIds = null;
+      else if (values.receiversIds[0] === undefined) receiversIds = null;
       const response = await DocumentsService.uploadDocument(
         user.id,
         values.title,
         values.file,
         values.removes,
-        values.receiversIds,
+        receiversIds,
       );
+
       if (response.status === 'SUCCESS') {
         ToastSuccess(toast, 'Dokument przesłany');
         onClose?.();

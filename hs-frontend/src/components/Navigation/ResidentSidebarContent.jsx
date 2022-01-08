@@ -1,26 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { Flex, Text, Avatar, Heading, chakra } from '@chakra-ui/react';
 import {
-  Flex,
-  Text,
-  IconButton,
-  Divider,
-  Avatar,
-  Heading,
-  chakra,
-} from '@chakra-ui/react';
-import {
-  FaBars,
-  FaHome,
   FaUser,
   FaBuilding,
   FaBriefcase,
-  FaSettings,
   FaUserAlt,
   FaScroll,
   FaClipboardCheck,
   FaSignOutAlt,
-  FaUsers,
 } from 'react-icons/fa';
 import NavItem from './NavItem';
 import { MODES } from '../../strings';
@@ -43,11 +31,6 @@ const SidebarContent = () => {
   return (
     <Flex>
       <Flex p="5%" flexDir="column" w="100%" alignItems={'flex-start'} as="nav">
-        <NavItem
-          icon={FaHome}
-          title="Strona główna"
-          onClick={() => setMode({ mode: MODES.HomePage, contentId: null })}
-        />
         <NavItem
           icon={FaScroll}
           title="Ogłoszenia"

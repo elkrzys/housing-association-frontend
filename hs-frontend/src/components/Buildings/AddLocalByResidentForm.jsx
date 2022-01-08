@@ -14,7 +14,7 @@ import { BasicInput } from '../Inputs';
 import { ToastError, ToastSuccess } from '../Toasts';
 import { AuthContext } from '../../contexts';
 
-const AddLocalByResidentForm = () => {
+const AddLocalByResidentForm = ({ refresh }) => {
   const toast = useToast();
   const { user } = useContext(AuthContext);
   const setSubmit = async (values, actions) => {
@@ -41,6 +41,7 @@ const AddLocalByResidentForm = () => {
           },
         });
         ToastSuccess(toast, 'Lokal dodany');
+        refresh();
       } else {
         ToastError(toast, 'Lokal nie został dodany');
       }

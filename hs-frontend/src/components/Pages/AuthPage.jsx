@@ -38,17 +38,6 @@ const AuthPage = () => {
         h={'full'}
         py={10}
         align={'center'}>
-        {/* <VStack
-          w={'full'}
-          justify={'center'}
-          px={useBreakpointValue({ base: 4, md: 8 })}
-          bgGradient={'linear(to-r, blackAlpha.600, transparent)'}>
-              
-          {/* <Stack maxW={'2xl'} align={'flex-start'} spacing={6}>   */}
-
-        {/* </Stack> */}
-
-        {/* </VStack> */}
         <Text
           maxW={{ base: '80vw', md: '30vw' }}
           color={'white'}

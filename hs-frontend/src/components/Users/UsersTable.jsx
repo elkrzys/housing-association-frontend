@@ -23,7 +23,7 @@ import AddWorkerForm from './AddWorkerForm';
 const UsersTable = ({ usersRole }) => {
   const { setMode } = useContext(ModeContext);
   const [users, setUsers] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState(0);
+  const [selectedUserId, setSelectedUserId] = useState();
   const [refresh, setRefresh] = useState(false);
   const toast = useToast();
   const {
@@ -64,13 +64,12 @@ const UsersTable = ({ usersRole }) => {
         <Thead h="75px">
           <Tr bg="blue.100">
             {columns.map(column => (
-              <Th key={column.accessor} w="20%" borderRight={'2px dotted gray'}>
+              <Th key={column.accessor} w="20%">
                 {column.Header}
               </Th>
             ))}
-
-            <Th>
-              {usersRole !== 'residents' && (
+            {usersRole !== 'residents' && (
+              <Th>
                 <Flex justifyContent="center">
                   <Button
                     bg="gray.100"
@@ -82,8 +81,8 @@ const UsersTable = ({ usersRole }) => {
                     <AddWorkerForm onClose={handleCloseAndRefresh} />
                   </CustomModal>
                 </Flex>
-              )}
-            </Th>
+              </Th>
+            )}
           </Tr>
         </Thead>
         <Tbody>
@@ -91,10 +90,9 @@ const UsersTable = ({ usersRole }) => {
             <Tr
               key={user.id}
               onClick={() => {
-                setSelectedUserId(user.id);
                 setMode({
                   mode: MODES.UserDetails,
-                  contentId: selectedUserId,
+                  contentId: user.id,
                 });
               }}
               _hover={{
@@ -106,22 +104,8 @@ const UsersTable = ({ usersRole }) => {
               <Td w="20%">{user.lastName}</Td>
               <Td w="20%">{user.email}</Td>
               <Td w="20%">{user.phoneNumber}</Td>
-              <Td w="20%">{user.isEnabled ? 'Aktywny' : 'Nieaktywny'}</Td>
-              <Td>
-                <Flex justifyContent="center">
-                  <Button
-                    bg="blue.100"
-                    _hover={{ bg: 'blue.200' }}
-                    onClick={e => {
-                      e.stopPropagation();
-                      //   setMode({
-                      //     mode: MODES.EditAnnouncement,
-                      //     contentId: announcement.id,
-                      //   });
-                    }}>
-                    <FaEdit />
-                  </Button>
-                </Flex>
+              <Td colSpan="2" w="20%">
+                {user.isEnabled ? 'Aktywny' : 'Nieaktywny'}
               </Td>
             </Tr>
           ))}
