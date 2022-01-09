@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import {
   Flex,
+  Text,
   Box,
   Heading,
   Stack,
@@ -16,6 +17,7 @@ import { AuthContext } from '../../contexts';
 import { BasicInput, ReactSelect } from '../Inputs';
 import { ToastError, ToastSuccess } from '../Toasts';
 import DatePickerField from '../DatePickerField';
+import { getSelections } from './functions';
 
 const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
   const { user } = useContext(AuthContext);
@@ -25,6 +27,8 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
   const [buildings, setBuildings] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [reselectedAddress, setReselectedAddress] = useState(false);
+  const [preSelectionLoaded, setPreSelectionLoaded] = useState(false);
+
   const toast = useToast();
 
   let defaultExpirationDate = new Date();
@@ -42,40 +46,12 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
   const [prevSelections, setPrevSelections] = useState(defaultSelections);
 
   const getCurrentSelections = async () => {
-    let selections = defaultSelections;
-    selections.cities = [
-      ...new Set(announcement.addresses.map(address => address.city)),
-    ];
-    if (selections.cities.length < 2) {
-      selections.districts = [
-        ...new Set(announcement.addresses.map(address => address.district)),
-      ];
-      selections.districts = selections.districts.filter(d => d !== null);
-      if (selections.districts.length < 2) {
-        selections.streets = [
-          ...new Set(announcement.addresses.map(address => address.street)),
-        ];
-        if (selections.streets.length) {
-          selections.buildingsIds = [...announcement.targetBuildingsIds];
-          if (
-            selections.cities.length === 1 ||
-            selections.districts.length === 1
-          ) {
-            const buildingsResponse = await BuildingsService.getBuildingsByIds(
-              selections.buildingsIds,
-            );
-            if (buildingsResponse.status === 'SUCCESS')
-              selections.buildings = buildingsResponse.data;
-            else
-              ToastError(
-                toast,
-                'Wystąpił problem podczas wczytywania aktualnych budynków',
-              );
-          }
-        }
-      }
+    try {
+      const selections = await getSelections(defaultSelections, announcement);
+      setPrevSelections(selections);
+    } catch {
+      ToastError(toast, 'Wystąpił problem podczas pobierania budynków');
     }
-    setPrevSelections(selections);
   };
 
   const getCities = async () => {
@@ -139,37 +115,49 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
     return (
       <>
         <Text>Miasta: {prevSelections.cities.map(c => `${c}, `)}</Text>
-        <br />
-        {prevSelections.districts.length && (
-          <>
+        {prevSelections.districts?.length !== 0 &&
+          prevSelections.cities.length === 1 && (
             <Text>
               Dzielnice: {prevSelections.districts.map(d => `${d}, `)}
             </Text>
-            <br />
-          </>
-        )}
+          )}
         {prevSelections.streets.length && (
-          <>
-            <Text>Ulice: {prevSelections.streets.map(s => `${s}, `)}</Text>
-            <br />
-          </>
+          <Text>Ulice: {prevSelections.streets.map(s => `${s}, `)}</Text>
         )}
         {prevSelections.streets.length === 1 && (
-          <>
-            <Text>
-              Numery budynków:{' '}
-              {prevSelections.buildings.map(b => `${b.number}, `)}
-            </Text>
-            <br />
-          </>
+          <Text>
+            Numery budynków:
+            {prevSelections.buildings.map(b => `${b.number}, `)}
+          </Text>
         )}
       </>
     );
   };
 
   useEffect(() => {
-    getCities();
-    if (!reselectedAddress) getCurrentSelections();
+    if (!cities.length) getCities();
+    if (!preSelectionLoaded) {
+      getCurrentSelections();
+      setReselectedAddress(true);
+    }
+    if (prevSelections.streets.length === 1 && !preSelectionLoaded) {
+      getStreets(prevSelections.cities[0], prevSelections.districts?.[0]);
+      getBuildings(
+        prevSelections.cities[0],
+        prevSelections.districts?.[0],
+        prevSelections.streets,
+      );
+      setPreSelectionLoaded(true);
+    }
+    if (
+      (prevSelections.cities.length === 1 ||
+        prevSelections.districts.length === 1) &&
+      !preSelectionLoaded
+    ) {
+      getDistricts(prevSelections.cities[0]);
+      getStreets(prevSelections.cities[0], prevSelections.districts?.[0]);
+      setPreSelectionLoaded(true);
+    }
   }, [refresh]);
 
   const initialValues = {
@@ -178,7 +166,7 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
     cities: prevSelections?.cities || [],
     districts: prevSelections?.districts || [],
     streets: prevSelections?.streets || [],
-    buildings: prevSelections?.buildings || [],
+    buildings: prevSelections?.buildingsIds || [],
     expirationDate: new Date(announcement.expirationDate)
       .toISOString()
       .split('T')[0],
@@ -252,9 +240,9 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
                   </FormControl>
                   {!reselectedAddress && (
                     <Box>
-                      <Heading>Aktualne adresy</Heading>
+                      <Heading fontSize="sm">Aktualne adresy</Heading>
                       <Box maxH="250px" overflow="auto">
-                        {showActualAddresses}
+                        {showActualAddresses()}
                       </Box>
                     </Box>
                   )}
@@ -269,7 +257,7 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
                         placeholder="Miasta"
                       />
                     )}
-                    {values.cities.length < 2 && districts.length && (
+                    {values.cities.length === 1 && districts.length && (
                       <ReactSelect
                         options={districts.map(d => ({ value: d, label: d }))}
                         isMulti={true}
@@ -281,7 +269,7 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
                         placeholder="Dzielnice"
                       />
                     )}
-                    {values.cities.length < 2 &&
+                    {values.cities.length === 1 &&
                       values.districts.length < 2 &&
                       streets.length && (
                         <ReactSelect
@@ -299,9 +287,9 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
                           placeholder="Ulice"
                         />
                       )}
-                    {values.cities.length < 2 &&
+                    {values.cities.length === 1 &&
                       values.districts.length < 2 &&
-                      values.streets.length > 0 &&
+                      values.streets.length === 1 &&
                       buildings.length && (
                         <ReactSelect
                           options={buildings.map(b => ({
