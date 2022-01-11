@@ -48,6 +48,8 @@ const UsersTable = ({ usersRole }) => {
     onAddClose();
   };
 
+  const pushToUserDetails = userId => history.push(`/users/details/${userId}`);
+
   useEffect(() => {
     getUsers();
   }, [refresh]);
@@ -91,13 +93,7 @@ const UsersTable = ({ usersRole }) => {
           {users?.map(user => (
             <Tr
               key={user.id}
-              onClick={() => {
-                history.push(`/users/details/${user.id}`);
-                // setMode({
-                //   mode: MODES.UserDetails,
-                //   contentId: user.id,
-                // });
-              }}
+              onClick={() => pushToUserDetails(user.id)}
               _hover={{
                 boxShadow: '0px 0px 4px 0px rgba(66, 68, 90, 0.52);',
                 transition: '0.1s',

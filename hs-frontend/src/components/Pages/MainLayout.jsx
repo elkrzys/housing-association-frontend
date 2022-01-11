@@ -2,8 +2,8 @@ import { useState, useContext } from 'react';
 import { Flex, Box, useBreakpointValue } from '@chakra-ui/react';
 import Sidebar from '../Navigation/Sidebar';
 import Header from '../Navigation/Header';
-import { Redirect, useHistory } from 'react-router-dom';
-import { AuthContext, ModeContext } from '../../contexts';
+import { Redirect } from 'react-router-dom';
+import { AuthContext } from '../../contexts';
 
 const MainLayout = ({ header, children }) => {
   const { token } = useContext(AuthContext);

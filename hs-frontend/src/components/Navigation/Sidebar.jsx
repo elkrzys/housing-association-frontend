@@ -1,4 +1,3 @@
-import React, { useContext } from 'react';
 import {
   Box,
   Drawer,
@@ -9,19 +8,10 @@ import {
   DrawerContent,
 } from '@chakra-ui/react';
 import SidebarContent from './SidebarContent';
-import { AuthContext } from '../../contexts';
 
 const Sidebar = ({ isOpen, variant, onClose }) => {
-  const { role } = useContext(AuthContext);
-  // const sidebarContent =
-  //   role === 'Worker' ? (
-  //     <WorkerSidebarContent onClick={onClose} />
-  //   ) : (
-  //     <ResidentSidebarContent onClick={onClose} />
-  //   );
-
   return variant === 'sidebar' ? (
-    <Box position="fixed" left={0} p={5} w="16vw" top={0} h="100%" bg="#f2f2f2">
+    <Box position="fixed" left="0" p="5" w="16vw" top="0" h="100%" bg="#f2f2f2">
       <SidebarContent />
     </Box>
   ) : (
@@ -29,7 +19,11 @@ const Sidebar = ({ isOpen, variant, onClose }) => {
       <DrawerOverlay>
         <DrawerContent>
           <DrawerCloseButton />
-          {/* <DrawerHeader>Chakra-UI</DrawerHeader> */}
+          <DrawerHeader textAlign="center">
+            System Zgłoszeń
+            <br />
+            Wspólnoty Mieszkaniowej
+          </DrawerHeader>
           <DrawerBody>
             <SidebarContent />
           </DrawerBody>

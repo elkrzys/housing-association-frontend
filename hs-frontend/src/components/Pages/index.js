@@ -1,4 +1,3 @@
-export { default as MainPage } from './MainPage';
 export { default as AuthPage } from './AuthPage';
 export {default as DocumentsPage} from './DocumentsPage';
 export {default as AnnouncementsPage} from './AnnouncementsPage';

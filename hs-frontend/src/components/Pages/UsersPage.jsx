@@ -19,7 +19,7 @@ import UsersTable from '../Users/UsersTable';
 const UsersPage = () => {
   return (
     <MainLayout header="Użytkownicy">
-      <Flex w="full">
+      <Box w="100%">
         <Accordion allowMultiple w="100%">
           <AccordionItem>
             <h2>
@@ -49,7 +49,7 @@ const UsersPage = () => {
             </AccordionPanel>
           </AccordionItem>
         </Accordion>
-      </Flex>
+      </Box>
     </MainLayout>
   );
 };

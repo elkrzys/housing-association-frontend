@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   Box,
@@ -13,21 +13,18 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { FaArrowDown, FaArrowUp, FaTrash, FaEdit } from 'react-icons/fa';
-import { ModeContext } from '../../contexts';
+import { FaTrash, FaEdit } from 'react-icons/fa';
 import CustomModal from '../CustomModal';
 import AddBuildingForm from './AddBuildingForm';
-import { MODES } from '../../strings';
-import './buildings.css';
 import { BuildingsService } from '../../services';
 import { ToastError } from '../Toasts';
 import CustomAlertDialog from '../CustomAlertDialog';
+import './buildings.css';
 
 const BuildingsTable = () => {
   const cancelRef = useRef();
   const toast = useToast();
   const history = useHistory();
-  const { setMode } = useContext(ModeContext);
   const [buildings, setBuildings] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
@@ -60,6 +57,9 @@ const BuildingsTable = () => {
       ToastError(toast, 'Wystąpił problem podczas wczytywania budynków');
     }
   };
+
+  const pushToDetailsPage = buildingId =>
+    history.push(`/building/${buildingId}`);
 
   const deleteBuilding = async id => {
     let response = await BuildingsService.deleteBuilding(id);
@@ -121,22 +121,14 @@ const BuildingsTable = () => {
                     alignSelf="center"
                     bg="blue.100"
                     _hover={{ bg: 'blue.200' }}
-                    onClick={() => {
-                      history.push(`/building/${building.id}`);
-                      // setMode({
-                      //   mode: MODES.BuildingDetails,
-                      //   contentId: building.id,
-                      // });
-                    }}>
+                    onClick={() => pushToDetailsPage(building.id)}>
                     <FaEdit />
                   </Button>
                   <Button
                     alignSelf="center"
                     bg="red.100"
                     _hover={{ bg: 'red.200' }}
-                    onClick={e => {
-                      onAlertOpen();
-                    }}>
+                    onClick={onAlertOpen}>
                     <FaTrash />
                     <CustomAlertDialog
                       leastDestructiveRef={cancelRef}

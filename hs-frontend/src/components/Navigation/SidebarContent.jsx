@@ -12,7 +12,6 @@ import {
   FaUsers,
 } from 'react-icons/fa';
 import NavItem from './NavItem';
-import { MODES } from '../../strings';
 import { ModeContext, AuthContext } from '../../contexts';
 
 const CFaUserAlt = chakra(FaUserAlt);
@@ -36,7 +35,6 @@ const SidebarContent = () => {
           <NavItem
             icon={FaBuilding}
             title="Budynki"
-            // onClick={() => setMode({ mode: MODES.Buildings, contentId: null })}
             onClick={() => history.push('/buildings')}
           />
         ) : (
@@ -44,16 +42,12 @@ const SidebarContent = () => {
             icon={FaBuilding}
             title="Lokale"
             onClick={() => history.push('/locals')}
-            // onClick={() =>
-            //   setMode({ mode: MODES.ResidentLocals, contentId: null })
-            // }
           />
         )}
         {role === 'Worker' && (
           <NavItem
             icon={FaUsers}
             title="Użytkownicy"
-            //onClick={() => setMode({ mode: MODES.UsersTables, contentId: null })}
             onClick={() => history.push('/users')}
           />
         )}
@@ -61,27 +55,21 @@ const SidebarContent = () => {
         <NavItem
           icon={FaScroll}
           title="Ogłoszenia"
-          // onClick={() =>
-          //   setMode({ mode: MODES.Announcements, contentId: null })
-          // }
           onClick={() => history.push('/announcements')}
         />
         <NavItem
           icon={FaClipboardCheck}
           title="Zgłoszenia"
-          // onClick={() => setMode({ mode: MODES.Issues, contentId: null })}
           onClick={() => history.push('/issues')}
         />
         <NavItem
           icon={FaBriefcase}
           title="Dokumenty"
-          // onClick={() => setMode({ mode: MODES.Documents, contentId: null })}
           onClick={() => history.push('/documents')}
         />
         <NavItem
           icon={FaUser}
           title="Twój profil"
-          // onClick={() => setMode({ mode: MODES.UserProfile, contentId: null })}
           onClick={() => history.push('/profile')}
         />
         <NavItem
