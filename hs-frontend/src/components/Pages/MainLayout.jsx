@@ -1,16 +1,12 @@
-import { useState, useContext, useEffect, useCallback } from 'react';
+import { useState, useContext } from 'react';
 import { Flex, Box, useBreakpointValue } from '@chakra-ui/react';
-import { MODES } from '../../strings';
 import Sidebar from '../Navigation/Sidebar';
 import Header from '../Navigation/Header';
 import { Redirect, useHistory } from 'react-router-dom';
 import { AuthContext, ModeContext } from '../../contexts';
-import Modes from '../Modes/Modes';
 
 const MainLayout = ({ header, children }) => {
-  const history = useHistory;
   const { token } = useContext(AuthContext);
-  const { mode, contentId, setMode } = useContext(ModeContext);
   const smVariant = { navigation: 'drawer', navigationButton: true };
   const mdVariant = { navigation: 'sidebar', navigationButton: false };
   const [isSidebarOpen, setSidebarOpen] = useState(false);

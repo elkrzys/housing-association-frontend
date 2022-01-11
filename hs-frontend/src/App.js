@@ -45,7 +45,9 @@ const App = () => (
                 <Pages.BuildingsPage />
               </Route>
               <Route exact path="/building/:buildingId" render={(props) => <Pages.BuildingDetailsPage {...props} /> }/>
-
+              <Route exact path="/locals">
+                <Pages.LocalsPage />
+              </Route>
               </Switch>
             
             </Router>
