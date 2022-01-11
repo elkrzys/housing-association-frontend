@@ -25,7 +25,7 @@ const SidebarContent = () => {
 
   const signOutAndRedirect = () => {
     signOut();
-    history.replace('/');
+    history.replace('/login');
   };
   const { setMode } = useContext(ModeContext);
   return (

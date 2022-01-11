@@ -148,7 +148,9 @@ const AnnouncementsTable = () => {
                 {new Date(announcement.created).toLocaleDateString()}
               </Td>
               <Td w="20%">
-                {new Date(announcement.expirationDate).toLocaleDateString()}
+                {!(new Date(announcement.expirationDate) <= new Date())
+                  ? new Date(announcement.expirationDate).toLocaleDateString()
+                  : 'Wygasło'}
               </Td>
               <Td w="20%">{`${announcement.author.firstName} ${announcement.author.lastName}`}</Td>
               {role !== 'Resident' && (

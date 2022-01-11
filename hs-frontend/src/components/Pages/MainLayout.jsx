@@ -3,11 +3,12 @@ import { Flex, Box, useBreakpointValue } from '@chakra-ui/react';
 import { MODES } from '../../strings';
 import Sidebar from '../Navigation/Sidebar';
 import Header from '../Navigation/Header';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { AuthContext, ModeContext } from '../../contexts';
 import Modes from '../Modes/Modes';
 
-const MainPage = () => {
+const MainLayout = ({ header, children }) => {
+  const history = useHistory;
   const { token } = useContext(AuthContext);
   const { mode, contentId, setMode } = useContext(ModeContext);
   const smVariant = { navigation: 'drawer', navigationButton: true };
@@ -29,18 +30,15 @@ const MainPage = () => {
         ml={!variants?.navigationButton && { base: '0', md: '16vw' }}
         w={!variants?.navigationButton && { base: '100vw', md: '84vw' }}>
         <Header
+          header={header}
           showSidebarButton={variants?.navigationButton}
           onShowSidebar={toggleSidebar}
         />
         <Box minW="100%" justify="center" mt="4vh">
-          {mode !== null ? (
-            <Modes mode={mode} contentId={contentId} />
-          ) : (
-            <Modes mode={MODES.Announcements} contentId={null} />
-          )}
+          {children}
         </Box>
       </Box>
     </Flex>
   );
 };
-export default MainPage;
+export default MainLayout;

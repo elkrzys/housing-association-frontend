@@ -10,12 +10,21 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
-import { AnnouncementsService, BuildingsService } from '../../services';
+import { AnnouncementsService } from '../../services';
 import { AuthContext } from '../../contexts';
-import { BasicInput, ReactSelect } from '../Inputs';
+import { BasicInput } from '../Inputs';
 import { useEffect } from 'react/cjs/react.development';
 import { ToastError, ToastSuccess } from '../Toasts';
 import DatePickerField from '../DatePickerField';
+import DynamicAddressSelect from './DynamicAddressSelect';
+import {
+  getCities,
+  getDistricts,
+  getStreets,
+  getBuildings,
+  getAddressErrorEnding,
+  handleSetValues,
+} from './functions';
 
 const AddAnnouncementForm = ({ onAddClose }) => {
   const { user } = useContext(AuthContext);
@@ -30,64 +39,54 @@ const AddAnnouncementForm = ({ onAddClose }) => {
   defaultExpirationDate.setDate(defaultExpirationDate.getDate() + 7);
   const [expirationDate] = useState(defaultExpirationDate);
 
-  const getCities = async () => {
-    const response = await BuildingsService.getCities();
-    if (response.status === 'SUCCESS') {
-      setCities(response.data);
-    } else {
-      ToastError(toast, 'Wystąpił problem podczas wczytywania miast');
-    }
-  };
-  const getDistricts = async city => {
-    const response = await BuildingsService.getDistricts(city);
-    if (response.status === 'SUCCESS') {
-      setDistricts(response.data);
-      setRefresh(!refresh);
-    } else {
-      ToastError(toast, 'Wystąpił problem podczas wczytywania dzielnic');
-    }
-  };
-  const getStreets = async (city, district) => {
-    const response = await BuildingsService.getStreets(city, district);
-    if (response.status === 'SUCCESS') {
-      setStreets(response.data);
-      setRefresh(!refresh);
-    } else {
-      ToastError(toast, 'Wystąpił problem podczas wczytywania ulic');
-    }
-  };
-  const getBuildings = async (city, streets, district = null) => {
-    const response = await BuildingsService.getBuildingsByAddresses(
-      city,
-      district,
-      streets,
-    );
-    if (response.status === 'SUCCESS') {
-      setBuildings(response.data);
-      setRefresh(!refresh);
-    } else {
-      ToastError(toast, 'Wystąpił problem podczas wczytywania budynków');
-    }
-  };
+  const handleRefresh = () => setRefresh(!refresh);
   const handleSelectCities = async values => {
     if (values.length === 1) {
-      await getDistricts(values[0]);
-      await getStreets(values[0]);
+      await getDistricts(
+        values[0],
+        values => handleSetValues(values, setDistricts, handleRefresh),
+        handleToastError,
+      );
+      await getStreets(
+        values[0],
+        null,
+        values => handleSetValues(values, setStreets, handleRefresh),
+        handleToastError,
+      );
     }
   };
   const handleSelectDistricts = async values => {
     if (values.length === 1) {
-      await getStreets(values.cities[0], values.districts[0]);
+      await getStreets(
+        values.cities[0],
+        values.districts[0],
+        values => handleSetValues(values, setStreets, handleRefresh),
+        handleToastError,
+      );
     }
   };
   const handleSelectStreets = async (city, values, district) => {
     if (values.length) {
-      await getBuildings(city, values, district);
+      await getBuildings(
+        city,
+        values,
+        district,
+        values => handleSetValues(values, setBuildings, handleRefresh),
+        handleToastError,
+      );
     }
+  };
+  const handleToastError = source => {
+    const ending = getAddressErrorEnding(source);
+    ToastError(toast, `Wystąpił problem podczas pobierania ${ending}.`);
   };
 
   useEffect(() => {
-    if (!cities.length) getCities();
+    if (!cities.length)
+      getCities(
+        values => handleSetValues(values, setCities, handleRefresh),
+        handleToastError,
+      );
   }, [refresh]);
 
   const setSubmit = async (values, actions) => {
@@ -171,63 +170,16 @@ const AddAnnouncementForm = ({ onAddClose }) => {
                       p="3"
                     />
                   </FormControl>
-                  <Stack>
-                    {cities.length && (
-                      <ReactSelect
-                        options={cities.map(c => ({ value: c, label: c }))}
-                        isMulti={true}
-                        name="cities"
-                        openMenuOnClick={true}
-                        onChange={async vals => await handleSelectCities(vals)}
-                        placeholder="Miasta"
-                      />
-                    )}
-                    {values.cities.length < 2 && districts.length && (
-                      <ReactSelect
-                        options={districts.map(d => ({ value: d, label: d }))}
-                        isMulti={true}
-                        name="districts"
-                        openMenuOnClick={true}
-                        onChange={async vals =>
-                          await handleSelectDistricts(vals)
-                        }
-                        placeholder="Dzielnice"
-                      />
-                    )}
-                    {values.cities.length < 2 &&
-                      values.districts.length < 2 &&
-                      streets.length && (
-                        <ReactSelect
-                          options={streets.map(s => ({ value: s, label: s }))}
-                          isMulti={true}
-                          name="streets"
-                          openMenuOnClick={true}
-                          onChange={async vals =>
-                            await handleSelectStreets(
-                              values.cities[0],
-                              vals,
-                              values.districts?.[0],
-                            )
-                          }
-                          placeholder="Ulice"
-                        />
-                      )}
-                    {values.cities.length < 2 &&
-                      values.districts.length < 2 &&
-                      values.streets.length === 1 &&
-                      buildings.length && (
-                        <ReactSelect
-                          options={buildings.map(b => ({
-                            value: b.id,
-                            label: `${b.address.street} ${b.number}`,
-                          }))}
-                          isMulti={true}
-                          name="buildings"
-                          openMenuOnClick={true}
-                          placeholder="Budynki"
-                        />
-                      )}
-                  </Stack>
+                  <DynamicAddressSelect
+                    values={values}
+                    cities={cities}
+                    districts={districts}
+                    streets={streets}
+                    buildings={buildings}
+                    handleSelectCities={handleSelectCities}
+                    handleSelectDistricts={handleSelectDistricts}
+                    handleSelectStreets={handleSelectStreets}
+                  />
                   <Stack spacing="10">
                     <Button
                       bg="green.300"

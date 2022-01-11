@@ -43,23 +43,25 @@ const EditAnnouncementsCellBody = ({ announcement, refresh }) => {
 
   return (
     <Flex maxH="24px" gridColumnGap="10px" justifyContent="center">
-      <Button
-        alignSelf="center"
-        bg="blue.100"
-        _hover={{ bg: 'blue.200' }}
-        onClick={e => handleOpenWithNoPropagation(e, onEditOpen)}>
-        <FaEdit />
-        <CustomModal
-          header="Edytuj ogłoszenie"
-          size="lg"
-          onClose={onEditClose}
-          isOpen={isEditOpen}>
-          <UpdateAnnouncementForm
-            announcement={announcement}
-            onEditClose={() => closeAndRefresh(onEditClose)}
-          />
-        </CustomModal>
-      </Button>
+      {!(new Date(announcement.expirationDate) <= new Date()) && (
+        <Button
+          alignSelf="center"
+          bg="blue.100"
+          _hover={{ bg: 'blue.200' }}
+          onClick={e => handleOpenWithNoPropagation(e, onEditOpen)}>
+          <FaEdit />
+          <CustomModal
+            header="Edytuj ogłoszenie"
+            size="lg"
+            onClose={onEditClose}
+            isOpen={isEditOpen}>
+            <UpdateAnnouncementForm
+              announcement={announcement}
+              onEditClose={() => closeAndRefresh(onEditClose)}
+            />
+          </CustomModal>
+        </Button>
+      )}
       <Button
         alignSelf="center"
         bg="red.100"

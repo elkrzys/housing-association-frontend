@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { useHistory, Redirect, useRouteMatch } from 'react-router-dom';
 import { Flex, Text, Avatar, Heading, chakra } from '@chakra-ui/react';
 import {
   FaUser,
@@ -23,45 +23,52 @@ const SidebarContent = () => {
   useEffect(() => {}, [user]);
 
   const history = useHistory();
+  const { path } = useRouteMatch();
   const signOutAndRedirect = () => {
     signOut();
-    history.replace('/');
+    history.replace('/login');
   };
   const { setMode } = useContext(ModeContext);
   return (
     <Flex>
-      <Flex p="5%" flexDir="column" w="100%" alignItems={'flex-start'} as="nav">
+      <Flex p="5%" flexDir="column" w="100%" alignItems="flex-start" as="nav">
         <NavItem
           icon={FaBuilding}
           title="Budynki"
-          onClick={() => setMode({ mode: MODES.Buildings, contentId: null })}
+          // onClick={() => setMode({ mode: MODES.Buildings, contentId: null })}
+          onClick={() => history.push('/buildings')}
         />
         <NavItem
           icon={FaUsers}
           title="Użytkownicy"
-          onClick={() => setMode({ mode: MODES.UsersTables, contentId: null })}
+          //onClick={() => setMode({ mode: MODES.UsersTables, contentId: null })}
+          onClick={() => history.push('/users')}
         />
         <NavItem
           icon={FaScroll}
           title="Ogłoszenia"
-          onClick={() =>
-            setMode({ mode: MODES.Announcements, contentId: null })
-          }
+          // onClick={() =>
+          //   setMode({ mode: MODES.Announcements, contentId: null })
+          // }
+          onClick={() => history.push('/announcements')}
         />
         <NavItem
           icon={FaClipboardCheck}
           title="Zgłoszenia"
-          onClick={() => setMode({ mode: MODES.Issues, contentId: null })}
+          // onClick={() => setMode({ mode: MODES.Issues, contentId: null })}
+          onClick={() => history.push('/issues')}
         />
         <NavItem
           icon={FaBriefcase}
           title="Dokumenty"
-          onClick={() => setMode({ mode: MODES.Documents, contentId: null })}
+          // onClick={() => setMode({ mode: MODES.Documents, contentId: null })}
+          onClick={() => history.push('/documents')}
         />
         <NavItem
           icon={FaUser}
           title="Twój profil"
-          onClick={() => setMode({ mode: MODES.UserProfile, contentId: null })}
+          // onClick={() => setMode({ mode: MODES.UserProfile, contentId: null })}
+          onClick={() => history.push('/profile')}
         />
         <NavItem
           icon={FaSignOutAlt}

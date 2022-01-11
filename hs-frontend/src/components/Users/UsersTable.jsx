@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import {
   Box,
   Flex,
@@ -12,7 +13,6 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { FaArrowDown, FaArrowUp, FaBan, FaEdit } from 'react-icons/fa';
 import { ModeContext } from '../../contexts';
 import CustomModal from '../CustomModal.jsx';
 import { MODES } from '../../strings';
@@ -21,6 +21,8 @@ import { ToastError } from '../Toasts';
 import AddWorkerForm from './AddWorkerForm';
 
 const UsersTable = ({ usersRole }) => {
+  const { url, path } = useRouteMatch();
+  const history = useHistory();
   const { setMode } = useContext(ModeContext);
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState();
@@ -90,10 +92,11 @@ const UsersTable = ({ usersRole }) => {
             <Tr
               key={user.id}
               onClick={() => {
-                setMode({
-                  mode: MODES.UserDetails,
-                  contentId: user.id,
-                });
+                history.push(`/users/details/${user.id}`);
+                // setMode({
+                //   mode: MODES.UserDetails,
+                //   contentId: user.id,
+                // });
               }}
               _hover={{
                 boxShadow: '0px 0px 4px 0px rgba(66, 68, 90, 0.52);',

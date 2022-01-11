@@ -24,7 +24,6 @@ const setLocalStorageData = result => {
   const user = getUserFromResponse(result);
   localStorage.setItem('user', JSON.stringify(user));
   localStorage.setItem('role', result.data.role);
-  axios.defaults.headers.common.Authorization = `Bearer ${result.data.accessToken}`;
 };
 
 const clearUserData = () => {
@@ -112,14 +111,17 @@ const AuthContextProvider = ({ children }) => {
   }, []);
 
   useMemo(() => {
+    axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
+
     axios.interceptors.request.use(config => {
       config.withCredentials = true;
+      config.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
       return config;
     });
 
     axios.interceptors.response.use((response)=> response, async error => {
       const request = error.config;
-      if(error.response.status === 401 && request?.url?.includes('/auth/refresh-token')){
+      if(error.response.status === 400 && request?.url?.includes('/auth/refresh-token')){
         signOut();
         return;
       }

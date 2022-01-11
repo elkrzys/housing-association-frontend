@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from 'react';
 import {
   Flex,
   Box,
-  Button,
   Accordion,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
 } from '@chakra-ui/react';
-import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import UsersTable from './UsersTable';
 
 const CollapsedUsersTables = () => {

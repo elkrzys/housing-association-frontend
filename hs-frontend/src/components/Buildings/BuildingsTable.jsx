@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Box,
   Flex,
@@ -25,6 +26,7 @@ import CustomAlertDialog from '../CustomAlertDialog';
 const BuildingsTable = () => {
   const cancelRef = useRef();
   const toast = useToast();
+  const history = useHistory();
   const { setMode } = useContext(ModeContext);
   const [buildings, setBuildings] = useState([]);
   const [refresh, setRefresh] = useState(false);
@@ -120,10 +122,11 @@ const BuildingsTable = () => {
                     bg="blue.100"
                     _hover={{ bg: 'blue.200' }}
                     onClick={() => {
-                      setMode({
-                        mode: MODES.BuildingDetails,
-                        contentId: building.id,
-                      });
+                      history.push(`/building/${building.id}`);
+                      // setMode({
+                      //   mode: MODES.BuildingDetails,
+                      //   contentId: building.id,
+                      // });
                     }}>
                     <FaEdit />
                   </Button>
