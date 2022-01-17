@@ -13,8 +13,9 @@ import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { BasicInput, PasswordInput } from '../Inputs';
 import { ToastError } from '../Toasts';
-import ResetPasswordModal from './ResetPasswordModal';
 import { Schemas, showErrorBox } from '../Validation';
+import CustomModal from '../CustomModal';
+import ResetPasswordForm from './ResetPasswordForm';
 
 const LoginForm = () => {
   const { signIn } = useContext(AuthContext);
@@ -70,7 +71,6 @@ const LoginForm = () => {
                   {errors.password && touched.password
                     ? showErrorBox(errors.password)
                     : null}
-
                   <Stack spacing={10}>
                     <Stack
                       direction={{ base: 'column', sm: 'row' }}
@@ -83,9 +83,13 @@ const LoginForm = () => {
                         color="blue.400">
                         Nie pamiętasz hasła?
                       </Button>
-                      <ResetPasswordModal isOpen={isOpen} onClose={onClose} />
+                      <CustomModal
+                        isOpen={isOpen}
+                        onClose={onClose}
+                        header="Zresetuj hasło">
+                        <ResetPasswordForm />
+                      </CustomModal>
                     </Stack>
-
                     <Button
                       bg="blue.400"
                       color="white"

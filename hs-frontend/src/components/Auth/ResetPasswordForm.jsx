@@ -94,6 +94,7 @@ const ResetPasswordForm = () => {
 
                   <Stack spacing="10">
                     <Button
+                      mt="4"
                       bg="green.300"
                       color="white"
                       _hover={{

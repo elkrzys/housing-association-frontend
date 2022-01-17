@@ -1,8 +1,8 @@
+import { useContext } from 'react';
 import {
   Flex,
   Box,
   Stack,
-  HStack,
   Button,
   FormLabel,
   FormControl,
@@ -10,12 +10,10 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { IssuesService } from '../../services';
 import { AuthContext } from '../../contexts';
-import { useContext, useEffect, useState } from 'react';
-import { BasicInput, MultiSelect } from '../Inputs';
-import { LocalsService } from '../../services';
+import { BasicInput } from '../Inputs';
 import { ToastError, ToastSuccess } from '../Toasts';
 
 const AddIssueForm = ({ locals, onAddClose }) => {
@@ -38,16 +36,9 @@ const AddIssueForm = ({ locals, onAddClose }) => {
       onSuccess,
     );
 
-    if (response.status === 'SUCCESS') {
-      actions.resetForm({
-        values: {
-          title: '',
-          content: '',
-        },
-      });
-    } else {
+    if (response.status !== 'SUCCESS')
       ToastError(toast, 'Zgłoszenie nie zostało dodane');
-    }
+
     actions.setSubmitting(false);
   };
 
@@ -88,7 +79,6 @@ const AddIssueForm = ({ locals, onAddClose }) => {
                       p="3"
                     />
                   </FormControl>
-
                   <Select
                     placeholder="Wybierz lokal"
                     name="local"
@@ -109,7 +99,6 @@ const AddIssueForm = ({ locals, onAddClose }) => {
                       );
                     })}
                   </Select>
-
                   <Stack spacing="10">
                     <Button
                       bg="green.300"

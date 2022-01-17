@@ -2,7 +2,6 @@ import {
   Flex,
   Box,
   Stack,
-  HStack,
   Button,
   FormLabel,
   FormControl,
@@ -10,12 +9,9 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { IssuesService } from '../../services';
-import { AuthContext } from '../../contexts';
-import { useContext, useEffect, useState } from 'react';
-import { BasicInput, MultiSelect } from '../Inputs';
-import { LocalsService } from '../../services';
+import { BasicInput } from '../Inputs';
 import { ToastError, ToastSuccess } from '../Toasts';
 
 const UpdateIssueForm = ({ locals, onEditClose, issue }) => {
@@ -48,12 +44,6 @@ const UpdateIssueForm = ({ locals, onEditClose, issue }) => {
     );
 
     if (response.status === 'SUCCESS') {
-      actions.resetForm({
-        values: {
-          title: '',
-          content: '',
-        },
-      });
       ToastSuccess(toast, 'Zgłoszenie zaktualizowane pomyślnie');
       onEditClose();
     } else {
@@ -94,7 +84,6 @@ const UpdateIssueForm = ({ locals, onEditClose, issue }) => {
                       p="3"
                     />
                   </FormControl>
-
                   <Select
                     placeholder="Wybierz lokal"
                     name="local"
@@ -115,7 +104,6 @@ const UpdateIssueForm = ({ locals, onEditClose, issue }) => {
                       );
                     })}
                   </Select>
-
                   <Stack spacing="10">
                     <Button
                       bg="green.300"

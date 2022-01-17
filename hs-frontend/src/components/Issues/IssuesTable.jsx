@@ -12,7 +12,6 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { FaArrowDown, FaArrowUp, FaBan, FaEdit } from 'react-icons/fa';
 import CustomModal from '../CustomModal.jsx';
 import { ToastError, ToastSuccess, ToastWarning } from '../Toasts.js';
 import { AuthContext } from '../../contexts';

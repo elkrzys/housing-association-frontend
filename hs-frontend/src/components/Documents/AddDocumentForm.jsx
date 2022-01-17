@@ -64,6 +64,7 @@ const AddDocumentForm = ({ onClose, preSelectedUserId }) => {
       let receiversIds;
       if (role === 'Resident') receiversIds = null;
       else if (values.receiversIds[0] === undefined) receiversIds = null;
+      else receiversIds = values.receiversIds;
       const response = await DocumentsService.uploadDocument(
         user.id,
         values.title,

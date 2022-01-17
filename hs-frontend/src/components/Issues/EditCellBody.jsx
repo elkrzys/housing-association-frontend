@@ -1,16 +1,9 @@
 import React, { useRef } from 'react';
-import {
-  Box,
-  Flex,
-  Td,
-  Button,
-  useDisclosure,
-  useToast,
-} from '@chakra-ui/react';
+import { Flex, Button, useDisclosure, useToast } from '@chakra-ui/react';
 import { FaBan, FaEdit } from 'react-icons/fa';
 import CustomModal from '../CustomModal.jsx';
 import CustomAlertDialog from '../CustomAlertDialog.jsx';
-import { ToastSuccess, ToastWarning } from '../Toasts.js';
+import { ToastError, ToastSuccess } from '../Toasts.js';
 import UpdateIssueForm from './UpdateIssueForm';
 import { IssuesService } from '../../services';
 
@@ -27,9 +20,9 @@ const EditCellBody = ({ selectedIssue, locals, refresh }) => {
     const response = await IssuesService.cancelIssue(selectedIssue.id);
     if (response.status === 'SUCCESS') {
       ToastSuccess(toast, 'Pomyślnie wycofano zgłoszenie');
-      refresh();
+      closeAndRefresh(onAlertClose);
     } else {
-      ToastSuccess(toast, 'Nie można było wycofać zgłoszenia');
+      ToastError(toast, 'Nie można było wycofać zgłoszenia');
     }
   };
 
@@ -39,9 +32,9 @@ const EditCellBody = ({ selectedIssue, locals, refresh }) => {
     onClose: onEditClose,
   } = useDisclosure();
 
-  const closeUpdate = async () => {
-    onEditClose();
-    refresh();
+  const closeAndRefresh = async closeAction => {
+    await refresh();
+    closeAction();
   };
 
   return (
@@ -60,7 +53,7 @@ const EditCellBody = ({ selectedIssue, locals, refresh }) => {
           onClose={onEditClose}
           isOpen={isEditOpen}>
           <UpdateIssueForm
-            onEditClose={closeUpdate}
+            onEditClose={() => closeAndRefresh(onEditClose)}
             locals={locals}
             issue={selectedIssue}
           />
