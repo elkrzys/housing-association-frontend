@@ -1,18 +1,16 @@
+import { useContext } from 'react';
 import {
   Flex,
   Box,
   Stack,
   HStack,
-  Text,
   Button,
   Heading,
-  useColorModeValue,
   useToast,
 } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import UsersService from '../../services/UsersService';
 import { AuthContext } from '../../contexts';
-import { useContext, useState } from 'react';
 import { PasswordInput } from '../Inputs';
 import { ToastError } from '../Toasts';
 
@@ -43,12 +41,12 @@ const UnregisterForm = ({ onClose, onUnregister }) => {
       {({ values, isSubmitting }) => (
         <Form>
           <Flex align="start" justify="center">
-            <Stack spacing={8} mx="auto" px={6}>
-              <Box rounded="lg" bg="white" w="md" px={8}>
-                <Stack align={'center'}>
-                  <Heading fontSize={'xl'}>Potwierdź usuwanie hasłem</Heading>
+            <Stack spacing="8" mx="auto" px="6">
+              <Box rounded="lg" bg="white" w="md" px="8">
+                <Stack align="center">
+                  <Heading fontSize="xl">Potwierdź usuwanie hasłem</Heading>
                 </Stack>
-                <Stack spacing={4}>
+                <Stack spacing="4">
                   <PasswordInput
                     id="password"
                     name="password"

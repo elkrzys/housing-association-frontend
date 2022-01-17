@@ -1,23 +1,12 @@
-import {
-  Flex,
-  Box,
-  Stack,
-  Text,
-  Button,
-  Heading,
-  useColorModeValue,
-  useToast,
-} from '@chakra-ui/react';
-import { Field, Form, Formik } from 'formik';
+import { useContext } from 'react';
+import { Flex, Box, Stack, Button, useToast } from '@chakra-ui/react';
+import { Form, Formik } from 'formik';
 import UsersService from '../../services/UsersService';
 import { AuthContext } from '../../contexts';
-import { useContext, useState } from 'react';
 import { PasswordInput } from '../Inputs';
 import { ToastError, ToastSuccess, ToastWarning } from '../Toasts';
 
 const ChangePasswordForm = () => {
-  const flexBg = useColorModeValue('none', 'gray.800');
-  const boxBg = useColorModeValue('white', 'gray.700');
   const toast = useToast();
   const { user } = useContext(AuthContext);
 
@@ -63,11 +52,8 @@ const ChangePasswordForm = () => {
         <Form>
           <Flex align="start" justify="center">
             <Stack spacing="8" mx="auto" px="6">
-              {/* <Stack align={'center'}>
-                        <Heading fontSize={'2xl'}>Zresetuj hasło</Heading>
-                    </Stack> */}
               <Box rounded="lg" bg="white" w="md" px="8">
-                <Stack spacing={4}>
+                <Stack spacing="4">
                   <PasswordInput
                     id="oldPassword"
                     name="oldPassword"

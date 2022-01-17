@@ -25,7 +25,7 @@ const AuthPage = () => {
         py="10"
         align="center">
         <Text
-          maxW={{ base: '80vw', md: '30vw' }}
+          maxW={{ base: '30vw', md: '80vw' }}
           color="white"
           fontWeight="700"
           lineHeight="1.2"

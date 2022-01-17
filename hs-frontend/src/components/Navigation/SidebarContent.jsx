@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 import { Flex, Text, Avatar, Heading, chakra } from '@chakra-ui/react';
 import {
   FaUser,
@@ -12,21 +12,20 @@ import {
   FaUsers,
 } from 'react-icons/fa';
 import NavItem from './NavItem';
-import { ModeContext, AuthContext } from '../../contexts';
+import { AuthContext } from '../../contexts';
 
 const CFaUserAlt = chakra(FaUserAlt);
 
 const SidebarContent = () => {
   const { signOut, role } = useContext(AuthContext);
   let { user } = useContext(AuthContext);
-  const { setMode } = useContext(ModeContext);
 
   useEffect(() => {}, [user]);
 
   const history = useHistory();
   const signOutAndRedirect = () => {
     signOut();
-    history.replace('/login');
+    return <Redirect to="/login" />;
   };
   return (
     <Flex>

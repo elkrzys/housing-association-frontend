@@ -8,7 +8,6 @@ import {
   FormControl,
   useToast,
 } from '@chakra-ui/react';
-import Select from 'react-select';
 import { Form, Formik } from 'formik';
 import { DocumentsService, UsersService } from '../../services';
 import { AuthContext } from '../../contexts';

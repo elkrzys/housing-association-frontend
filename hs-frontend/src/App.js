@@ -2,49 +2,51 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ChakraProvider, theme } from '@chakra-ui/react';
 import { AuthContextProvider, ModeContextProvider } from './contexts';
+import PrivateRoute from './components/PrivateRoute';
 import * as Pages from './components/Pages';
 
 const App = () => { 
     document.title = 'System wspólnoty mieszkaniowej'
     return (
     <ChakraProvider theme={theme}>
-      <AuthContextProvider>
-        <ModeContextProvider>
-          <Router>
+      <Router>
+        <AuthContextProvider>
+          <ModeContextProvider>
             <Switch>
-              <Route exact path="/" >
-                <Pages.AnnouncementsPage />
-              </Route>
-              <Route exact path="/login">
+            <Route exact path="/login">
                 <Pages.AuthPage />
               </Route>
-              <Route exact path="/users">
-                <Pages.UsersPage />
-              </Route>
-              <Route exact path="/users/details/:userId" render={(props) => <Pages.UserDetailsPage {...props} /> }/>
-              <Route exact path="/announcements">
+              <PrivateRoute exact path="/" >
                 <Pages.AnnouncementsPage />
-              </Route>
-              <Route exact path="/documents">
+              </PrivateRoute>
+              
+              <PrivateRoute exact path="/users">
+                <Pages.UsersPage />
+              </PrivateRoute>
+              <PrivateRoute exact path="/users/details/:userId" render={(props) => <Pages.UserDetailsPage {...props} /> }/>
+              <PrivateRoute exact path="/announcements">
+                <Pages.AnnouncementsPage />
+              </PrivateRoute>
+              <PrivateRoute exact path="/documents">
                 <Pages.DocumentsPage />
-              </Route>
-              <Route exact path="/issues">
+              </PrivateRoute>
+              <PrivateRoute exact path="/issues">
                 <Pages.IssuesPage />
-              </Route>
-              <Route exact path="/profile">
+              </PrivateRoute>
+              <PrivateRoute exact path="/profile">
                 <Pages.ProfilePage />
-              </Route>
-              <Route exact path="/buildings">
+              </PrivateRoute>
+              <PrivateRoute exact path="/buildings">
                 <Pages.BuildingsPage />
-              </Route>
-              <Route exact path="/building/:buildingId" render={(props) => <Pages.BuildingDetailsPage {...props} /> }/>
-              <Route exact path="/locals">
+              </PrivateRoute>
+              <PrivateRoute exact path="/building/:buildingId" render={(props) => <Pages.BuildingDetailsPage {...props} /> }/>
+              <PrivateRoute exact path="/locals">
                 <Pages.LocalsPage />
-              </Route>
+              </PrivateRoute>
             </Switch>
-          </Router>
-        </ModeContextProvider>
-      </AuthContextProvider>
+          </ModeContextProvider>
+        </AuthContextProvider>
+      </Router>
     </ChakraProvider> 
 )}
 export default App;

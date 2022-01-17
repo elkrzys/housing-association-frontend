@@ -40,7 +40,7 @@ const CustomAlertDialog = ({
               onAction();
               onClose();
             }}
-            ml={3}>
+            ml="3">
             {actionName}
           </Button>
         </AlertDialogFooter>

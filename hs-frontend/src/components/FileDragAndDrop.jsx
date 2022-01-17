@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useField, useFormikContext } from 'formik';
-import { Box, Text } from '@chakra-ui/react';
 import { FilePond, registerPlugin } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import '../filepond.css';

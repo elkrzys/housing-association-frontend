@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Flex, Box, useBreakpointValue } from '@chakra-ui/react';
 import Sidebar from '../Navigation/Sidebar';
 import Header from '../Navigation/Header';

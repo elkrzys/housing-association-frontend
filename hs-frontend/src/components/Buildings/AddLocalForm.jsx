@@ -1,15 +1,4 @@
-import { useState } from 'react';
-import {
-  Flex,
-  Box,
-  Stack,
-  HStack,
-  Button,
-  Heading,
-  Radio,
-  RadioGroup,
-  useToast,
-} from '@chakra-ui/react';
+import { Flex, Box, Stack, HStack, Button, useToast } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import { LocalsService } from '../../services';
 import { BasicInput } from '../Inputs';

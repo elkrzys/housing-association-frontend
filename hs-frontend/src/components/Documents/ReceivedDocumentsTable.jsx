@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
   Box,
-  Flex,
   Table,
   Thead,
   Tbody,
@@ -10,8 +9,7 @@ import {
   Td,
   useToast,
 } from '@chakra-ui/react';
-import { FaArrowDown, FaArrowUp, FaBan, FaEdit } from 'react-icons/fa';
-import { ToastError, ToastSuccess, ToastWarning } from '../Toasts.js';
+import { ToastError } from '../Toasts.js';
 import { AuthContext } from '../../contexts';
 import { DocumentsService } from '../../services';
 import { onClickUrl } from './functions.js';
@@ -20,7 +18,6 @@ const ReceivedDocumentsTable = () => {
   const { user, role } = useContext(AuthContext);
   const toast = useToast();
   const [documents, setDocuments] = useState([]);
-  const [selectedDocument, setSelectedDocument] = useState(null);
 
   const getDocuments = async () => {
     let response;

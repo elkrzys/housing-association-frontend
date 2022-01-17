@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   Box,
   Flex,
@@ -84,7 +84,7 @@ const LocalsTable = ({ buildingId, residentId }) => {
             {!residentId && (
               <>
                 {role !== 'Resident' && <Th>Liczba mieszkańców</Th>}
-                <Th colSpan={2}>
+                <Th colSpan="2">
                   <Flex justifyContent="center">
                     <Button
                       bg="gray.100"

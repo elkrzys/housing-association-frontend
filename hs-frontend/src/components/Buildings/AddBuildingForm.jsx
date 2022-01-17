@@ -56,12 +56,7 @@ const AddBuildingForm = () => {
         <Form>
           <Flex align="start" justify="center" bg="none">
             <Stack spacing="8" mx="auto" px="6">
-              <Box
-                rounded="lg"
-                bg="white"
-                // boxShadow={'lg'}
-                w="md"
-                px="8">
+              <Box rounded="lg" bg="white" w="md" px="8">
                 <Stack spacing="4">
                   <Stack align="left">
                     <Heading fontSize="md">Adres</Heading>

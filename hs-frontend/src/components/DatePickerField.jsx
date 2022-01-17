@@ -1,9 +1,9 @@
-import { Box, Button } from '@chakra-ui/react';
 import React, { useState, forwardRef } from 'react';
+import { Button } from '@chakra-ui/react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useField, useFormikContext } from 'formik';
-import { registerLocale, setDefaultLocale } from 'react-datepicker';
+import { registerLocale } from 'react-datepicker';
 import pl from 'date-fns/locale/pl';
 registerLocale('pl', pl);
 

@@ -103,7 +103,7 @@ const UpdateBuildingForm = ({ buildingId }) => {
                     isRequired={!isDisabled}
                     isDisabled={isDisabled}
                   />
-                  <Stack spacing={10}>
+                  <Stack spacing="10">
                     <HStack>
                       <Button
                         w="50%"
