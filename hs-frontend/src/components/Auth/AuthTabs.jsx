@@ -4,13 +4,6 @@ import RegisterForm from './RegisterForm';
 
 const AuthTabs = () => {
   return (
-    // <Box
-    //     //minH={'100vh'}
-    //     align={'center'}
-    //     justify={'center'}
-    //     width={'50%'}
-    //     mx={'auto'}
-    // >
     <Box w="100%">
       <Tabs rounded="lg" isFitted variant="enclosed" bg="white">
         <TabList>
@@ -27,7 +20,6 @@ const AuthTabs = () => {
         </TabPanels>
       </Tabs>
     </Box>
-    // </Box>
   );
 };
 export default AuthTabs;

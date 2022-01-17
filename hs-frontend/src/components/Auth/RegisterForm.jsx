@@ -13,7 +13,7 @@ import { useContext } from 'react';
 import { BasicInput, PasswordInput } from '../Inputs';
 import { AuthContext } from '../../contexts/AuthContext';
 import { ToastError, ToastSuccess } from '../Toasts';
-import { ValidationSchemas } from '../ValidationSchemas';
+import { Schemas, showErrorBox } from '../Validation';
 
 const RegisterForm = () => {
   const { signUp } = useContext(AuthContext);
@@ -40,6 +40,7 @@ const RegisterForm = () => {
 
   return (
     <Formik
+      validateOnBlur
       initialValues={{
         firstName: '',
         lastName: '',
@@ -48,18 +49,18 @@ const RegisterForm = () => {
         password: '',
         confirmPassword: '',
       }}
-      validationSchema={ValidationSchemas.signUpSchema}
+      validationSchema={Schemas.signUpSchema}
       onSubmit={setSubmit}>
       {({ values, isSubmitting, errors, touched }) => (
         <Form>
           <Flex align="start" justify="center">
-            <Stack w="100%" spacing={8} mx="auto" py={6} px={6}>
+            <Stack w="100%" spacing="8" mx="auto" py="6" px="6">
               <Stack align="center">
                 <Heading fontSize="2xl">Utwórz konto</Heading>
               </Stack>
-              <Box rounded="lg" bg="white" boxShadow="lg" py={6} px={8}>
-                <Stack spacing={4}>
-                  <HStack spacing={2}>
+              <Box rounded="lg" bg="white" boxShadow="lg" py="6" px="8">
+                <Stack spacing="4">
+                  <HStack spacing="2">
                     <BasicInput
                       id="firstName"
                       name="firstName"
@@ -79,10 +80,10 @@ const RegisterForm = () => {
                     />
                   </HStack>
                   {errors.firstName && touched.firstName
-                    ? errorBox(errors.firstName)
+                    ? showErrorBox(errors.firstName)
                     : null}
                   {errors.lastName && touched.lastName
-                    ? errorBox(errors.lastName)
+                    ? showErrorBox(errors.lastName)
                     : null}
 
                   <BasicInput
@@ -94,7 +95,7 @@ const RegisterForm = () => {
                     isRequired
                   />
                   {errors.phoneNumber && touched.phoneNumber
-                    ? errorBox(errors.phoneNumber)
+                    ? showErrorBox(errors.phoneNumber)
                     : null}
 
                   <BasicInput
@@ -106,7 +107,7 @@ const RegisterForm = () => {
                     isRequired
                   />
                   {errors.email && touched.email
-                    ? errorBox(errors.email)
+                    ? showErrorBox(errors.email)
                     : null}
 
                   <PasswordInput
@@ -117,7 +118,7 @@ const RegisterForm = () => {
                     isRequired
                   />
                   {errors.password && touched.password
-                    ? errorBox(errors.password)
+                    ? showErrorBox(errors.password)
                     : null}
 
                   <PasswordInput
@@ -128,10 +129,10 @@ const RegisterForm = () => {
                     isRequired
                   />
                   {errors.confirmPassword && touched.confirmPassword
-                    ? errorBox(errors.confirmPassword)
+                    ? showErrorBox(errors.confirmPassword)
                     : null}
 
-                  <Stack pt={4}>
+                  <Stack pt="4">
                     <Button
                       bg="blue.400"
                       color="white"

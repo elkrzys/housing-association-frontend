@@ -169,16 +169,6 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
     );
 
     if (response.status === 'SUCCESS') {
-      actions.resetForm({
-        values: {
-          title: '',
-          content: '',
-          cities: [],
-          districts: [],
-          streets: [],
-          buildings: [],
-        },
-      });
       ToastSuccess(toast, 'Ogłoszenie zaktualizowane pomyślnie');
       onEditClose();
     } else {
@@ -229,6 +219,7 @@ const UpdateAnnouncementForm = ({ onEditClose, announcement }) => {
                     handleSelectCities={handleSelectCities}
                     handleSelectDistricts={handleSelectDistricts}
                     handleSelectStreets={handleSelectStreets}
+                    isUpdate={true}
                   />
                   <Stack spacing="10">
                     <Button

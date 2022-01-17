@@ -21,8 +21,6 @@ const UserDetails = ({ userId }) => {
 
   useEffect(() => {
     getUser();
-
-    console.log(user);
   }, []);
 
   return (

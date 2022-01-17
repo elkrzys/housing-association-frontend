@@ -11,11 +11,8 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { FaArrowDown, FaArrowUp, FaBan, FaEdit } from 'react-icons/fa';
 import React, { useContext, useEffect, useState } from 'react';
-import { ModeContext } from '../../contexts';
 import CustomModal from '../CustomModal.jsx';
-import { MODES } from '../../strings';
 import Announcement from './Announcement';
 import AddAnnouncementForm from './AddAnnouncementForm';
 import { AuthContext } from '../../contexts';
@@ -54,20 +51,10 @@ const AnnouncementsTable = () => {
     handleRefresh();
   };
 
-  useEffect(() => {
-    getAnnouncements();
-  }, [refresh]);
-
   const {
     isOpen: isAddOpen,
     onOpen: onAddOpen,
     onClose: onAddClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isEditOpen,
-    onOpen: onEditOpen,
-    onClose: onEditClose,
   } = useDisclosure();
 
   const {
@@ -83,6 +70,10 @@ const AnnouncementsTable = () => {
     { Header: 'Wygasa', accessor: 'expirationDate' },
     { Header: 'Autor', accessor: 'author' },
   ];
+
+  useEffect(() => {
+    getAnnouncements();
+  }, [refresh]);
 
   return (
     <Box rounded="lg" mx={{ base: '0', md: '5%' }}>

@@ -102,20 +102,20 @@ export const showActualAddresses = (selections) => {
   console.log(selections)
   return (
     <>
-      <Text>Miasta: {selections.cities.map(c => `${c}, `)}</Text>
+      <Text>Miasta: {selections.cities.map((c, i, arr) => i !== (arr.length - 1) ? `${c}, ` : `${c}`)}</Text>
       {selections.districts?.length !== 0 &&
         selections.cities.length === 1 && (
           <Text>
-            Dzielnice: {selections.districts.map(d => `${d}, `)}
+            Dzielnice: {selections.districts.map((d, i, arr) => i !== (arr.length - 1) ? `${d}, ` : `${d}`)}
           </Text>
         )}
       {selections.streets.length && (
-        <Text>Ulice: {selections.streets.map(s => `${s}, `)}</Text>
+        <Text>Ulice: {selections.streets.map((s, i, arr) => i !== (arr.length - 1) ? `${s}, ` : `${s}`)}</Text>
       )}
       {selections.streets.length === 1 && (
         <Text>
           Numery budynków:
-          {selections.buildings.map(b => `${b.number}, `)}
+          {selections.buildings.map((b, i, arr) => i !== (arr.length - 1) ? `${b.number}, ` : `${b.number}`)}
         </Text>
       )}
     </>

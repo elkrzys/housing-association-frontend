@@ -4,11 +4,13 @@ import { ChakraProvider, theme } from '@chakra-ui/react';
 import { AuthContextProvider, ModeContextProvider } from './contexts';
 import * as Pages from './components/Pages';
 
-const App = () => (
+const App = () => { 
+    document.title = 'System wspólnoty mieszkaniowej'
+    return (
     <ChakraProvider theme={theme}>
       <AuthContextProvider>
         <ModeContextProvider>
-        <Router>
+          <Router>
             <Switch>
               <Route exact path="/" >
                 <Pages.AnnouncementsPage />
@@ -39,10 +41,10 @@ const App = () => (
               <Route exact path="/locals">
                 <Pages.LocalsPage />
               </Route>
-              </Switch>
-            </Router>
+            </Switch>
+          </Router>
         </ModeContextProvider>
       </AuthContextProvider>
     </ChakraProvider> 
-)
+)}
 export default App;

@@ -11,6 +11,7 @@ import { Form, Formik } from 'formik';
 import { BasicInput } from '../Inputs';
 import { ToastError, ToastSuccess } from '../Toasts';
 import { UsersService } from '../../services';
+import { Schemas, showErrorBox } from '../Validation';
 
 const AddWorkerForm = ({ onClose }) => {
   const toast = useToast();
@@ -36,14 +37,16 @@ const AddWorkerForm = ({ onClose }) => {
 
   return (
     <Formik
+      validateOnBlur
       initialValues={{
         firstName: '',
         lastName: '',
         email: '',
         phoneNumber: '',
       }}
+      validationSchema={Schemas.signUpSchema}
       onSubmit={setSubmit}>
-      {({ values, isSubmitting }) => (
+      {({ values, isSubmitting, errors, touched }) => (
         <Form>
           <Flex align="start" justify="center">
             <Stack w="100%" spacing="8" mx="auto" py="6" px="6">
@@ -70,6 +73,12 @@ const AddWorkerForm = ({ onClose }) => {
                       isRequired
                     />
                   </HStack>
+                  {errors.firstName && touched.firstName
+                    ? showErrorBox(errors.firstName)
+                    : null}
+                  {errors.lastName && touched.lastName
+                    ? showErrorBox(errors.lastName)
+                    : null}
                   <BasicInput
                     id="phoneNumber"
                     name="phoneNumber"
@@ -78,6 +87,9 @@ const AddWorkerForm = ({ onClose }) => {
                     type="tel"
                     isRequired
                   />
+                  {errors.phoneNumber && touched.phoneNumber
+                    ? showErrorBox(errors.phoneNumber)
+                    : null}
                   <BasicInput
                     id="email"
                     name="email"
@@ -86,6 +98,9 @@ const AddWorkerForm = ({ onClose }) => {
                     type="email"
                     isRequired
                   />
+                  {errors.email && touched.email
+                    ? showErrorBox(errors.email)
+                    : null}
                   <Stack pt="4">
                     <Button
                       bg="blue.400"

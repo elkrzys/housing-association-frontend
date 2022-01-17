@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   Flex,
   Box,
@@ -13,7 +13,6 @@ import { Form, Formik } from 'formik';
 import { AnnouncementsService } from '../../services';
 import { AuthContext } from '../../contexts';
 import { BasicInput } from '../Inputs';
-import { useEffect } from 'react/cjs/react.development';
 import { ToastError, ToastSuccess } from '../Toasts';
 import DatePickerField from '../DatePickerField';
 import DynamicAddressSelect from './DynamicAddressSelect';
@@ -111,16 +110,6 @@ const AddAnnouncementForm = ({ onAddClose }) => {
       );
     }
     if (response.status === 'SUCCESS') {
-      actions.resetForm({
-        values: {
-          title: '',
-          content: '',
-          cities: [],
-          districts: [],
-          streets: [],
-          buildings: [],
-        },
-      });
       ToastSuccess(toast, 'Ogłoszenie dodane pomyślnie');
       onAddClose();
     } else {

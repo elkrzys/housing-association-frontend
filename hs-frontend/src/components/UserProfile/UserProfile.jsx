@@ -49,7 +49,7 @@ const UserProfile = () => {
   const onUnregisterSuccess = () => {
     setIsRedirected(true);
     signOut();
-    history.replace('/');
+    history.replace('/login');
   };
 
   const setSubmit = async (values, actions) => {
@@ -86,7 +86,7 @@ const UserProfile = () => {
       onSubmit={setSubmit}>
       {({ values, isSubmitting }) => (
         <Flex w="full">
-          <Stack spacing={8}>
+          <Stack spacing="8">
             <Form>
               <Box
                 w={{ base: '100%', md: '50%' }}
@@ -95,7 +95,7 @@ const UserProfile = () => {
                 bg="white"
                 boxShadow="lg"
                 p="8">
-                <Stack spacing={4}>
+                <Stack spacing="4">
                   <BasicInput
                     id="firstName"
                     name="firstName"

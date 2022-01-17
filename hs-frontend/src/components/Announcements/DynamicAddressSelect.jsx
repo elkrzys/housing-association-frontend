@@ -1,6 +1,7 @@
 import React from 'react';
 import { Stack } from '@chakra-ui/react';
 import { ReactSelect } from '../Inputs';
+import { useFormikContext } from 'formik';
 
 const DynamicAddressSelect = ({
   values,
@@ -11,7 +12,28 @@ const DynamicAddressSelect = ({
   handleSelectStreets,
   handleSelectDistricts,
   handleSelectCities,
+  isUpdate,
 }) => {
+  const { setFieldValue } = useFormikContext();
+  const handleSelectionChange = fieldChanged => {
+    switch (fieldChanged) {
+      case 'cities':
+        setFieldValue('districts', []);
+        setFieldValue('streets', []);
+        setFieldValue('buildings', []);
+        break;
+      case 'districts':
+        setFieldValue('streets', []);
+        setFieldValue('buildings', []);
+        break;
+      case 'streets':
+        setFieldValue('buildings', []);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <Stack>
       {cities.length && (
@@ -20,7 +42,10 @@ const DynamicAddressSelect = ({
           isMulti={true}
           name="cities"
           openMenuOnClick={true}
-          onChange={async vals => await handleSelectCities(vals)}
+          onChange={async vals => {
+            if (isUpdate) handleSelectionChange('cities');
+            await handleSelectCities(vals);
+          }}
           placeholder="Miasta"
         />
       )}
@@ -30,7 +55,10 @@ const DynamicAddressSelect = ({
           isMulti={true}
           name="districts"
           openMenuOnClick={true}
-          onChange={async vals => await handleSelectDistricts(vals)}
+          onChange={async vals => {
+            if (isUpdate) handleSelectionChange('districts');
+            await handleSelectDistricts(vals);
+          }}
           placeholder="Dzielnice"
         />
       )}
@@ -42,13 +70,14 @@ const DynamicAddressSelect = ({
             isMulti={true}
             name="streets"
             openMenuOnClick={true}
-            onChange={async vals =>
+            onChange={async vals => {
+              if (isUpdate) handleSelectionChange('streets');
               await handleSelectStreets(
                 values.cities[0],
                 vals,
                 values.districts?.[0],
-              )
-            }
+              );
+            }}
             placeholder="Ulice"
           />
         )}

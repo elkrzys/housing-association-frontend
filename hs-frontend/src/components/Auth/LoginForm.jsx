@@ -14,13 +14,12 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { BasicInput, PasswordInput } from '../Inputs';
 import { ToastError } from '../Toasts';
 import ResetPasswordModal from './ResetPasswordModal';
-import { ValidationSchemas } from '../ValidationSchemas';
+import { Schemas, showErrorBox } from '../Validation';
 
 const LoginForm = () => {
   const { signIn } = useContext(AuthContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-  const errorBox = error => <Box color="red.500">{error}</Box>;
 
   // eslint-disable-next-line consistent-return
   const setSubmit = async (values, actions) => {
@@ -33,11 +32,12 @@ const LoginForm = () => {
 
   return (
     <Formik
+      validateOnBlur
       initialValues={{
         email: '',
         password: '',
       }}
-      validationSchema={ValidationSchemas.signInSchema}
+      validationSchema={Schemas.signInSchema}
       onSubmit={setSubmit}>
       {({ values, isSubmitting, errors, touched }) => (
         <Form>
@@ -57,7 +57,7 @@ const LoginForm = () => {
                     isRequired
                   />
                   {errors.email && touched.email
-                    ? errorBox(errors.email)
+                    ? showErrorBox(errors.email)
                     : null}
 
                   <PasswordInput
@@ -68,7 +68,7 @@ const LoginForm = () => {
                     isRequired
                   />
                   {errors.password && touched.password
-                    ? errorBox(errors.password)
+                    ? showErrorBox(errors.password)
                     : null}
 
                   <Stack spacing={10}>

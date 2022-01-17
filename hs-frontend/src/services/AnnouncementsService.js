@@ -4,12 +4,12 @@ import { Endpoints, REQUEST_STATUS } from '../strings';
 const mapAddresses = (cities, districts, streets) => {
     if(cities.length > 1){
         return cities.map(city => ({city: city, district: null, street: null}));
-    }
-    if(districts.length > 1){
+    } else if(districts.length){
         return districts.map(district => ({city: cities[0], district: district, street: null}))
-    }
-    if(streets.length){
+    } else if(streets.length){
         return streets.map(street => ({city: cities[0], district: districts?.[0], street: street}))
+    } else if(cities.length === 1){
+        return {city: cities[0], district: null, street: null};
     }
     throw 'Niepoprawny adres';
 }
