@@ -33,18 +33,16 @@ const AddIssueForm = ({ locals, onAddClose }) => {
       values.content,
       JSON.parse(values.local),
       user.id,
-      onSuccess,
     );
 
-    if (response.status !== 'SUCCESS')
+    if (response.status === 'SUCCESS') {
+      ToastSuccess(toast, 'Zgłoszenie dodane pomyślnie');
+      onAddClose();
+    } else {
       ToastError(toast, 'Zgłoszenie nie zostało dodane');
+    }
 
     actions.setSubmitting(false);
-  };
-
-  const onSuccess = () => {
-    ToastSuccess(toast, 'Zgłoszenie dodane pomyślnie');
-    onAddClose();
   };
 
   return (

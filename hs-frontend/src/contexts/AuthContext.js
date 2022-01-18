@@ -91,6 +91,7 @@ const AuthContextProvider = ({ children }) => {
       newState.user = newUser;
       return newState
     }));
+    localStorage.removeItem('user')
     localStorage.setItem('user', JSON.stringify(newUser))
   }, []);
 

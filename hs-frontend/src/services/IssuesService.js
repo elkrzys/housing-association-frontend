@@ -26,7 +26,7 @@ const IssuesService = {
             return { status: REQUEST_STATUS.ERROR, error};
           }
     },
-    addIssue: async (title, content, local, authorId, onSuccess) => {
+    addIssue: async (title, content, local, authorId) => {
         let sourceLocalId = local.localId;
         let sourceBuildingId = local.buildingId;
 
@@ -38,7 +38,6 @@ const IssuesService = {
               sourceLocalId,
               sourceBuildingId
             });
-            onSuccess();
             return { status: REQUEST_STATUS.SUCCESS, data: response.data };
           } catch (error) {
             return { status: REQUEST_STATUS.ERROR, error };

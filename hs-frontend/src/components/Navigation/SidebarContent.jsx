@@ -17,9 +17,7 @@ import { AuthContext } from '../../contexts';
 const CFaUserAlt = chakra(FaUserAlt);
 
 const SidebarContent = () => {
-  const { signOut, role } = useContext(AuthContext);
-  let { user } = useContext(AuthContext);
-
+  const { signOut, role, user } = useContext(AuthContext);
   useEffect(() => {}, [user]);
 
   const history = useHistory();

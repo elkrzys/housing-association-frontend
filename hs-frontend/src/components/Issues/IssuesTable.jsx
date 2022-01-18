@@ -189,7 +189,7 @@ const IssuesTable = () => {
                 />
               </CustomModal>
               <Td w="5%">{issue.id}</Td>
-              <Td w="20%">{`${issue.address?.city} ${issue.address?.street} ${issue.sourceBuildingId}/${issue.sourceLocalId}`}</Td>
+              <Td w="20%">{`${issue.address?.city} ${issue.address?.street} ${issue.buildingNumber}/${issue.localNumber}`}</Td>
               <Td w="20%">{issue.title}</Td>
               <Td>{new Date(issue.created).toLocaleDateString()}</Td>
               <Td>

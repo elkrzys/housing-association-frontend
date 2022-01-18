@@ -38,7 +38,7 @@ const UserProfile = () => {
     if (response.status === 'SUCCESS') {
       setUser(response.data);
     } else {
-      return null;
+      ToastError(toast, 'Błąd pobierania użytkownika');
     }
   };
 
@@ -53,17 +53,17 @@ const UserProfile = () => {
   };
 
   const setSubmit = async (values, actions) => {
-    let response = await UsersService.updateUser(
+    const response = await UsersService.updateUser(
       user.id,
       values.firstName,
       values.lastName,
       values.phoneNumber,
       values.email,
     );
-    if (response) {
-      let updatedUser = await getUser();
-      let newUser = (({ phoneNumber, ...others }) => ({ ...others }))(
-        updatedUser,
+    if (response.status === 'SUCCESS') {
+      await getUser();
+      const newUser = (({ phoneNumber, ...others }) => ({ ...others }))(
+        fullUser,
       );
       refreshUser(newUser);
       setIsDisabled(true);
@@ -85,7 +85,6 @@ const UserProfile = () => {
       }}
       onSubmit={setSubmit}>
       {({ values, isSubmitting }) => (
-        // <Flex justifyContent="center">
         <Box
           w={{ base: '100%', md: '50%' }}
           mx={{ base: '0', md: 'auto' }}
@@ -181,7 +180,6 @@ const UserProfile = () => {
             </Stack>
           </Form>
         </Box>
-        // </Flex>
       )}
     </Formik>
   );

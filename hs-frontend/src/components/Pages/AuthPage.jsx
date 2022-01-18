@@ -21,7 +21,7 @@ const AuthPage = () => {
         px={useBreakpointValue({ base: 4, md: 8 })}
         bgGradient={'linear(to-r, blackAlpha.600, transparent)'}
         w="full"
-        h="full"
+        minH="100vh"
         py="10"
         align="center">
         <Text
