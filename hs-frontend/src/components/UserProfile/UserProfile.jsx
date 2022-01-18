@@ -37,6 +37,7 @@ const UserProfile = () => {
     const response = await UsersService.getUser(user.id);
     if (response.status === 'SUCCESS') {
       setUser(response.data);
+      return response.data;
     } else {
       ToastError(toast, 'Błąd pobierania użytkownika');
     }
@@ -61,9 +62,9 @@ const UserProfile = () => {
       values.email,
     );
     if (response.status === 'SUCCESS') {
-      await getUser();
+      const updatedUser = await getUser();
       const newUser = (({ phoneNumber, ...others }) => ({ ...others }))(
-        fullUser,
+        updatedUser,
       );
       refreshUser(newUser);
       setIsDisabled(true);

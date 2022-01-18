@@ -9,9 +9,10 @@ const App = () => {
     document.title = 'System wspólnoty mieszkaniowej'
     return (
     <ChakraProvider theme={theme}>
-      <Router>
+      
         <AuthContextProvider>
           <ModeContextProvider>
+          <Router>
             <Switch>
             <Route exact path="/login">
                 <Pages.AuthPage />
@@ -44,9 +45,10 @@ const App = () => {
                 <Pages.LocalsPage />
               </PrivateRoute>
             </Switch>
+            </Router>
           </ModeContextProvider>
         </AuthContextProvider>
-      </Router>
+     
     </ChakraProvider> 
 )}
 export default App;
