@@ -17,7 +17,7 @@ import Announcement from './Announcement';
 import AddAnnouncementForm from './AddAnnouncementForm';
 import { AuthContext } from '../../contexts';
 import { AnnouncementsService } from '../../services';
-import { ToastError, ToastSuccess } from '../Toasts';
+import { ToastError } from '../Toasts';
 import EditAnnouncementsCellBody from './EditAnnouncementsCellBody';
 
 const AnnouncementsTable = () => {
@@ -25,7 +25,6 @@ const AnnouncementsTable = () => {
   const toast = useToast();
   const [announcements, setAnnouncements] = useState([]);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-  const [refresh, setRefresh] = useState(false);
 
   const getAnnouncements = async () => {
     let response;
@@ -41,14 +40,13 @@ const AnnouncementsTable = () => {
     }
   };
 
-  const handleRefresh = async () => {
+  const handleReloadAnnouncements = async () => {
     await getAnnouncements();
-    setRefresh(!refresh);
   };
 
-  const closeAndRefresh = closeAction => {
+  const closeAndReloadAnnouncements = closeAction => {
     closeAction();
-    handleRefresh();
+    getAnnouncements();
   };
 
   const {
@@ -73,7 +71,9 @@ const AnnouncementsTable = () => {
 
   useEffect(() => {
     getAnnouncements();
-  }, [refresh]);
+  }, []);
+
+  useEffect(() => {}, [announcements]);
 
   return (
     <Box rounded="lg" mx={{ base: '0', md: '5%' }}>
@@ -99,7 +99,7 @@ const AnnouncementsTable = () => {
                     size="lg"
                     header="Dodaj ogłoszenie">
                     <AddAnnouncementForm
-                      onAddClose={() => closeAndRefresh(onAddClose)}
+                      onAddClose={() => closeAndReloadAnnouncements(onAddClose)}
                     />
                   </CustomModal>
                 </Flex>
@@ -120,19 +120,6 @@ const AnnouncementsTable = () => {
                 transition: '0.1s',
                 cursor: 'pointer',
               }}>
-              <CustomModal
-                size="lg"
-                onClose={onDisplayClose}
-                isOpen={
-                  isDisplayOpen && announcement.id === selectedAnnouncement?.id
-                }>
-                <Announcement
-                  title={selectedAnnouncement?.title}
-                  content={selectedAnnouncement?.content}
-                  author={selectedAnnouncement?.author}
-                  date={selectedAnnouncement?.date}
-                />
-              </CustomModal>
               <Td w="5%">{announcement.id}</Td>
               <Td w="20%">{announcement.title}</Td>
               <Td w="20%">
@@ -148,7 +135,7 @@ const AnnouncementsTable = () => {
                 <Td>
                   <EditAnnouncementsCellBody
                     announcement={announcement}
-                    refresh={() => handleRefresh()}
+                    refresh={handleReloadAnnouncements}
                   />
                 </Td>
               )}
@@ -156,6 +143,14 @@ const AnnouncementsTable = () => {
           ))}
         </Tbody>
       </Table>
+      <CustomModal size="lg" onClose={onDisplayClose} isOpen={isDisplayOpen}>
+        <Announcement
+          title={selectedAnnouncement?.title}
+          content={selectedAnnouncement?.content}
+          author={selectedAnnouncement?.author}
+          date={selectedAnnouncement?.date}
+        />
+      </CustomModal>
     </Box>
   );
 };

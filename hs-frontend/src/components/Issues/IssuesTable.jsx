@@ -26,22 +26,16 @@ const IssuesTable = () => {
   const [issues, setIssues] = useState([]);
   const [locals, setLocals] = useState([]);
   const [selectedIssue, setSelectedIssue] = useState(null);
-  const [refresh, setRefresh] = useState(false);
-
-  const handleRefresh = async () => {
-    await getIssues();
-    setRefresh(!refresh);
-  };
 
   const closeAndRefresh = closeAction => {
     closeAction();
-    handleRefresh();
+    getIssues();
   };
 
   const resolveIssue = async () => {
     const response = await IssuesService.resolveIssue(selectedIssue.id);
     if (response.status === 'SUCCESS') {
-      await handleRefresh();
+      await getIssues();
       onDisplayClose();
       ToastSuccess(toast, 'Pomyślnie zatwierdzono zgłoszenie');
     } else {
@@ -76,7 +70,9 @@ const IssuesTable = () => {
   useEffect(() => {
     getIssues();
     getLocals();
-  }, [refresh]);
+  }, []);
+
+  useEffect(() => {}, [issues]);
 
   const {
     isOpen: isAddOpen,
@@ -164,30 +160,6 @@ const IssuesTable = () => {
                 transition: '0.1s',
                 cursor: 'pointer',
               }}>
-              <CustomModal
-                size="lg"
-                onClose={onDisplayClose}
-                isOpen={isDisplayOpen && selectedIssue?.id === issue.id}
-                footerContent={
-                  role !== 'Resident' &&
-                  !selectedIssue?.resolved && (
-                    <Button
-                      colorScheme="green"
-                      onClick={async () => {
-                        await resolveIssue(selectedIssue.id);
-                      }}>
-                      Zatwierdź sprawę
-                    </Button>
-                  )
-                }>
-                <Issue
-                  title={selectedIssue?.title}
-                  content={selectedIssue?.content}
-                  author={selectedIssue?.author}
-                  date={selectedIssue?.created}
-                  resolved={selectedIssue?.resolved}
-                />
-              </CustomModal>
               <Td w="5%">{issue.id}</Td>
               <Td w="20%">{`${issue.address?.city} ${issue.address?.street} ${issue.buildingNumber}/${issue.localNumber}`}</Td>
               <Td w="20%">{issue.title}</Td>
@@ -208,7 +180,7 @@ const IssuesTable = () => {
                     <EditCellBody
                       selectedIssue={issue}
                       locals={locals}
-                      refresh={handleRefresh}
+                      refresh={getIssues}
                     />
                   )}
                 </Td>
@@ -217,6 +189,30 @@ const IssuesTable = () => {
           ))}
         </Tbody>
       </Table>
+      <CustomModal
+        size="lg"
+        onClose={onDisplayClose}
+        isOpen={isDisplayOpen}
+        footerContent={
+          role !== 'Resident' &&
+          !selectedIssue?.resolved && (
+            <Button
+              colorScheme="green"
+              onClick={async () => {
+                await resolveIssue(selectedIssue.id);
+              }}>
+              Zatwierdź sprawę
+            </Button>
+          )
+        }>
+        <Issue
+          title={selectedIssue?.title}
+          content={selectedIssue?.content}
+          author={selectedIssue?.author}
+          date={selectedIssue?.created}
+          resolved={selectedIssue?.resolved}
+        />
+      </CustomModal>
     </Box>
   );
 };

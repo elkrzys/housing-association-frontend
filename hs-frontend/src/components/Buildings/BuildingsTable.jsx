@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   Box,
@@ -19,14 +19,13 @@ import AddBuildingForm from './AddBuildingForm';
 import { BuildingsService } from '../../services';
 import { ToastError } from '../Toasts';
 import CustomAlertDialog from '../CustomAlertDialog';
-import './buildings.css';
 
 const BuildingsTable = () => {
   const cancelRef = useRef();
   const toast = useToast();
   const history = useHistory();
   const [buildings, setBuildings] = useState([]);
-  const [refresh, setRefresh] = useState(false);
+  const [selectedBuilding, setSelectedBuilding] = useState(null);
 
   const columns = [
     { Header: 'Miasto', accessor: 'city' },
@@ -59,13 +58,12 @@ const BuildingsTable = () => {
   };
 
   const pushToDetailsPage = buildingId =>
-    history.push(`/building/${buildingId}`);
+    history.push(`/buildings/${buildingId}`);
 
   const deleteBuilding = async id => {
     let response = await BuildingsService.deleteBuilding(id);
     if (response.status === 'SUCCESS') {
       await getBuildings();
-      setRefresh(!refresh);
     } else {
       ToastError(toast, 'Wystąpił problem podczas usuwania budynku');
     }
@@ -73,7 +71,9 @@ const BuildingsTable = () => {
 
   useEffect(() => {
     getBuildings();
-  }, [refresh]);
+  }, []);
+
+  useEffect(() => {}, [buildings]);
 
   return (
     <Box mx={{ base: '0', md: '5%' }}>
@@ -96,7 +96,7 @@ const BuildingsTable = () => {
                 <CustomModal
                   isOpen={isAddOpen}
                   onClose={() => {
-                    setRefresh(!refresh);
+                    getBuildings();
                     onAddClose();
                   }}
                   header={'Dodaj budynek'}>
@@ -128,17 +128,11 @@ const BuildingsTable = () => {
                     alignSelf="center"
                     bg="red.100"
                     _hover={{ bg: 'red.200' }}
-                    onClick={onAlertOpen}>
+                    onClick={() => {
+                      setSelectedBuilding(building);
+                      onAlertOpen();
+                    }}>
                     <FaTrash />
-                    <CustomAlertDialog
-                      leastDestructiveRef={cancelRef}
-                      onClose={onAlertClose}
-                      isOpen={isAlertOpen}
-                      onAction={async () => await deleteBuilding(building.id)}
-                      actionName={'Usuń'}
-                      header={'Usunąć budynek i powiązane lokale?'}>
-                      <p>Tej operacji nie da się cofnąć.</p>
-                    </CustomAlertDialog>
                   </Button>
                 </Flex>
               </Td>
@@ -146,6 +140,15 @@ const BuildingsTable = () => {
           ))}
         </Tbody>
       </Table>
+      <CustomAlertDialog
+        leastDestructiveRef={cancelRef}
+        onClose={onAlertClose}
+        isOpen={isAlertOpen}
+        onAction={async () => await deleteBuilding(selectedBuilding.id)}
+        actionName={'Usuń'}
+        header={'Usunąć budynek i powiązane lokale?'}>
+        <p>Tej operacji nie da się cofnąć.</p>
+      </CustomAlertDialog>
     </Box>
   );
 };

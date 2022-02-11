@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -13,7 +13,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { FaBan } from 'react-icons/fa';
-import { ToastError, ToastSuccess, ToastWarning } from '../Toasts.js';
+import { ToastError, ToastSuccess } from '../Toasts.js';
 import { AuthContext } from '../../contexts';
 import { DocumentsService } from '../../services';
 import CustomModal from '../CustomModal.jsx';
@@ -26,7 +26,6 @@ const OwnedDocumentsTable = () => {
   const toast = useToast();
   const [documents, setDocuments] = useState([]);
   const [selectedDocumentId, setSelectedDocumentId] = useState(null);
-  const [refresh, setRefresh] = useState(false);
   const [isFiltered, setIsFiltered] = useState(false);
   const [filterButtonText, setFilterButtonText] = useState(
     'Pokaż moje dokumenty',
@@ -56,30 +55,21 @@ const OwnedDocumentsTable = () => {
       getDocumentsByAuthor();
       setFilterButtonText('Pokaż dokumenty wspólnoty');
     } else {
-      getDocumentsByAuthor();
+      getDocuments();
       setFilterButtonText('Pokaż moje dokumenty');
     }
     setIsFiltered(!isFiltered);
-    handleRefresh();
   };
 
   const deleteDocument = async id => {
     const response = await DocumentsService.deleteDocument(id);
     if (response.status === 'SUCCESS') {
-      await handleRefresh();
+      await getDocumentsByAuthor();
       ToastSuccess(toast, 'Usunięto pomyślnie');
     } else {
       ToastError(toast, 'Nie można było usunąć');
     }
   };
-
-  useEffect(() => {
-    if (role !== 'Resident' && !isFiltered) {
-      getDocuments();
-    } else {
-      getDocumentsByAuthor();
-    }
-  }, [refresh]);
 
   const {
     isOpen: isAddOpen,
@@ -93,13 +83,8 @@ const OwnedDocumentsTable = () => {
     onClose: onAlertClose,
   } = useDisclosure();
 
-  const handleRefresh = async () => {
+  const handleCloseAndReloadDocuments = async () => {
     await getDocumentsByAuthor();
-    setRefresh(!refresh);
-  };
-
-  const handleCloseAndRefresh = async () => {
-    await handleRefresh();
     onAddClose();
   };
 
@@ -114,6 +99,16 @@ const OwnedDocumentsTable = () => {
   if (role === 'Resident') {
     columns.pop();
   }
+
+  useEffect(() => {
+    if (role !== 'Resident' && !isFiltered) {
+      getDocuments();
+    } else {
+      getDocumentsByAuthor();
+    }
+  }, []);
+
+  useEffect(() => {}, [documents]);
 
   return (
     <>
@@ -151,7 +146,7 @@ const OwnedDocumentsTable = () => {
                     isOpen={isAddOpen}
                     onClose={onAddClose}
                     header={'Dodaj dokument'}>
-                    <AddDocumentForm onClose={handleCloseAndRefresh} />
+                    <AddDocumentForm onClose={handleCloseAndReloadDocuments} />
                   </CustomModal>
                 </Flex>
               </Th>
@@ -192,17 +187,6 @@ const OwnedDocumentsTable = () => {
                         e.stopPropagation();
                       }}>
                       <FaBan />
-                      <CustomAlertDialog
-                        leastDestructiveRef={cancelRef}
-                        onClose={onAlertClose}
-                        isOpen={
-                          isAlertOpen && selectedDocumentId === document.id
-                        }
-                        onAction={() => deleteDocument(selectedDocumentId)}
-                        actionName={'Usuń'}
-                        header={'Usunąć dokument?'}>
-                        <p>Tej operacji nie da się cofnąć.</p>
-                      </CustomAlertDialog>
                     </Button>
                   </Flex>
                 </Td>
@@ -210,6 +194,15 @@ const OwnedDocumentsTable = () => {
             ))}
           </Tbody>
         </Table>
+        <CustomAlertDialog
+          leastDestructiveRef={cancelRef}
+          onClose={onAlertClose}
+          isOpen={isAlertOpen}
+          onAction={() => deleteDocument(selectedDocumentId)}
+          actionName={'Usuń'}
+          header={'Usunąć dokument?'}>
+          <p>Tej operacji nie da się cofnąć.</p>
+        </CustomAlertDialog>
       </Box>
     </>
   );

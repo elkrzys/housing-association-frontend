@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Flex, Stack, useToast } from '@chakra-ui/react';
 import UserInfo from './UserInfo';
 import { UsersService } from '../../services';
-import { ToastError } from '../Toasts';
+import { ToastError, ToastSuccess } from '../Toasts';
 import { LocalsTable } from '../Buildings';
 const UserDetails = ({ userId }) => {
   const [user, setUser] = useState();

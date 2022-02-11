@@ -15,18 +15,13 @@ import {
 } from '@chakra-ui/react';
 import { ModeContext } from '../../contexts';
 import CustomModal from '../CustomModal.jsx';
-import { MODES } from '../../strings';
 import { UsersService } from '../../services';
 import { ToastError } from '../Toasts';
 import AddWorkerForm from './AddWorkerForm';
 
 const UsersTable = ({ usersRole }) => {
-  const { url, path } = useRouteMatch();
   const history = useHistory();
-  const { setMode } = useContext(ModeContext);
   const [users, setUsers] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState();
-  const [refresh, setRefresh] = useState(false);
   const toast = useToast();
   const {
     onOpen: onAddOpen,
@@ -43,16 +38,18 @@ const UsersTable = ({ usersRole }) => {
     }
   };
 
-  const handleCloseAndRefresh = () => {
-    setRefresh(!refresh);
+  const handleCloseAndReloadUsers = () => {
+    getUsers();
     onAddClose();
   };
 
-  const pushToUserDetails = userId => history.push(`/users/details/${userId}`);
+  const pushToUserDetails = userId => history.push(`/users/${userId}`);
 
   useEffect(() => {
     getUsers();
-  }, [refresh]);
+  }, []);
+
+  useEffect(() => {}, [users]);
 
   const columns = [
     { Header: 'Imię', accessor: 'firstName' },
@@ -82,7 +79,7 @@ const UsersTable = ({ usersRole }) => {
                     Dodaj pracownika
                   </Button>
                   <CustomModal onClose={onAddClose} isOpen={isAddOpen}>
-                    <AddWorkerForm onClose={handleCloseAndRefresh} />
+                    <AddWorkerForm onClose={handleCloseAndReloadUsers} />
                   </CustomModal>
                 </Flex>
               </Th>
